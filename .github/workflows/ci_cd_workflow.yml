@@ -27,7 +27,6 @@ permissions:
 
 jobs:
   pheno-ci:
-    needs: init
     uses: ./.github/workflows/ci_workflow.yml
 
   nbdev-ci:
