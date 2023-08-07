@@ -1,0 +1,31 @@
+name: Tests Run Workflow
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        default: 'main'
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  tests-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Load Environment Variables
+        uses: PhenoAI/ci_cd_shared_infrastructure/.github/actions/load-env-vars@main
+
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+        with:
+          ref: ${{ env.BRANCH_NAME }}
+
+      - name: Echo Message
+        run: |
+          echo "Implement your Tests_Suits workflow"
+          echo "Move this Job To Separate scheduled pipeline if needed"
+        shell: bash

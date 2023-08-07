@@ -1,0 +1,41 @@
+name: Release Workflow
+
+on:
+  push:
+    branches:
+      - prod
+    paths:
+      - 'setup.py'
+      - 'CHANGELOG.md'
+
+  workflow_dispatch:
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  init:
+    if: github.actor == 'pheno-actions-bot'
+    uses: PhenoAI/ci_cd_shared_infrastructure/.github/workflows/init_workflow.yml@main
+    with:
+      aws_default_region: "us-east-1"
+      event_name: "${{ github.event_name }}"
+      head_ref: "${{ github.head_ref }}"
+      ref: "${{ github.ref }}"
+      python_version: "3.9"
+    secrets: inherit
+
+  build-release:
+    needs: init
+    uses: ./.github/workflows/build_workflow.yml
+    secrets: inherit
+
+  deploy-release:
+    needs: build-release
+    uses: ./.github/workflows/deploy_workflow.yml
+    secrets: inherit

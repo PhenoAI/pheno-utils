@@ -1,0 +1,10 @@
+[bandit]
+exclude: /test,/venv,/.venv
+skips:
+fail_level: HIGH
+
+[report]
+level: LOW
+confidence: LOW
+output_format: txt
+output_file: bandit-report.txt

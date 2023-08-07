@@ -1,0 +1,20 @@
+# Assign a specific code owner for a folder
+./.github     @sidkos
+
+# Assign a specific code owner for a file
+/path/to/file.txt     @sidkos
+
+./.bandit		@sidkos
+./.coveragerc		@sidkos
+./.flake8		@sidkos
+./.gitignore		@sidkos
+./.isort.cfg		@sidkos
+./.pylintrc		@sidkos
+./mypy.ini		@sidkos
+./pyproject.toml		@sidkos
+./python-version.txt		@sidkos
+./setup.cfg		@sidkos
+./setup.py		@sidkos
+
+# Assign a different code owner for the rest of the repository
+/*                    @sidkos
