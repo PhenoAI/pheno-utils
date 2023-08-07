@@ -7,7 +7,7 @@ name: CI-CD Workflow
 
 on:
   push:
-    branches: ["master", "infrastructure/PAD-514-BitBucket-Repositories-migration-utils"]
+    branches: ["master",]
   pull_request:
     branches: ["master", "bugfix/PAD-*", "poc/PAD-*", "feature/PAD-*", "infrastructure/PAD-*"]
   workflow_dispatch:
@@ -26,18 +26,18 @@ permissions:
   pages: write
 
 jobs:
-#   pheno-ci:
-#     uses: ./.github/workflows/ci_workflow.yml
+  pheno-ci:
+    uses: ./.github/workflows/ci_workflow.yml
 
   nbdev-ci:
-#     needs: pheno-ci
+    needs: pheno-ci
     runs-on: ubuntu-latest
     steps:
       - name: nbdev-ci
         uses: fastai/workflows/nbdev-ci@master
 
   deploy:
-#     needs: nbdev-ci
+    needs: nbdev-ci
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
