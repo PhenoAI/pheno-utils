@@ -30,7 +30,7 @@ jobs:
     uses: ./.github/workflows/ci_workflow.yml
 
   nbdev-ci:
-    needs: ci
+    needs: pheno-ci
     runs-on: ubuntu-latest
     steps:
       - name: nbdev-ci
