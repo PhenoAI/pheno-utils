@@ -38,7 +38,7 @@ jobs:
         uses: fastai/workflows/nbdev-ci@master
 
   deploy:
-    needs: ci
+    needs: nbdev-ci
     runs-on: ubuntu-latest
     steps:
       - name: Deploy
