@@ -10,8 +10,8 @@ permissions:
 
 jobs:
   static_code_analysis:
-    uses:  PhenoAI/ci_cd_shared_infrastructure/.github/workflows/static_code_analysis_workflow.yml@main
+    uses:  ./.github/workflows/static_code_analysis_workflow.yml
 
   unit-tests:
-    uses:  PhenoAI/ci_cd_shared_infrastructure/.github/workflows/unit_tests_workflow.yml@main
+    uses: ./.github/workflows/unit_tests_workflow.yml
 

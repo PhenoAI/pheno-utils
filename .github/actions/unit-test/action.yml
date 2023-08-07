@@ -1,0 +1,8 @@
+name: 'Run Unit Tests'
+description: 'Run Unit Tests for a project'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Unit Tests
+      run: coverage run -m pytest ./tests
+      shell: bash

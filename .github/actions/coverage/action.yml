@@ -1,0 +1,8 @@
+name: 'Run Coverage'
+description: 'Run Coverage on Python files'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Coverage
+      run: coverage report
+      shell: bash

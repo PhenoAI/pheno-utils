@@ -1,0 +1,21 @@
+name: 'Run Radon'
+# Configure according to this docs https://radon.readthedocs.io/en/latest/
+description: 'Run Radon on Python files'
+runs:
+  using: 'composite'
+  steps:
+    - name: Cyclomatic Complexity
+      run: radon cc  **/*.py
+      shell: bash
+
+    - name: Halstead Metrics
+      run: radon hal  **/*.py
+      shell: bash
+
+    - name: Maintainability Index
+      run: radon mi  **/*.py
+      shell: bash
+
+    - name: Raw metrics
+      run: radon raw  **/*.py
+      shell: bash

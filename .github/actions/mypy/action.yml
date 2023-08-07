@@ -1,0 +1,8 @@
+name: 'Run Mypy'
+description: 'Run Mypy on Python files'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run MyPy
+      run: mypy .
+      shell: bash

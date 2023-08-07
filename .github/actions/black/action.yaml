@@ -1,0 +1,8 @@
+name: 'Run Black'
+description: 'Run Black on Python files'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run black
+      run: black --check .
+      shell: bash

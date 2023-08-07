@@ -1,0 +1,8 @@
+name: 'Run Flake8'
+description: 'Run Flake8 on Python files'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Flake8
+      run: flake8 .
+      shell: bash

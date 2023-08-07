@@ -1,0 +1,8 @@
+name: 'Run Pylint'
+description: 'Run Pylint on Python files'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Pylint
+      run: pylint **/*.py
+      shell: bash

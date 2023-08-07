@@ -1,0 +1,8 @@
+name: 'Run Bandit'
+description: 'Run Bandit on Python files'
+runs:
+  using: 'composite'
+  steps:
+    - name: Run Bandit
+      run: bandit -r .
+      shell: bash
