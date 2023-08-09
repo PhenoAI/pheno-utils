@@ -34,26 +34,6 @@ config_found = False
 
 # %% ../nbs/00_config.ipynb 5
 def copy_tre_config():
-    tre_mode = False
-    script_path = os.path.dirname(os.path.abspath(__file__))
-    absolute_config_path = os.path.join(script_path, 'config_setup/config_tre.json')
-    
-    with open(absolute_config_path, 'r') as openfile:
-        json_object = json.load(openfile)
-                
-    datasets_full_path = json_object['DATASETS_PATH']
-    if os.path.exists(datasets_full_path):
-        print("TRE Mode")
-        tre_mode = True
-        if not os.path.exists(os.path.expanduser('~/.pheno')):
-            os.makedirs(os.path.expanduser('~/.pheno'))
-        
-        shutil.copy2(absolute_config_path, os.path.expanduser('~/.pheno/config.json'))
-    
-    return tre_mode
-
-
-def copy_tre_config():
     default_config_found = False
     script_path = os.path.dirname(os.path.abspath(__file__))
     
