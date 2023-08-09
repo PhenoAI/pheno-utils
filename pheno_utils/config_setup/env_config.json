@@ -1,0 +1,10 @@
+{
+    "default_tre":{
+        "ident_path": "/home/ec2-user/studies/hpp_datasets/population/", 
+        "config_name": "config_tre.json"
+    },
+    "mbz_tre":{
+        "ident_path": "/home/ec2-user/studies/population/", 
+        "config_name": "config_tre_mbz.json"
+    }
+}
