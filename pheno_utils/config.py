@@ -53,6 +53,35 @@ def copy_tre_config():
     return tre_mode
 
 
+def copy_tre_config():
+    default_config_found = False
+    script_path = os.path.dirname(os.path.abspath(__file__))
+    
+    env_config = os.path.join(script_path, 'config_setup', 'env_config.json')
+    with open(env_config, 'r') as openfile:
+        env_json = json.load(openfile)
+    
+    # where am I? 
+    config_name = ''
+    env = None
+    for k, v in env_json.items():
+        if os.path.exists(v['ident_path']):
+            env = k
+            config_name = v['config_name']
+            break
+        
+    absolute_config_path = os.path.join(script_path, 'config_setup', config_name)
+    
+    if (env is not None) and (os.path.exists(absolute_config_path)):
+        default_config_found = True
+        if not os.path.exists(os.path.expanduser('~/.pheno')):
+            os.makedirs(os.path.expanduser('~/.pheno'))
+        
+        shutil.copy2(absolute_config_path, os.path.expanduser('~/.pheno/config.json'))
+    
+    return default_config_found
+
+
 # %% ../nbs/00_config.ipynb 6
 for cf in CONFIG_FILES:
     cf = os.path.expanduser(cf)
