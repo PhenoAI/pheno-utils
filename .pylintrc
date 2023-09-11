@@ -1,0 +1,8 @@
+[MESSAGES CONTROL]
+disable=C0103
+
+[DESIGN]
+max-statements=40
+
+[FORMAT]
+max-line-length=120

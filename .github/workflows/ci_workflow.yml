@@ -1,0 +1,17 @@
+name: CI Workflow
+
+on:
+  workflow_call:
+  workflow_dispatch:
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  static_code_analysis:
+    uses:  ./.github/workflows/static_code_analysis_workflow.yml
+
+  unit-tests:
+    uses: ./.github/workflows/unit_tests_workflow.yml
+

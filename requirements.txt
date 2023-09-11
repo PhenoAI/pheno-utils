@@ -1,0 +1,13 @@
+dask==2023.8.0
+matplotlib==3.7.2
+neurokit2==0.2.5
+numpy==1.25.2
+pandas==2.0.3
+Pillow==10.0.0
+pyCompare==1.5.4
+pygam==0.9.0
+scikit_learn==1.3.0
+scipy==1.11.1
+seaborn==0.12.2
+setuptools==68.0.0
+smart_open==6.3.0

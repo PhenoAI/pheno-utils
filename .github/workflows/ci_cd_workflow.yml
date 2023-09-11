@@ -1,0 +1,44 @@
+# This is a basic CI for all branches in this repository
+# Shall be triggered automatically for main and prod branches on PR and push
+# Shall be triggered automatically for bugfix/PAD-* poc/PAD-* feature/PAD-* infrastructure/PAD-* and prod branches only on PR
+# Deploy happens automatically only for main branch (stage env)
+
+name: CI-CD Workflow
+
+on:
+  push:
+    branches: ["master",]
+  pull_request:
+    branches: ["master", "bugfix/PAD-*", "poc/PAD-*", "feature/PAD-*", "infrastructure/PAD-*"]
+  workflow_dispatch:
+    inputs:
+        branch:
+          description: 'Branch to run the workflow on'
+          required: true
+
+concurrency:
+  group: '${{ github.workflow }} @ ${{ github.event.pull_request.head.label || github.head_ref || github.ref }}'
+  cancel-in-progress: true
+
+permissions:
+  id-token: write
+  contents: write
+  pages: write
+
+jobs:
+  pheno-ci:
+    uses: ./.github/workflows/ci_workflow.yml
+
+  nbdev-ci:
+    needs: pheno-ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: nbdev-ci
+        uses: fastai/workflows/nbdev-ci@master
+
+  deploy:
+    needs: nbdev-ci
+    runs-on: ubuntu-latest
+    steps:
+      - name: Deploy
+        uses: fastai/workflows/quarto-ghp@master

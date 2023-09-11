@@ -1,0 +1,35 @@
+name: Static Code Analysis Workflow
+
+on:
+  workflow_call:
+  workflow_dispatch:
+    inputs:
+      branch:
+        description: 'Branch to run the workflow on'
+        required: true
+        type: string
+
+permissions:
+  id-token: write
+  contents: write
+
+jobs:
+  unit-tests-workflow:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@v3
+
+      - name: Setup Python
+        uses: ./.github/actions/setup-python
+        with:
+          python-version: 3.11
+
+      - name: Setup Python Dependencies
+        uses: ./.github/actions/setup-python-dependencies
+
+      - name: Run Unit Tests
+        uses: ./.github/actions/unit-test
+
+      - name: Run Coverage Test
+        uses: ./.github/actions/coverage

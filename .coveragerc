@@ -1,0 +1,22 @@
+[run]
+# Include your project files in the coverage report
+source = template_repo
+
+# Don't include tests in the coverage report
+omit = tests/*
+
+[report]
+# Exclude certain lines from consideration
+# This can be particularly useful for branches that are difficult to test or that you're confident don't need testing
+fail_under = 80
+exclude_lines =
+    pragma: no cover
+
+    def __repr__
+    if self.debug:
+
+    raise AssertionError
+    raise NotImplementedError
+
+    if 0:
+    if __name__ == .__main__.:
