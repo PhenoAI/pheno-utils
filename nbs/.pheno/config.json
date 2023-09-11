@@ -1,9 +1,0 @@
-{
-"DATASETS_PATH": "examples/", 
-"BULK_DATA_PATH": {
-    "M0":"/home/jovyan/projects/pheno-utils/nbs/examples/fundus/M0"
-},
-"EVENTS_DATASET": "events",
-"COHORT": "None",
-"ERROR_ACTION": "warn"
-}
