@@ -76,6 +76,7 @@ class PhenoLoader:
         valid_dates: bool = False,
         valid_stage: bool = False,
         flexible_field_search: bool = False,
+        squeeze: bool = False,
         errors: str = ERROR_ACTION,
         read_parquet_kwargs: Dict[str, Any] = {}
     ) -> None:
@@ -92,6 +93,7 @@ class PhenoLoader:
         self.valid_dates = valid_dates
         self.valid_stage = valid_stage
         self.flexible_field_search = flexible_field_search
+        self.squeeze = squeeze
         self.errors = errors
         self.read_parquet_kwargs = read_parquet_kwargs
 
@@ -103,7 +105,7 @@ class PhenoLoader:
     def load_sample_data(
         self,
         field_name: str,
-        participant_id: Union[int, List[int]],
+        participant_id: Union[None, int, List[int]] = None,
         research_stage: Union[None, str, List[str]] = None,
         array_index: Union[None, int, List[int]] = None,
         load_func: callable = pd.read_parquet,
@@ -115,39 +117,46 @@ class PhenoLoader:
 
         Args:
             field_name (str): The name of the field to load.
-            participant_id (str or list): The participant ID or IDs to load data for.
+            participant_id (str or list, optional): The participant ID or IDs to load data for.
             research_stage (str or list, optional): The research stage or stages to load data for.
             array_index (int or list, optional): The array index or indices to load data for.
             load_func (callable, optional): The function to use to load the data. Defaults to pd.read_parquet
             concat (bool, optional): Whether to concatenate the data into a single DataFrame. Automatically ignored if data is not a DataFrame. Defaults to True.
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
         """
-        query_str = 'participant_id in @participant_id'
-        if not isinstance(participant_id, list):
-            participant_id = [participant_id]
+        query_str = []
+        if participant_id is not None:
+            query_str.append('participant_id in @participant_id')
+            if not isinstance(participant_id, list):
+                participant_id = [participant_id]
         if research_stage is not None:
             if not isinstance(research_stage, list):
                 research_stage = [research_stage]
-            query_str += ' and research_stage in @research_stage'
+            query_str.append('research_stage in @research_stage')
         if array_index is not None:
             if not isinstance(array_index, list):
                 array_index = [array_index]
-            query_str += ' and array_index in @array_index'
+            query_str.append('array_index in @array_index')
+        query_str = ' and '.join(query_str)
 
-        sample = self[[field_name] + ['participant_id']].query(query_str)
+        sample = self[[field_name] + ['participant_id']]
+        if query_str:
+            sample = sample.query(query_str)
         col = sample.columns[0]  # can be different from field_name is a parent_dataframe is implied
-        sample = sample.astype({col: str})  
-        missing_participants = np.setdiff1d(participant_id, sample['participant_id'].unique())
-        sample = sample.loc[:, col]
-        
+        sample = sample.astype({col: str})
+        if participant_id is not None:
+            missing_participants = np.setdiff1d(participant_id, sample['participant_id'].unique())
+        else:
+            missing_participants = []
 
         if len(missing_participants):
             if self.errors == 'raise':
                 raise ValueError(f'Missing samples: {missing_participants}')
             elif self.errors == 'warn':
                 warnings.warn(f'Missing samples: {missing_participants}')
-            if len(sample) == 0:
-                return None
+        if len(sample) == 0:
+            return None
+        sample = sample.loc[:, col]
 
         # Load data
         data = []
@@ -155,6 +164,9 @@ class PhenoLoader:
             try:
                 data.append(load_func(p, **kwargs))
                 if isinstance(data[-1], pd.DataFrame):
+                    data[-1] = self.__add_missing_levels__(data[-1], sample.loc[sample == p].to_frame())
+                    if query_str:
+                        data[-1] = data[-1].query(query_str)
                     data[-1].sort_index(inplace=True)
             except Exception as e:
                 if self.errors == 'raise':
@@ -188,7 +200,7 @@ class PhenoLoader:
         Returns:
             str: String representation of object
         """
-        return f'DataLoader for {self.dataset} with' +\
+        return f'PhenoLoader for {self.dataset} with' +\
             f'\n{len(self.fields)} fields\n{len(self.dfs)} tables: {list(self.dfs.keys())}'
 
     def __getitem__(self, fields: Union[str,List[str]]):
@@ -203,19 +215,21 @@ class PhenoLoader:
         """
         return self.get(fields)
 
-    def get(self, fields: Union[str,List[str]], flexible: bool=None):
+    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None):
         """
         Return data for the specified fields from all tables
 
         Args:
             fields (List[str]): Fields to return
-            flexible (bool, optional): Whether to use fuzzy matching to find fields. Defaults to None, which uses the DataLoader's flexible_field_search attribute.
+            flexible (bool, optional): Whether to use fuzzy matching to find fields. Defaults to None, which uses the PhenoLoader's flexible_field_search attribute.
 
         Returns:
             pd.DataFrame: Data for the specified fields from all tables
         """
         if flexible is None:
             flexible = self.flexible_field_search
+        if squeeze is None:
+            squeeze = self.squeeze
         if isinstance(fields, str):
             fields = [fields]
 
@@ -262,9 +276,11 @@ class PhenoLoader:
         cols_order = [field for field in fields if field in data.columns]
         cols_order += [field for field in flexi_fields if (field in data.columns and field not in fields)]
 
+        if squeeze and len(cols_order) == 1:
+            return data[cols_order[0]]
+
         return data[cols_order]
     
-
     def replace_bulk_data_path(self, data, fields):
         bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('item_type == "Bulk"')
         cols = [col for col in bulk_fields.index.to_list() if col in data.columns] 
@@ -279,8 +295,6 @@ class PhenoLoader:
             data[col] = data[col].astype('category')
             
         return data
-
-
 
     def __concat__(self, df1, df2):
         if df1.empty:
@@ -485,6 +499,67 @@ class PhenoLoader:
         if self.cohort is not None:
             return os.path.join(self.base_path, dataset, self.cohort)
         return os.path.join(self.base_path, dataset)
+
+    def __add_missing_levels__(self, data: pd.DataFrame, more_levels: pd.DataFrame) -> pd.DataFrame:
+        """
+        Extends the index levels of the given DataFrame ('data') by appending missing levels
+        found in another DataFrame ('more_levels').
+
+        This method performs a left join on the common index levels between 'data' and 'more_levels'.
+        The extra index level from 'more_levels' is appended at the end of the index levels in 'data'.
+        Rows present in 'data' are retained, and their indices are potentially extended.
+        Rows from 'more_levels' that do not exist in 'data' are not included in the output.
+
+        Parameters:
+        -----------
+        data : pd.DataFrame
+            The DataFrame whose index levels you want to extend.
+            This DataFrame's rows will all be present in the output DataFrame.
+
+        more_levels : pd.DataFrame
+            The DataFrame used as a reference for adding extra index levels to 'data'.
+
+        Returns:
+        --------
+        pd.DataFrame
+            A new DataFrame with the same rows as 'data' but potentially extended index levels.
+
+        Example:
+        --------
+        # Given the following DataFrames:
+        data: index(levels: A, B), columns: [value]
+        more_levels: index(levels: A, B, C), columns: [value]
+
+        # The output will have:
+        index(levels: A, B, C), columns: [value]
+        """
+        # Identify common index levels
+        common_index_levels = set(data.index.names).intersection(set(more_levels.index.names))
+        
+        # Identify the extra index level in more_levels
+        extra_index_levels = list(set(more_levels.index.names) - common_index_levels)
+        
+        if not extra_index_levels:
+            # If there are no additional index levels in more_levels, return data as is
+            return data
+
+        extra_index_level = extra_index_levels[0]
+        
+        # Reset the index of more_levels to convert all index levels to columns
+        more_levels_reset = more_levels.reset_index()
+        
+        # Select only the common and extra index levels
+        more_levels_subset = more_levels_reset[list(common_index_levels) + [extra_index_level]].drop_duplicates()
+        
+        # Merge the dataframes on the common index levels using a left join
+        new_data = pd.merge(data.reset_index(), more_levels_subset, how='left', on=list(common_index_levels))
+        
+        # Explicitly set the order of the new index levels to maintain the original order in 'data' and append the new level
+        new_index_order = data.index.names + [extra_index_level]
+        
+        new_data.set_index(new_index_order, inplace=True)
+        
+        return new_data
 
     def describe_field(self, fields: Union[str,List[str]], return_summary: bool=False):
         """

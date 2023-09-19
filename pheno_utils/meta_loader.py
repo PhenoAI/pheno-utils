@@ -77,17 +77,31 @@ class MetaLoader:
             pd.DataFrame: Dataframe containing the fields from the respective datasets.
         """
         found_fields = self.get(fields, flexible, prop)
+        if found_fields.empty:
+            return pd.DataFrame()
+
         found_fields.columns = found_fields.columns.str.split('/').str[1]
         dup_fields = found_fields.columns.value_counts()\
             .to_frame('count').query('count > 1').index
+        n_datasets = found_fields.loc['dataset'].nunique()
 
         loaded_fields = []
         for ds, f in found_fields.T.groupby('dataset'):
             df = PhenoLoader(ds, base_path=self.base_path, cohort=self.cohort,
                              age_sex_dataset=None, **self.kwargs)\
                 [f.index.tolist()]
+            if df.empty:
+                continue
+
+            if 'array_index' in df.index.names and n_datasets > 1:
+                if df.index.get_level_values('array_index').nunique() > 1:
+                    df = df.reset_index('array_index', drop=False)\
+                        .rename(columns={'array_index': f'{ds}__array_index'})
+                else:
+                    df = df.reset_index('array_index', drop=True)
+
             # rename duplicate fields
-            df = df.rename(columns=pd.Series(dup_fields + f'_{ds}', index=dup_fields))
+            df = df.rename(columns=pd.Series(f'{ds}__' + dup_fields, index=dup_fields))
 
             if not len(loaded_fields):
                 loaded_fields = df
@@ -113,20 +127,29 @@ class MetaLoader:
             flexible = self.flexible_field_search
         if isinstance(fields, str):
             fields = [fields]
-        fields = [f.lower() for f in fields]
+        fields = pd.DataFrame({'field': [f.lower() for f in fields]}).assign(dataset=None)
+
+        if prop == 'tabular_field_name':
+            ind = fields['field'].str.contains('/')
+            fields.loc[ind, 'dataset'] = fields.loc[ind, 'field'].str.split('/').str[0]
+            fields.loc[ind, 'field'] = fields.loc[ind, 'field'].str.split('/').str[1]
 
         data = pd.DataFrame()
         for dataset, df in self.dicts.items():
+            keep = (fields['dataset'] == dataset) | fields['dataset'].isnull()
+            fields_in_dataset = fields.loc[keep, 'field']
+
             if prop == 'tabular_field_name':
                 search_in = pd.Series(df.columns, index=df.columns).str.lower()
             else:
                 search_in = df.loc[prop].dropna().str.lower()
             if flexible:
                 # use fuzzy matching including regex to find fields
-                fields_in_col = np.unique([col for f in fields for col, text in search_in.items()
+                fields_in_col = np.unique([col for f in fields_in_dataset for col, text in search_in.items()
                                            if type(text) is str and re.search(f, text)])
             else:
-                fields_in_col = search_in[search_in.isin(fields)].index
+                fields_in_col = search_in[search_in.isin(fields_in_dataset)].index
+
             if len(fields_in_col):
                 this_data = df[fields_in_col]
                 this_data.columns = dataset + '/' + this_data.columns

@@ -20,6 +20,9 @@ from pheno_utils.config import (
 from .meta_loader import MetaLoader
 
 # %% ../nbs/12_cohort_selector.ipynb 5
+from typing import Optional
+
+
 class CohortSelector:
     """
     Class for selecting a subset of a cohort's data based on a query.
@@ -69,13 +72,14 @@ class CohortSelector:
             flexible_field_search=False, errors=self.errors,
             **self.kwargs)
 
-    def select(self, query: str) -> pd.DataFrame:
+    def select(self, query: str, add_fields: Optional[List] = []) -> pd.DataFrame:
         """
         Select a subset of the cohort's data based on the given query.
 
         Args:
 
             query (str): Query string to filter the data.
+            add_fields (List, optional): Additional fields to load. Defaults to [].
 
         Returns:
 
@@ -87,17 +91,24 @@ class CohortSelector:
             ValueError: If column names in the query do not match the column names in the metadata.
 
         """
-        column_names = re.findall(r'([a-zA-Z][a-zA-Z0-9_]*)\b', query)
+        column_names = re.findall(r'([a-zA-Z][a-zA-Z0-9_/]*)\b', query)
         if not column_names:
             raise ValueError('No column names found in query')
 
-        test_cols = self.ml.get(column_names)    
+        test_cols = self.ml.get(column_names)
         missing_cols = [col for col in column_names
-                        if col not in test_cols.columns.str.split('/').str[1]]
+                        if col not in test_cols.columns and
+                        col not in test_cols.columns.str.split('/').str[1]]
         if len(missing_cols):
             raise ValueError(f'Column names {missing_cols} in query do not match column names in metadata')
 
-        df = self.ml.load(column_names)
+        if type(add_fields) == str:
+            add_fields = [add_fields]
+        df = self.ml.load(column_names + add_fields)
 
-        return df.query(query)
+        try:
+            return df.query(re.sub(r'\w+/', '', query))
+        except:
+            print(re.sub(r'\w+(/)', '__', query))
+            return df.query(re.sub(r'(\w+)/', r'\1__', query))
 

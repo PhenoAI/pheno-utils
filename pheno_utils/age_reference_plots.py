@@ -17,6 +17,8 @@ from typing import Dict, List, Callable, Optional, Union, Tuple
 import numpy as np
 import pandas as pd
 import matplotlib.pyplot as plt
+from matplotlib.colors import to_rgba
+import matplotlib.patches as mpatches
 import importlib
 from scipy.stats import linregress
 from sklearn.linear_model import HuberRegressor
@@ -81,6 +83,7 @@ class AgeRefPlot:
         val_bins: Optional[np.ndarray] = None,
         linear_fit: bool = True,
         expectiles: Optional[List] = [0.03, 0.1, 0.5, 0.9, 0.97],
+        thresholds: Optional[List] = None,
         top_disp_perc: float = 99,
         bottom_disp_perc: float = 1,
         robust: bool = True,
@@ -290,6 +293,61 @@ class AgeRefPlot:
             # font="Roboto Condensed",
         )
 
+    def plot_thresholds(self, thresholds: List[float], labels: Optional[List[str]] = None,
+                        cmap: str = 'viridis', legend: bool = True) -> None:
+        """
+        Add threshold-based fill_between patches to the main axis of the plot.
+        
+        Parameters:
+        -----------
+        thresholds : List[float]
+            List of N threshold values for plotting N+1 patches.
+            
+        labels : Optional[List[str]], default=None
+            List of N+1 labels for the patches. If None, automatic labels will be generated.
+            
+        cmap : str, default='viridis'
+            Colormap to use for the patches.
+            
+        legend : bool, default=True
+            Whether to show the legend.
+        
+        Returns:
+        --------
+        None
+        """
+        cm = plt.get_cmap(cmap)
+        n_patches = max(2, len(thresholds) - 1)
+        colors = [to_rgba(cm(i / (n_patches - 1))) for i in range(n_patches)]
+        ylim = self.ax_main.get_ylim()
+        legend_patches = []
+
+        for i, (lo, hi) in enumerate(zip(thresholds[:-1], thresholds[1:])):
+            lo = max(lo, ylim[0])
+            hi = min(hi, ylim[1])
+            if labels is None:
+                if lo == ylim[0]:
+                    label = f'<{hi:.4g}'
+                elif hi == ylim[1]:
+                    label = f'>{lo:.4g}'
+                else:
+                    label = f'[{lo:.4g}, {hi:.4g})'
+            else:
+                label = labels[i]
+
+            self.ax_main.fill_between(
+                self.ax_main.get_xlim(), lo, hi, color=colors[i],
+                zorder=-1, alpha=0.2)
+            self.ax_valhist.fill_between(
+                self.ax_valhist.get_xlim(), lo, hi, color=colors[i],
+                zorder=-1, alpha=0.2)
+            legend_patches.append(mpatches.Patch(color=colors[i], alpha=0.2, label=label))
+
+        # Add legend
+        if legend:
+            plt.legend(handles=legend_patches, loc='upper left', bbox_to_anchor=(1, 1))
+
+
     def plot(self):
         ax = self.ax_main
         ax.spines["right"].set_visible(False)
@@ -379,6 +437,33 @@ class GenderAgeRefPlot(AgeRefPlot):
             transform=transform,
             make_fig=False
         )
+
+    def plot_thresholds(self, thresholds: List[float], labels: Optional[List[str]] = None,
+                        cmap: str = 'viridis', legend: bool = True) -> None:
+        """
+        Add threshold-based fill_between patches to the main axis of the plot.
+        
+        Parameters:
+        -----------
+        thresholds : List[float]
+            List of N threshold values for plotting N+1 patches.
+            
+        labels : Optional[List[str]], default=None
+            List of N+1 labels for the patches. If None, automatic labels will be generated.
+            
+        cmap : str, default='viridis'
+            Colormap to use for the patches.
+            
+        legend : bool, default=True
+            Whether to show the legend.
+        
+        Returns:
+        --------
+        None
+        """
+        self.female_refplot.plot_thresholds(thresholds, labels, cmap, legend)
+        self.male_refplot.plot_thresholds(thresholds, labels, cmap, legend)
+        
 
     def plot(self) -> None:
         """Plots the data for both genders in separate panels."""
