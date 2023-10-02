@@ -1,5 +1,5 @@
 {
-    "DATASETS_PATH": "examples/", 
+    "DATASETS_PATH": "nbs/examples/", 
     "BULK_DATA_PATH": {
         "M0":"examples/fundus/M0"
     },
