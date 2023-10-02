@@ -1,0 +1,9 @@
+{
+    "DATASETS_PATH": "nbs/examples/", 
+    "BULK_DATA_PATH": {
+        "M0":"examples/fundus/M0"
+    },
+    "POPULATION_DATASET": "population",
+    "COHORT": "None",
+    "ERROR_ACTION": "warn"
+    }
