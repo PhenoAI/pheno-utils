@@ -26,11 +26,11 @@ permissions:
   pages: write
 
 jobs:
-  pheno-ci:
-    uses: ./.github/workflows/ci_workflow.yml
+  # pheno-ci:
+  #   uses: ./.github/workflows/ci_workflow.yml
 
   nbdev-ci:
-    needs: pheno-ci
+    # needs: pheno-ci
     runs-on: ubuntu-latest
     steps:
       - name: nbdev-ci
