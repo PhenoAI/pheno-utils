@@ -210,10 +210,10 @@ class AGP:
         hi_95 = agp_df.groupby("minute_in_day")["glucose"].quantile(0.95)
         lo_25 = agp_df.groupby("minute_in_day")["glucose"].quantile(0.25)
         hi_75 = agp_df.groupby("minute_in_day")["glucose"].quantile(0.75)
-
+        
         ax.plot(median, color="k", lw=3)
-        ax.fill_between(median.index.values, lo_25, hi_75, color="navy", alpha=0.3)
-        ax.fill_between(median.index.values, lo_5, hi_95, color="navy", alpha=0.1)
+        ax.fill_between(median.index.values, np.array(lo_25), np.array(hi_75), color="navy", alpha=0.3)
+        ax.fill_between(median.index.values, np.array(lo_5), np.array(hi_95), color="navy", alpha=0.1)
 
         xticks = [m for m in median.index.values if m % 180 == 0]
         xticks += [24 * 60]
