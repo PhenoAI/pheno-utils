@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['data_histplot', 'data_ecdfplot', 'hist_ecdf_plots', 'plot_stats', 'plot_hist_stats', 'plot_data_collection',
-           'show_fundus']
+           'show_fundus', 'plot_top_n_value_counts']
 
 # %% ../nbs/01_basic_plots.ipynb 3
 import numpy as np
@@ -18,7 +18,8 @@ from pheno_utils.config import (
     ALL_COLOR,
     FEMALE_COLOR, 
     MALE_COLOR, 
-    generate_synthetic_data
+    generate_synthetic_data, 
+    generate_categorical_synthetic_data
     )
 
 # %% ../nbs/01_basic_plots.ipynb 5
@@ -288,3 +289,41 @@ def show_fundus(fname: str) -> None:
     ax.set_xticks([])
     ax.set_yticks([])
     ax.axis('off')
+
+# %% ../nbs/01_basic_plots.ipynb 22
+def plot_top_n_value_counts(df, column_name, n=20, filter_index=None, filter_value=None):
+    """
+    Plot the top N items in a specified column of a DataFrame.
+    
+    Parameters:
+    df (DataFrame): The DataFrame to analyze.
+    column_name (str): The name of the column to count and plot.
+    n (int): The number of top items to plot.
+    filter_index (str, optional): The name of the index to filter on, if any.
+    filter_value (str, optional): The value to filter the index on, if any.
+    """
+    
+    # If filter parameters are provided, filter the DataFrame
+    if filter_index and filter_value:
+        df = df[df.index.get_level_values(filter_index) == filter_value]
+    
+    
+    # Count the occurrences of each item in the specified column
+    item_counts = df[[column_name]].value_counts().reset_index()#.rename(columns={'index': column_name, column_name: 'count'})
+    
+    # Select the top N items
+    top_n_items = item_counts.head(n)
+    
+    # Create the plot
+    plt.figure(figsize=(10, 7))
+    sns.barplot(x='count', y=column_name, data=top_n_items, orient='h', color='cornflowerblue')
+    
+    # Add values at the end of the bars
+    for index, value in enumerate(top_n_items['count']):
+        plt.text(value, index, str(value))
+        
+    plt.title(f'Top {n} {column_name.title()}')
+    plt.xlabel('Count')
+    plt.ylabel(column_name.title())
+
+
