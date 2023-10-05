@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['data_histplot', 'data_ecdfplot', 'hist_ecdf_plots', 'plot_stats', 'plot_hist_stats', 'plot_data_collection',
-           'show_fundus', 'plot_top_n_value_counts']
+           'show_fundus', 'plot_horizontal_count_bars']
 
 # %% ../nbs/01_basic_plots.ipynb 3
 import numpy as np
@@ -68,7 +68,7 @@ def data_histplot(data: pd.DataFrame, col: str, feature_str: Optional[str] = Non
     ax.spines["top"].set_visible(False)
     ax.legend()
 
-# %% ../nbs/01_basic_plots.ipynb 9
+# %% ../nbs/01_basic_plots.ipynb 10
 def data_ecdfplot(data: pd.DataFrame, col: str, feature_str: Optional[str] = None,
                   gender_col: str = "sex", plot_both_genders: bool=True, ax=None) -> None:
     """
@@ -114,7 +114,7 @@ def data_ecdfplot(data: pd.DataFrame, col: str, feature_str: Optional[str] = Non
     ax.spines["top"].set_visible(False)
     ax.legend()
 
-# %% ../nbs/01_basic_plots.ipynb 12
+# %% ../nbs/01_basic_plots.ipynb 13
 def hist_ecdf_plots(data: pd.DataFrame, col: str, feature_str: Optional[str] = None,
                   gender_col: str = "sex", plot_both_genders: bool=True) -> None:
     """
@@ -156,7 +156,7 @@ def hist_ecdf_plots(data: pd.DataFrame, col: str, feature_str: Optional[str] = N
     fig.tight_layout()
     plt.show()
 
-# %% ../nbs/01_basic_plots.ipynb 14
+# %% ../nbs/01_basic_plots.ipynb 15
 def plot_stats(data: pd.DataFrame, col: str, ax: plt.Axes, color: str,
                x_position: float = 0.3, label: Optional[str] = "All") -> None:
     """
@@ -203,7 +203,7 @@ def plot_stats(data: pd.DataFrame, col: str, ax: plt.Axes, color: str,
     # Hide axes
     ax.axis('off')
 
-# %% ../nbs/01_basic_plots.ipynb 15
+# %% ../nbs/01_basic_plots.ipynb 16
 def plot_hist_stats(data: pd.DataFrame, col: str, feature_str: Optional[str] = None,
                     gender_col: str = "sex", plot_both_genders: bool=True) -> None:
     """
@@ -242,7 +242,7 @@ def plot_hist_stats(data: pd.DataFrame, col: str, feature_str: Optional[str] = N
         # Plot statistics for all data
         plot_stats(data, col, ax=ax, color=ALL_COLOR, x_position=0)
 
-# %% ../nbs/01_basic_plots.ipynb 19
+# %% ../nbs/01_basic_plots.ipynb 20
 def plot_data_collection(data: pd.DataFrame, date_col: str = "collection_date", feature_str: Optional[str] = None, ax: Optional[plt.Axes] = None) -> None:
     """
     Plots a histogram of the specified column in a pandas DataFrame and excludes the last point from the plot.
@@ -276,7 +276,7 @@ def plot_data_collection(data: pd.DataFrame, date_col: str = "collection_date", 
 
     ax.set_ylabel(f"{feature_str} data collected", fontsize=14)
 
-# %% ../nbs/01_basic_plots.ipynb 21
+# %% ../nbs/01_basic_plots.ipynb 22
 def show_fundus(fname: str) -> None:
     """
     Display a fundus image from an input file path.
@@ -290,40 +290,48 @@ def show_fundus(fname: str) -> None:
     ax.set_yticks([])
     ax.axis('off')
 
-# %% ../nbs/01_basic_plots.ipynb 22
-def plot_top_n_value_counts(df, column_name, n=20, filter_index=None, filter_value=None):
+# %% ../nbs/01_basic_plots.ipynb 23
+def plot_horizontal_count_bars(data, column_name, hue=None, n=20):
     """
-    Plot the top N items in a specified column of a DataFrame.
+    Function to plot horizontal bar charts with counts.
     
     Parameters:
-    df (DataFrame): The DataFrame to analyze.
-    column_name (str): The name of the column to count and plot.
-    n (int): The number of top items to plot.
-    filter_index (str, optional): The name of the index to filter on, if any.
-    filter_value (str, optional): The value to filter the index on, if any.
+    - data (pd.DataFrame): DataFrame containing the data
+    - y (str): Column name for the y-axis
+    - hue (str, optional): Column name for the hue (default is None)
+    - n (int, optional): Number of top categories to display (default is None, showing all)
+    
+    Returns:
+    - ax (Axes object): The plot
     """
+    plt.figure(figsize=(10,6))
     
-    # If filter parameters are provided, filter the DataFrame
-    if filter_index and filter_value:
-        df = df[df.index.get_level_values(filter_index) == filter_value]
+    value_counts = data[column_name].value_counts()
+    top_categories = value_counts.index 
     
     
-    # Count the occurrences of each item in the specified column
-    item_counts = df[[column_name]].value_counts().reset_index()#.rename(columns={'index': column_name, column_name: 'count'})
+    # Get top n categories based on value counts
+    top_categories = top_categories[:n]
+    # Filter data to retain only top n categories
+    data = data[data[column_name].isin(top_categories)]
     
-    # Select the top N items
-    top_n_items = item_counts.head(n)
-    
-    # Create the plot
-    plt.figure(figsize=(10, 7))
-    sns.barplot(x='count', y=column_name, data=top_n_items, orient='h', color='cornflowerblue')
-    
-    # Add values at the end of the bars
-    for index, value in enumerate(top_n_items['count']):
-        plt.text(value, index, str(value))
         
-    plt.title(f'Top {n} {column_name.title()}')
-    plt.xlabel('Count')
-    plt.ylabel(column_name.title())
+    if hue:
+        ax = sns.countplot(data=data, y=column_name, hue=hue, palette='viridis', order=top_categories)
+    else: 
+        ax = sns.countplot(data=data, y=column_name, color='cornflowerblue', order=top_categories)
+    
+    if (n < len(top_categories)):
+        plt.title(f'Top {n} {column_name.title()} Value Counts')
+    else:
+        plt.title(f'{column_name.title()} Value Counts')
 
+    # Adding annotations
+    for p in ax.patches:
+        if p.get_width() == 0 and p.get_height() == 0:
+            continue
+        ax.annotate(f'{int(p.get_width())}', 
+                    (p.get_x() + p.get_width() + 3, p.get_y() + p.get_height()/2),
+                    ha='center', va='center')
+    
 

@@ -177,10 +177,10 @@ def generate_categorical_synthetic_data(n: int = 1000) -> pd.DataFrame:
     genders = np.random.choice([0, 1], size=n)
     
     # Generate categorical values for 'val1'
-    categories = ['A', 'B', 'C', 'D']
-    val1 = np.random.choice(categories, size=n)
+    categories = ['A', 'B', 'C', 'D', 'E']
+    val1 = np.random.choice(['A', 'B', 'C', 'D', 'E'], size=n)
+    val2 = np.random.choice(['A', 'B', 'C'], size=n)
     
-    data = pd.DataFrame(data={"participant_id":pids, "date_of_research_stage": dates, "age_at_research_stage": ages, "sex": genders, "val1": val1}).set_index("participant_id")
-    data["val2"] = data["age_at_research_stage"]*0.3 + 0.5*np.random.normal(0, 50, size=n) + 0.2*10*data["sex"]
+    data = pd.DataFrame(data={"participant_id":pids, "date_of_research_stage": dates, "age_at_research_stage": ages, "sex": genders, "val1": val1, "val2": val2}).set_index("participant_id")
     return data
 
