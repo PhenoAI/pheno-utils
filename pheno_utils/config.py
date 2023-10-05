@@ -3,7 +3,7 @@
 # %% auto 0
 __all__ = ['REF_COLOR', 'FEMALE_COLOR', 'MALE_COLOR', 'ALL_COLOR', 'GLUC_COLOR', 'FOOD_COLOR', 'DATASETS_PATH', 'COHORT',
            'EVENTS_DATASET', 'ERROR_ACTION', 'CONFIG_FILES', 'BULK_DATA_PATH', 'config_found', 'copy_tre_config',
-           'generate_synthetic_data', 'generate_synthetic_data_like']
+           'generate_synthetic_data', 'generate_synthetic_data_like', 'generate_categorical_synthetic_data']
 
 # %% ../nbs/00_config.ipynb 3
 import os
@@ -151,8 +151,36 @@ def generate_synthetic_data_like(df: pd.DataFrame, n: int = 1000, random_seed: i
         return isinstance(x, str) and (x.count('/') > 1)
 
     # handle specific columns
-    null.loc[:, null.applymap(is_path_string).mean() > 0.5] = '/path/to/file'
+    null.loc[:, null.map(is_path_string).mean() > 0.5] = '/path/to/file'
     if ('collection_timestamp' in null.columns) and ('collection_date' in null.columns):
         null['collection_date'] = null['collection_timestamp'].dt.date
 
     return null
+
+# %% ../nbs/00_config.ipynb 9
+def generate_categorical_synthetic_data(n: int = 1000) -> pd.DataFrame:
+    """
+    Generates a sample DataFrame containing age, gender, and categorical value data.
+
+    Args:
+        n: The number of rows in the generated DataFrame.
+
+    Returns:
+        A pandas DataFrame with columns 'age', 'gender', and 'val1'.
+    """
+    pids = np.arange(n)
+    # Set start and end dates
+    start_date = pd.Timestamp('2020-01-01')
+    end_date = pd.Timestamp('now')
+    dates = pd.to_datetime(pd.to_datetime(np.random.uniform(start_date.value, end_date.value, n).astype(np.int64)).date)
+    ages = np.random.uniform(35, 73, size=n)
+    genders = np.random.choice([0, 1], size=n)
+    
+    # Generate categorical values for 'val1'
+    categories = ['A', 'B', 'C', 'D']
+    val1 = np.random.choice(categories, size=n)
+    
+    data = pd.DataFrame(data={"participant_id":pids, "date_of_research_stage": dates, "age_at_research_stage": ages, "sex": genders, "val1": val1}).set_index("participant_id")
+    data["val2"] = data["age_at_research_stage"]*0.3 + 0.5*np.random.normal(0, 50, size=n) + 0.2*10*data["sex"]
+    return data
+
