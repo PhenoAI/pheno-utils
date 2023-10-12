@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['data_histplot', 'data_ecdfplot', 'hist_ecdf_plots', 'plot_stats', 'plot_hist_stats', 'plot_data_collection',
-           'show_fundus']
+           'show_fundus', 'plot_horizontal_count_bars']
 
 # %% ../nbs/01_basic_plots.ipynb 3
 import numpy as np
@@ -18,7 +18,8 @@ from pheno_utils.config import (
     ALL_COLOR,
     FEMALE_COLOR, 
     MALE_COLOR, 
-    generate_synthetic_data
+    generate_synthetic_data, 
+    generate_categorical_synthetic_data
     )
 
 # %% ../nbs/01_basic_plots.ipynb 5
@@ -288,3 +289,51 @@ def show_fundus(fname: str) -> None:
     ax.set_xticks([])
     ax.set_yticks([])
     ax.axis('off')
+
+# %% ../nbs/01_basic_plots.ipynb 22
+def plot_horizontal_count_bars(data, column_name, hue=None, n=20):
+    """
+    Function to plot horizontal bar charts with counts.
+    
+    Parameters:
+    - data (pd.DataFrame): DataFrame containing the data
+    - y (str): Column name for the y-axis
+    - hue (str, optional): Column name for the hue (default is None)
+    - n (int, optional): Number of top categories to display (default is None, showing all)
+    
+    Returns:
+    - ax (Axes object): The plot
+    """
+    plt.figure(figsize=(10,6))
+    
+    value_counts = data[column_name].value_counts()
+    top_categories = value_counts.index 
+    
+    
+    # Get top n categories based on value counts
+    top_categories = top_categories[:n]
+    # Filter data to retain only top n categories
+    data = data[data[column_name].isin(top_categories)]
+    
+        
+    if hue:
+        ax = sns.countplot(data=data, y=column_name, hue=hue, palette='viridis', order=top_categories)
+    else: 
+        ax = sns.countplot(data=data, y=column_name, color='cornflowerblue', order=top_categories)
+    
+    if (n < len(top_categories)):
+        plt.title(f'Top {n} {column_name.title()} Value Counts')
+    else:
+        plt.title(f'{column_name.title()} Value Counts')
+
+    # Adding annotations
+    for p in ax.patches:
+        if p.get_width() == 0 and p.get_height() == 0:
+            continue
+
+        factor = 0.03 * p.get_width() 
+        ax.annotate(f'{int(p.get_width())}', 
+                    (p.get_x() + p.get_width() + factor, p.get_y() + p.get_height()/2),
+                    ha='center', va='center')
+    
+
