@@ -68,7 +68,7 @@ def data_histplot(data: pd.DataFrame, col: str, feature_str: Optional[str] = Non
     ax.spines["top"].set_visible(False)
     ax.legend()
 
-# %% ../nbs/01_basic_plots.ipynb 10
+# %% ../nbs/01_basic_plots.ipynb 9
 def data_ecdfplot(data: pd.DataFrame, col: str, feature_str: Optional[str] = None,
                   gender_col: str = "sex", plot_both_genders: bool=True, ax=None) -> None:
     """
@@ -114,7 +114,7 @@ def data_ecdfplot(data: pd.DataFrame, col: str, feature_str: Optional[str] = Non
     ax.spines["top"].set_visible(False)
     ax.legend()
 
-# %% ../nbs/01_basic_plots.ipynb 13
+# %% ../nbs/01_basic_plots.ipynb 12
 def hist_ecdf_plots(data: pd.DataFrame, col: str, feature_str: Optional[str] = None,
                   gender_col: str = "sex", plot_both_genders: bool=True) -> None:
     """
@@ -156,7 +156,7 @@ def hist_ecdf_plots(data: pd.DataFrame, col: str, feature_str: Optional[str] = N
     fig.tight_layout()
     plt.show()
 
-# %% ../nbs/01_basic_plots.ipynb 15
+# %% ../nbs/01_basic_plots.ipynb 14
 def plot_stats(data: pd.DataFrame, col: str, ax: plt.Axes, color: str,
                x_position: float = 0.3, label: Optional[str] = "All") -> None:
     """
@@ -203,7 +203,7 @@ def plot_stats(data: pd.DataFrame, col: str, ax: plt.Axes, color: str,
     # Hide axes
     ax.axis('off')
 
-# %% ../nbs/01_basic_plots.ipynb 16
+# %% ../nbs/01_basic_plots.ipynb 15
 def plot_hist_stats(data: pd.DataFrame, col: str, feature_str: Optional[str] = None,
                     gender_col: str = "sex", plot_both_genders: bool=True) -> None:
     """
@@ -242,7 +242,7 @@ def plot_hist_stats(data: pd.DataFrame, col: str, feature_str: Optional[str] = N
         # Plot statistics for all data
         plot_stats(data, col, ax=ax, color=ALL_COLOR, x_position=0)
 
-# %% ../nbs/01_basic_plots.ipynb 20
+# %% ../nbs/01_basic_plots.ipynb 19
 def plot_data_collection(data: pd.DataFrame, date_col: str = "collection_date", feature_str: Optional[str] = None, ax: Optional[plt.Axes] = None) -> None:
     """
     Plots a histogram of the specified column in a pandas DataFrame and excludes the last point from the plot.
@@ -276,7 +276,7 @@ def plot_data_collection(data: pd.DataFrame, date_col: str = "collection_date", 
 
     ax.set_ylabel(f"{feature_str} data collected", fontsize=14)
 
-# %% ../nbs/01_basic_plots.ipynb 22
+# %% ../nbs/01_basic_plots.ipynb 21
 def show_fundus(fname: str) -> None:
     """
     Display a fundus image from an input file path.
@@ -290,7 +290,7 @@ def show_fundus(fname: str) -> None:
     ax.set_yticks([])
     ax.axis('off')
 
-# %% ../nbs/01_basic_plots.ipynb 23
+# %% ../nbs/01_basic_plots.ipynb 22
 def plot_horizontal_count_bars(data, column_name, hue=None, n=20):
     """
     Function to plot horizontal bar charts with counts.
@@ -330,8 +330,10 @@ def plot_horizontal_count_bars(data, column_name, hue=None, n=20):
     for p in ax.patches:
         if p.get_width() == 0 and p.get_height() == 0:
             continue
+
+        factor = 0.03 * p.get_width() 
         ax.annotate(f'{int(p.get_width())}', 
-                    (p.get_x() + p.get_width() + 3, p.get_y() + p.get_height()/2),
+                    (p.get_x() + p.get_width() + factor, p.get_y() + p.get_height()/2),
                     ha='center', va='center')
     
 
