@@ -45,7 +45,7 @@ class PhenoLoader:
         valid_stage (bool, optional): Whether to ensure that all research stages in the data are valid. Defaults to False.
         flexible_field_search (bool, optional): Whether to allow regex field search. Defaults to False.
         errors (str, optional): Whether to raise an error or issue a warning if missing data is encountered.
-            Possible values are 'raise', 'warn' and 'ignore'. Defaults to 'raise'.
+            Possible values are 'raise', 'warn' and 'ignore'. Defaults to ERROR_ACTION.
 
     Attributes:
     
@@ -453,7 +453,16 @@ class PhenoLoader:
         """
         self.dict = pd.read_csv(self.__get_dictionary_file_path__(self.dataset))\
             .set_index('tabular_field_name')
-        self.fields = self.dict.index.tolist()
+
+        if 'bulk_dictionary' not in self.dict.columns:
+            return
+
+        # bulk dictionaries
+        bulk_dicts = self.dataset_path + '/metadata/' + \
+            self.dict.dropna(subset='bulk_dictionary')['bulk_dictionary'] + '.csv'
+        self.dict = pd.concat([self.dict] +
+            [pd.read_csv(bd).set_index('tabular_field_name').assign(parent_dataframe=tfn)
+             for tfn, bd in bulk_dicts.items()], axis=0)
 
     def __get_file_path__(self, dataset: str, extension: str) -> str:
         """
