@@ -157,8 +157,10 @@ class PhenoLoader:
         if len(sample) == 0:
             return None
         sample = sample.loc[:, col]
+        sample = self.__slice_bulk_partition__(field_name, sample)
 
         # Load data
+        kwargs.update(self.__slice_bulk_data__(field_name))
         data = []
         for p in sample.unique():
             try:
@@ -569,6 +571,50 @@ class PhenoLoader:
         new_data.set_index(new_index_order, inplace=True)
         
         return new_data
+
+    def __slice_bulk_partition__(self, field_name: str, paths: pd.Series) -> pd.Series:
+        """
+        Slice the bulk partition based on the field name.
+
+        Args:
+            field_name (str): The name of the field.
+            paths (pd.Series): The paths to be sliced.
+
+        Returns:
+            pd.Series: The sliced paths.
+        """
+        if 'field_type' not in self.dict:
+            return paths
+
+        partition = self.dict.loc[field_name, 'field_type']
+        if 'partition' not in partition:
+            return paths
+        partition = partition.split(':')[1].strip()
+
+        paths[paths.str[-1] != '/'] += '/'
+        paths += partition + '=' + field_name + '/'
+        return paths
+
+    def __slice_bulk_data__(self, field_name: str) -> dict:
+        """
+        Generate keyword arguments for pd.read_parquet based on the field name.
+
+        Args:
+            field_name (str): The name of the field.
+
+        Returns:
+            dict: The keyword arguments for pd.read_parquet.
+        """
+        if 'field_type' not in self.dict:
+            return {}
+
+        slice_by = self.dict.loc[field_name, 'field_type']
+        if 'column' in slice_by:
+            return {'columns': [field_name]}
+        if 'long' in slice_by:
+            return {'filters': [(slice_by.split(':')[1].strip(), '==', field_name)],
+                    'engine': 'pyarrow'}
+        return {}
 
     def describe_field(self, fields: Union[str,List[str]], return_summary: bool=False):
         """
