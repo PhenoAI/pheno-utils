@@ -104,7 +104,7 @@ class PhenoLoader:
 
     def load_sample_data(
         self,
-        field_name: str,
+        field_name: Union[str, List[str]],
         parent_bulk: Union[None, str] = None,
         participant_id: Union[None, int, List[int]] = None,
         research_stage: Union[None, str, List[str]] = None,
@@ -117,8 +117,8 @@ class PhenoLoader:
         Load time series or bulk data for sample(s).
 
         Args:
-            field_name (str): The name of the field to load.
-            parent_bulk (str, optional): The name of the field that points to the bulk data file. Defaults to None.
+            field_name (str or List): The name of the field(s) to load.
+            parent_bulk (str, optional): The name of the field that points to the bulk data file. Defaults to None (inferred from field_name).
             participant_id (str or list, optional): The participant ID or IDs to load data for.
             research_stage (str or list, optional): The research stage or stages to load data for.
             array_index (int or list, optional): The array index or indices to load data for.
@@ -127,7 +127,9 @@ class PhenoLoader:
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
         """
         # get path to bulk file
-        sample = self[[field_name] + ['participant_id']]
+        if type(field_name) is str:
+            field_name = [field_name]
+        sample = self[field_name + ['participant_id']]
         if sample.shape[1] > 2:
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
@@ -176,6 +178,7 @@ class PhenoLoader:
         sample = sample.loc[:, col]
         sample = self.__slice_bulk_partition__(field_name, sample)
         kwargs.update(self.__slice_bulk_data__(field_name))
+        print(kwargs)
         data = []
         for p in sample.unique():
             try:
@@ -626,12 +629,14 @@ class PhenoLoader:
             return {}
 
         slice_by = self.dict.loc[field_name, 'field_type']
+        if type(field_name) is str:
+            field_name = [field_name]
         if isinstance(slice_by, pd.Series):
             slice_by = slice_by.iloc[0]
         if 'column' in slice_by:
-            return {'columns': [field_name]}
+            return {'columns': field_name}
         if 'rows' in slice_by:
-            return {'filters': [(slice_by.split(':')[1].strip(), '==', field_name)],
+            return {'filters': [[(slice_by.split(':')[1].strip(), '==', f)] for f in field_name],
                     'engine': 'pyarrow'}
         return {}
 
