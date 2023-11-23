@@ -1,4 +1,4 @@
-__version__ = "0.3.8.11"
+__version__ = "0.3.9.1"
 
 from .age_reference_plots import *
 from .basic_analysis import *
