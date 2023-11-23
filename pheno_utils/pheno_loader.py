@@ -126,6 +126,21 @@ class PhenoLoader:
             concat (bool, optional): Whether to concatenate the data into a single DataFrame. Automatically ignored if data is not a DataFrame. Defaults to True.
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
         """
+        # get path to bulk file
+        sample = self[[field_name] + ['participant_id']]
+        if sample.shape[1] > 2:
+            if parent_bulk is not None:
+                # get the field_name associated with parent_bulk
+                sample = sample[[parent_bulk, 'participant_id']]
+            else:
+                if self.errors == 'raise':
+                    raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
+                elif self.errors == 'warn':
+                    warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
+        col = sample.columns[0]  # can be different from field_name if parent_dataframe is implied
+        sample = sample.astype({col: str})
+
+        # filter by participant_id, research_stage and array_index
         query_str = []
         if participant_id is not None:
             query_str.append('participant_id in @participant_id')
@@ -140,21 +155,10 @@ class PhenoLoader:
                 array_index = [array_index]
             query_str.append('array_index in @array_index')
         query_str = ' and '.join(query_str)
-
-        sample = self[[field_name] + ['participant_id']]
-        if sample.shape[1] > 2:
-            if parent_bulk is not None:
-                # get the field_name associated with parent_bulk
-                sample = sample[[parent_bulk, 'participant_id']]
-            else:
-                if self.errors == 'raise':
-                    raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
-                elif self.errors == 'warn':
-                    warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
         if query_str:
             sample = sample.query(query_str)
-        col = sample.columns[0]  # can be different from field_name if parent_dataframe is implied
-        sample = sample.astype({col: str})
+
+        # check for missing samples
         if participant_id is not None:
             missing_participants = np.setdiff1d(participant_id, sample['participant_id'].unique())
         else:
@@ -167,10 +171,10 @@ class PhenoLoader:
                 warnings.warn(f'Missing samples: {missing_participants}')
         if len(sample) == 0:
             return None
+
+        # load data
         sample = sample.loc[:, col]
         sample = self.__slice_bulk_partition__(field_name, sample)
-
-        # Load data
         kwargs.update(self.__slice_bulk_data__(field_name))
         data = []
         for p in sample.unique():
@@ -187,7 +191,7 @@ class PhenoLoader:
                 elif self.errors == 'warn':
                     warnings.warn(f'Error loading {p}: {e}')
 
-        # Format the final result
+        # format the final result
         if concat and isinstance(data[0], pd.DataFrame):
             data = pd.concat(data, axis=0)
         if pivot is not None and isinstance(data, pd.DataFrame):
@@ -626,7 +630,7 @@ class PhenoLoader:
             slice_by = slice_by.iloc[0]
         if 'column' in slice_by:
             return {'columns': [field_name]}
-        if 'long' in slice_by:
+        if 'rows' in slice_by:
             return {'filters': [(slice_by.split(':')[1].strip(), '==', field_name)],
                     'engine': 'pyarrow'}
         return {}
