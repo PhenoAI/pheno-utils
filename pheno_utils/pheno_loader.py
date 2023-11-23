@@ -105,6 +105,7 @@ class PhenoLoader:
     def load_sample_data(
         self,
         field_name: str,
+        parent_bulk: Union[None, str] = None,
         participant_id: Union[None, int, List[int]] = None,
         research_stage: Union[None, str, List[str]] = None,
         array_index: Union[None, int, List[int]] = None,
@@ -117,6 +118,7 @@ class PhenoLoader:
 
         Args:
             field_name (str): The name of the field to load.
+            parent_bulk (str, optional): The name of the field that points to the bulk data file. Defaults to None.
             participant_id (str or list, optional): The participant ID or IDs to load data for.
             research_stage (str or list, optional): The research stage or stages to load data for.
             array_index (int or list, optional): The array index or indices to load data for.
@@ -140,9 +142,18 @@ class PhenoLoader:
         query_str = ' and '.join(query_str)
 
         sample = self[[field_name] + ['participant_id']]
+        if sample.shape[1] > 2:
+            if parent_bulk is not None:
+                # get the field_name associated with parent_bulk
+                sample = sample[[parent_bulk, 'participant_id']]
+            else:
+                if self.errors == 'raise':
+                    raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
+                elif self.errors == 'warn':
+                    warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
         if query_str:
             sample = sample.query(query_str)
-        col = sample.columns[0]  # can be different from field_name is a parent_dataframe is implied
+        col = sample.columns[0]  # can be different from field_name if parent_dataframe is implied
         sample = sample.astype({col: str})
         if participant_id is not None:
             missing_participants = np.setdiff1d(participant_id, sample['participant_id'].unique())
@@ -238,8 +249,8 @@ class PhenoLoader:
         # check whether any field points to a parent_dataframe
         # has_parent = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
         seen_fields = set()
-        parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna().to_dict()
-        fields = [parent_dict.get(field, field) for field in fields]
+        parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
+        fields = np.hstack([parent_dict.get(field, field) for field in fields])
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
         # fields += has_parent.unique().tolist()
         flexi_fields = list()
@@ -587,6 +598,8 @@ class PhenoLoader:
             return paths
 
         partition = self.dict.loc[field_name, 'field_type']
+        if isinstance(partition, pd.Series):
+            partition = partition.iloc[0]
         if 'partition' not in partition:
             return paths
         partition = partition.split(':')[1].strip()
@@ -609,6 +622,8 @@ class PhenoLoader:
             return {}
 
         slice_by = self.dict.loc[field_name, 'field_type']
+        if isinstance(slice_by, pd.Series):
+            slice_by = slice_by.iloc[0]
         if 'column' in slice_by:
             return {'columns': [field_name]}
         if 'long' in slice_by:
