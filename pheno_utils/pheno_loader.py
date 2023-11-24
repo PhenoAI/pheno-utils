@@ -178,7 +178,6 @@ class PhenoLoader:
         sample = sample.loc[:, col]
         sample = self.__slice_bulk_partition__(field_name, sample)
         kwargs.update(self.__slice_bulk_data__(field_name))
-        print(kwargs)
         data = []
         for p in sample.unique():
             try:
@@ -407,7 +406,7 @@ class PhenoLoader:
         """
         self.dfs = {}
         self.fields = set()
-        for relative_location in self.dict['relative_location'].dropna().unique(): 
+        for relative_location in self.dict['relative_location'].dropna().unique():
             parquet_name = relative_location.split(os.sep)[-1]
             internal_location = os.sep.join(relative_location.split(os.sep)[1:])
             
@@ -563,28 +562,28 @@ class PhenoLoader:
         index(levels: A, B, C), columns: [value]
         """
         # Identify common index levels
-        common_index_levels = set(data.index.names).intersection(set(more_levels.index.names))
+        common_index_levels = list(set(data.index.names).intersection(set(more_levels.index.names)))
         
         # Identify the extra index level in more_levels
-        extra_index_levels = list(set(more_levels.index.names) - common_index_levels)
+        extra_index_levels = [l for l in more_levels.index.names if l not in common_index_levels]
         
         if not extra_index_levels:
             # If there are no additional index levels in more_levels, return data as is
             return data
 
-        extra_index_level = extra_index_levels[0]
-        
         # Reset the index of more_levels to convert all index levels to columns
         more_levels_reset = more_levels.reset_index()
         
         # Select only the common and extra index levels
-        more_levels_subset = more_levels_reset[list(common_index_levels) + [extra_index_level]].drop_duplicates()
+        more_levels_subset = more_levels_reset[common_index_levels + extra_index_levels].drop_duplicates()
         
         # Merge the dataframes on the common index levels using a left join
-        new_data = pd.merge(data.reset_index(), more_levels_subset, how='left', on=list(common_index_levels))
+        new_data = pd.merge(data.reset_index(), more_levels_subset, how='left', on=common_index_levels)
         
-        # Explicitly set the order of the new index levels to maintain the original order in 'data' and append the new level
-        new_index_order = data.index.names + [extra_index_level]
+        # Explicitly set the order of the new index levels to maintain
+        # the original order in 'more_levels' and append the extra remaining levels
+        new_index_order = more_levels.index.names + \
+            [l for l in data.index.names if l not in more_levels.index.names]
         
         new_data.set_index(new_index_order, inplace=True)
         
