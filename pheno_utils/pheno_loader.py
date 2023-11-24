@@ -252,25 +252,21 @@ class PhenoLoader:
         if isinstance(fields, str):
             fields = [fields]
 
+        if flexible:
+            fields = np.hstack([self.dict.index[self.dict.index.str.contains(field, case=False)].tolist()
+                                for field in fields])
+
         # check whether any field points to a parent_dataframe
-        # has_parent = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
         seen_fields = set()
         parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
         fields = np.hstack([parent_dict.get(field, field) for field in fields])
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
-        # fields += has_parent.unique().tolist()
-        flexi_fields = list()
 
         data = pd.DataFrame()
         for table_name, df in self.dfs.items():
             if 'mapping' in table_name:
                 continue
-            if flexible:
-                # use fuzzy matching including regex to find fields
-                fields_in_col = np.unique([col for f in fields for col in df.columns if re.search(f, col)])
-                flexi_fields += fields_in_col.tolist()
-            else:
-                fields_in_col = df.columns.intersection(fields).difference(data.columns)
+            fields_in_col = df.columns.intersection(fields).difference(data.columns)
             if len(fields_in_col):
                 data = self.__concat__(data, df[fields_in_col])
 
@@ -293,7 +289,6 @@ class PhenoLoader:
         data = self.replace_bulk_data_path(data, fields)
         
         cols_order = [field for field in fields if field in data.columns]
-        cols_order += [field for field in flexi_fields if (field in data.columns and field not in fields)]
 
         if squeeze and len(cols_order) == 1:
             return data[cols_order[0]]
@@ -410,7 +405,6 @@ class PhenoLoader:
             parquet_name = relative_location.split(os.sep)[-1]
             internal_location = os.sep.join(relative_location.split(os.sep)[1:])
             
-            
             if any([pattern in relative_location for pattern in self.skip_dfs]):
                 print(f'Skipping {relative_location}')
                 continue
@@ -471,6 +465,7 @@ class PhenoLoader:
         Load dataset dictionary.
         """
         self.dict = pd.read_csv(self.__get_dictionary_file_path__(self.dataset))\
+            .dropna(subset='tabular_field_name')\
             .set_index('tabular_field_name')
 
         if 'bulk_dictionary' not in self.dict.columns:
