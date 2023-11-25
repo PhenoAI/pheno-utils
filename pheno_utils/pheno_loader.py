@@ -141,7 +141,7 @@ class PhenoLoader:
                     raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
                 elif self.errors == 'warn':
                     warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
-        col = sample.columns[0]  # can be different from field_name if parent_dataframe is implied
+        col = sample.columns.drop('participant_id')[0]  # can be different from field_name if parent_dataframe is implied
         sample = sample.astype({col: str})
 
         # filter by participant_id, research_stage and array_index
