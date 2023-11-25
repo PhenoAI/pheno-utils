@@ -129,7 +129,9 @@ class PhenoLoader:
         # get path to bulk file
         if type(field_name) is str:
             field_name = [field_name]
-        sample = self[field_name + ['participant_id']]
+        sample, fields = self.get(field_name + ['participant_id'], return_fields=True)
+        fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
+        # TODO: slice bulk data based on field_type
         if sample.shape[1] > 2:
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
@@ -176,8 +178,8 @@ class PhenoLoader:
 
         # load data
         sample = sample.loc[:, col]
-        sample = self.__slice_bulk_partition__(field_name, sample)
-        kwargs.update(self.__slice_bulk_data__(field_name))
+        sample = self.__slice_bulk_partition__(fields, sample)
+        kwargs.update(self.__slice_bulk_data__(fields))
         data = []
         for p in sample.unique():
             try:
@@ -234,13 +236,15 @@ class PhenoLoader:
         """
         return self.get(fields)
 
-    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None):
+    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None, return_fields: bool=False):
         """
         Return data for the specified fields from all tables
 
         Args:
             fields (List[str]): Fields to return
             flexible (bool, optional): Whether to use fuzzy matching to find fields. Defaults to None, which uses the PhenoLoader's flexible_field_search attribute.
+            squeeze (bool, optional): Whether to squeeze the output if only one field is requested. Defaults to None, which uses the PhenoLoader's squeeze attribute.
+            return_fields (bool, optional): Whether to return the list of fields that were found. Defaults to False.
 
         Returns:
             pd.DataFrame: Data for the specified fields from all tables
@@ -252,13 +256,14 @@ class PhenoLoader:
         if isinstance(fields, str):
             fields = [fields]
 
+        matches = fields
         if flexible:
             # 1. searching in dictionary, so we can access bulk fields as well as tabular fields
             # 2. keeping the given fields, so we can access fields (e.g., index levels) that are not in the dictionary
             # 3. approximate matches will appear after exact matches
-            fields = np.hstack(fields +
-                               [self.dict.index[self.dict.index.str.contains(field, case=False)].tolist()
-                                for field in fields])
+            matches = [self.dict.index[self.dict.index.str.contains(field, case=False)].tolist()
+                       for field in fields]
+            fields = np.hstack(fields + matches)
 
         # check whether any field points to a parent_dataframe
         seen_fields = set()
@@ -296,6 +301,9 @@ class PhenoLoader:
 
         if squeeze and len(cols_order) == 1:
             return data[cols_order[0]]
+
+        if return_fields:
+            return data[cols_order], np.unique(np.hstack(matches)).tolist()
 
         return data[cols_order]
     
@@ -630,6 +638,8 @@ class PhenoLoader:
         if type(field_name) is str:
             field_name = [field_name]
         if isinstance(slice_by, pd.Series):
+            # get all fields that have the same field_type (first type)
+            field_name = slice_by[slice_by == slice_by.iloc[0]].index.tolist()
             slice_by = slice_by.iloc[0]
         if 'column' in slice_by:
             return {'columns': field_name}
