@@ -253,7 +253,11 @@ class PhenoLoader:
             fields = [fields]
 
         if flexible:
-            fields = np.hstack([self.dict.index[self.dict.index.str.contains(field, case=False)].tolist()
+            # 1. searching in dictionary, so we can access bulk fields as well as tabular fields
+            # 2. keeping the given fields, so we can access fields (e.g., index levels) that are not in the dictionary
+            # 3. approximate matches will appear after exact matches
+            fields = np.hstack(fields +
+                               [self.dict.index[self.dict.index.str.contains(field, case=False)].tolist()
                                 for field in fields])
 
         # check whether any field points to a parent_dataframe
