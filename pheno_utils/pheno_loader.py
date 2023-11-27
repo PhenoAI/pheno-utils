@@ -115,6 +115,24 @@ class PhenoLoader:
     ) -> Union[pd.DataFrame, None]:
         """
         Load time series or bulk data for sample(s).
+        Deprecated function. See load_bulk_data().
+        """
+        warnings.warn('load_sample_data() is deprecated in favour of load_bulk_data() and will be removed in a future version.', DeprecationWarning)
+        self.load_bulk_data(field_name, parent_bulk, participant_id, research_stage, array_index, load_func, concat, pivot, **kwargs)
+
+    def load_bulk_data(
+        self,
+        field_name: Union[str, List[str]],
+        parent_bulk: Union[None, str] = None,
+        participant_id: Union[None, int, List[int]] = None,
+        research_stage: Union[None, str, List[str]] = None,
+        array_index: Union[None, int, List[int]] = None,
+        load_func: callable = pd.read_parquet,
+        concat: bool = True,
+        pivot=None, **kwargs
+    ) -> Union[pd.DataFrame, None]:
+        """
+        Load time series or bulk data for sample(s).
 
         Args:
             field_name (str or List): The name of the field(s) to load.
