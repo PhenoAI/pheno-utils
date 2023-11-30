@@ -511,7 +511,7 @@ class PhenoLoader:
 
         # bulk dictionaries
         bulk_dicts = self.dataset_path + '/metadata/' + \
-            self.dict.dropna(subset='bulk_dictionary')['bulk_dictionary'] + '.csv'
+            self.dict.dropna(subset='bulk_dictionary')['bulk_dictionary'] + '_bulk_dictionary.csv'
         self.dict = pd.concat([self.dict] +
             [pd.read_csv(bd).set_index('tabular_field_name').assign(parent_dataframe=tfn)
              for tfn, bd in bulk_dicts.items()], axis=0)
