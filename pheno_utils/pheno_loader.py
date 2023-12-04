@@ -639,6 +639,8 @@ class PhenoLoader:
         partition = self.dict.loc[field_name, 'field_type']
         if isinstance(partition, pd.Series):
             partition = partition.iloc[0]
+        if type(partition) is not str:
+            return paths
         if 'partition' not in partition:
             return paths
         partition = partition.split(':')[1].strip()
@@ -667,6 +669,8 @@ class PhenoLoader:
             # get all fields that have the same field_type (first type)
             field_name = slice_by[slice_by == slice_by.iloc[0]].index.tolist()
             slice_by = slice_by.iloc[0]
+        if type(slice_by) is not str:
+            return {}
         if 'column' in slice_by:
             return {'columns': field_name}
         if 'rows' in slice_by:
