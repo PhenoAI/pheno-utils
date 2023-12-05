@@ -45,7 +45,7 @@ class PhenoLoader:
         valid_stage (bool, optional): Whether to ensure that all research stages in the data are valid. Defaults to False.
         flexible_field_search (bool, optional): Whether to allow regex field search. Defaults to False.
         errors (str, optional): Whether to raise an error or issue a warning if missing data is encountered.
-            Possible values are 'raise', 'warn' and 'ignore'. Defaults to 'raise'.
+            Possible values are 'raise', 'warn' and 'ignore'. Defaults to ERROR_ACTION.
 
     Attributes:
     
@@ -104,10 +104,37 @@ class PhenoLoader:
 
     def load_sample_data(
         self,
-        field_name: str,
+        field_name: Union[str, List[str]],
         participant_id: Union[None, int, List[int]] = None,
         research_stage: Union[None, str, List[str]] = None,
         array_index: Union[None, int, List[int]] = None,
+        parent_bulk: Union[None, str] = None,
+        load_func: callable = pd.read_parquet,
+        concat: bool = True,
+        pivot=None, **kwargs
+    ) -> Union[pd.DataFrame, None]:
+        """
+        Load time series or bulk data for sample(s).
+        Deprecated function. See load_bulk_data().
+        """
+        warnings.warn('load_sample_data() is deprecated in favour of load_bulk_data() and will be removed in a future version.')
+        return self.load_bulk_data(field_name,
+                                   participant_id=participant_id,
+                                   research_stage=research_stage,
+                                   array_index=array_index,
+                                   parent_bulk=parent_bulk,
+                                   load_func=load_func,
+                                   concat=concat,
+                                   pivot=pivot,
+                                   **kwargs)
+
+    def load_bulk_data(
+        self,
+        field_name: Union[str, List[str]],
+        participant_id: Union[None, int, List[int]] = None,
+        research_stage: Union[None, str, List[str]] = None,
+        array_index: Union[None, int, List[int]] = None,
+        parent_bulk: Union[None, str] = None,
         load_func: callable = pd.read_parquet,
         concat: bool = True,
         pivot=None, **kwargs
@@ -116,7 +143,8 @@ class PhenoLoader:
         Load time series or bulk data for sample(s).
 
         Args:
-            field_name (str): The name of the field to load.
+            field_name (str or List): The name of the field(s) to load.
+            parent_bulk (str, optional): The name of the field that points to the bulk data file. Defaults to None (inferred from field_name).
             participant_id (str or list, optional): The participant ID or IDs to load data for.
             research_stage (str or list, optional): The research stage or stages to load data for.
             array_index (int or list, optional): The array index or indices to load data for.
@@ -124,6 +152,25 @@ class PhenoLoader:
             concat (bool, optional): Whether to concatenate the data into a single DataFrame. Automatically ignored if data is not a DataFrame. Defaults to True.
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
         """
+        # get path to bulk file
+        if type(field_name) is str:
+            field_name = [field_name]
+        sample, fields = self.get(field_name + ['participant_id'], return_fields=True)
+        fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
+        # TODO: slice bulk data based on field_type
+        if sample.shape[1] > 2:
+            if parent_bulk is not None:
+                # get the field_name associated with parent_bulk
+                sample = sample[[parent_bulk, 'participant_id']]
+            else:
+                if self.errors == 'raise':
+                    raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
+                elif self.errors == 'warn':
+                    warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
+        col = sample.columns.drop('participant_id')[0]  # can be different from field_name if parent_dataframe is implied
+        sample = sample.astype({col: str})
+
+        # filter by participant_id, research_stage and array_index
         query_str = []
         if participant_id is not None:
             query_str.append('participant_id in @participant_id')
@@ -138,12 +185,10 @@ class PhenoLoader:
                 array_index = [array_index]
             query_str.append('array_index in @array_index')
         query_str = ' and '.join(query_str)
-
-        sample = self[[field_name] + ['participant_id']]
         if query_str:
             sample = sample.query(query_str)
-        col = sample.columns[0]  # can be different from field_name is a parent_dataframe is implied
-        sample = sample.astype({col: str})
+
+        # check for missing samples
         if participant_id is not None:
             missing_participants = np.setdiff1d(participant_id, sample['participant_id'].unique())
         else:
@@ -156,9 +201,11 @@ class PhenoLoader:
                 warnings.warn(f'Missing samples: {missing_participants}')
         if len(sample) == 0:
             return None
-        sample = sample.loc[:, col]
 
-        # Load data
+        # load data
+        sample = sample.loc[:, col]
+        sample = self.__slice_bulk_partition__(fields, sample)
+        kwargs.update(self.__slice_bulk_data__(fields))
         data = []
         for p in sample.unique():
             try:
@@ -174,7 +221,7 @@ class PhenoLoader:
                 elif self.errors == 'warn':
                     warnings.warn(f'Error loading {p}: {e}')
 
-        # Format the final result
+        # format the final result
         if concat and isinstance(data[0], pd.DataFrame):
             data = pd.concat(data, axis=0)
         if pivot is not None and isinstance(data, pd.DataFrame):
@@ -215,13 +262,15 @@ class PhenoLoader:
         """
         return self.get(fields)
 
-    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None):
+    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None, return_fields: bool=False):
         """
         Return data for the specified fields from all tables
 
         Args:
             fields (List[str]): Fields to return
             flexible (bool, optional): Whether to use fuzzy matching to find fields. Defaults to None, which uses the PhenoLoader's flexible_field_search attribute.
+            squeeze (bool, optional): Whether to squeeze the output if only one field is requested. Defaults to None, which uses the PhenoLoader's squeeze attribute.
+            return_fields (bool, optional): Whether to return the list of fields that were found. Defaults to False.
 
         Returns:
             pd.DataFrame: Data for the specified fields from all tables
@@ -233,25 +282,26 @@ class PhenoLoader:
         if isinstance(fields, str):
             fields = [fields]
 
+        matches = fields
+        if flexible:
+            # 1. searching in dictionary, so we can access bulk fields as well as tabular fields
+            # 2. keeping the given fields, so we can access fields (e.g., index levels) that are not in the dictionary
+            # 3. approximate matches will appear after exact matches
+            matches = [self.dict.index[self.dict.index.str.contains(field, case=False)].tolist()
+                       for field in fields]
+            fields = np.hstack(fields + matches)
+
         # check whether any field points to a parent_dataframe
-        # has_parent = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
         seen_fields = set()
-        parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna().to_dict()
-        fields = [parent_dict.get(field, field) for field in fields]
+        parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
+        fields = np.hstack([parent_dict.get(field, field) for field in fields])
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
-        # fields += has_parent.unique().tolist()
-        flexi_fields = list()
 
         data = pd.DataFrame()
         for table_name, df in self.dfs.items():
             if 'mapping' in table_name:
                 continue
-            if flexible:
-                # use fuzzy matching including regex to find fields
-                fields_in_col = np.unique([col for f in fields for col in df.columns if re.search(f, col)])
-                flexi_fields += fields_in_col.tolist()
-            else:
-                fields_in_col = df.columns.intersection(fields).difference(data.columns)
+            fields_in_col = df.columns.intersection(fields).difference(data.columns)
             if len(fields_in_col):
                 data = self.__concat__(data, df[fields_in_col])
 
@@ -274,10 +324,12 @@ class PhenoLoader:
         data = self.replace_bulk_data_path(data, fields)
         
         cols_order = [field for field in fields if field in data.columns]
-        cols_order += [field for field in flexi_fields if (field in data.columns and field not in fields)]
 
         if squeeze and len(cols_order) == 1:
             return data[cols_order[0]]
+
+        if return_fields:
+            return data[cols_order], np.unique(np.hstack(matches)).tolist()
 
         return data[cols_order]
     
@@ -387,10 +439,9 @@ class PhenoLoader:
         """
         self.dfs = {}
         self.fields = set()
-        for relative_location in self.dict['relative_location'].dropna().unique(): 
+        for relative_location in self.dict['relative_location'].dropna().unique():
             parquet_name = relative_location.split(os.sep)[-1]
             internal_location = os.sep.join(relative_location.split(os.sep)[1:])
-            
             
             if any([pattern in relative_location for pattern in self.skip_dfs]):
                 print(f'Skipping {relative_location}')
@@ -452,8 +503,18 @@ class PhenoLoader:
         Load dataset dictionary.
         """
         self.dict = pd.read_csv(self.__get_dictionary_file_path__(self.dataset))\
+            .dropna(subset='tabular_field_name')\
             .set_index('tabular_field_name')
-        self.fields = self.dict.index.tolist()
+
+        if 'bulk_dictionary' not in self.dict.columns:
+            return
+
+        # bulk dictionaries
+        bulk_dicts = self.dataset_path + '/metadata/' + \
+            self.dict.dropna(subset='bulk_dictionary')['bulk_dictionary'] + '_bulk_dictionary.csv'
+        self.dict = pd.concat([self.dict] +
+            [pd.read_csv(bd).set_index('tabular_field_name').assign(parent_dataframe=tfn)
+             for tfn, bd in bulk_dicts.items()], axis=0)
 
     def __get_file_path__(self, dataset: str, extension: str) -> str:
         """
@@ -534,32 +595,88 @@ class PhenoLoader:
         index(levels: A, B, C), columns: [value]
         """
         # Identify common index levels
-        common_index_levels = set(data.index.names).intersection(set(more_levels.index.names))
+        common_index_levels = list(set(data.index.names).intersection(set(more_levels.index.names)))
         
         # Identify the extra index level in more_levels
-        extra_index_levels = list(set(more_levels.index.names) - common_index_levels)
+        extra_index_levels = [l for l in more_levels.index.names if l not in common_index_levels]
         
         if not extra_index_levels:
             # If there are no additional index levels in more_levels, return data as is
             return data
 
-        extra_index_level = extra_index_levels[0]
-        
         # Reset the index of more_levels to convert all index levels to columns
         more_levels_reset = more_levels.reset_index()
         
         # Select only the common and extra index levels
-        more_levels_subset = more_levels_reset[list(common_index_levels) + [extra_index_level]].drop_duplicates()
+        more_levels_subset = more_levels_reset[common_index_levels + extra_index_levels].drop_duplicates()
         
         # Merge the dataframes on the common index levels using a left join
-        new_data = pd.merge(data.reset_index(), more_levels_subset, how='left', on=list(common_index_levels))
+        new_data = pd.merge(data.reset_index(), more_levels_subset, how='left', on=common_index_levels)
         
-        # Explicitly set the order of the new index levels to maintain the original order in 'data' and append the new level
-        new_index_order = data.index.names + [extra_index_level]
+        # Explicitly set the order of the new index levels to maintain
+        # the original order in 'more_levels' and append the extra remaining levels
+        new_index_order = more_levels.index.names + \
+            [l for l in data.index.names if l not in more_levels.index.names]
         
         new_data.set_index(new_index_order, inplace=True)
         
         return new_data
+
+    def __slice_bulk_partition__(self, field_name: str, paths: pd.Series) -> pd.Series:
+        """
+        Slice the bulk partition based on the field name.
+
+        Args:
+            field_name (str): The name of the field.
+            paths (pd.Series): The paths to be sliced.
+
+        Returns:
+            pd.Series: The sliced paths.
+        """
+        if 'field_type' not in self.dict:
+            return paths
+
+        partition = self.dict.loc[field_name, 'field_type']
+        if isinstance(partition, pd.Series):
+            partition = partition.iloc[0]
+        if type(partition) is not str:
+            return paths
+        if 'partition' not in partition:
+            return paths
+        partition = partition.split(':')[1].strip()
+
+        paths[paths.str[-1] != '/'] += '/'
+        paths += partition + '=' + field_name + '/'
+        return paths
+
+    def __slice_bulk_data__(self, field_name: str) -> dict:
+        """
+        Generate keyword arguments for pd.read_parquet based on the field name.
+
+        Args:
+            field_name (str): The name of the field.
+
+        Returns:
+            dict: The keyword arguments for pd.read_parquet.
+        """
+        if 'field_type' not in self.dict:
+            return {}
+
+        slice_by = self.dict.loc[field_name, 'field_type']
+        if type(field_name) is str:
+            field_name = [field_name]
+        if isinstance(slice_by, pd.Series):
+            # get all fields that have the same field_type (first type)
+            field_name = slice_by[slice_by == slice_by.iloc[0]].index.tolist()
+            slice_by = slice_by.iloc[0]
+        if type(slice_by) is not str:
+            return {}
+        if 'column' in slice_by:
+            return {'columns': field_name}
+        if 'rows' in slice_by:
+            return {'filters': [[(slice_by.split(':')[1].strip(), '==', f)] for f in field_name],
+                    'engine': 'pyarrow'}
+        return {}
 
     def describe_field(self, fields: Union[str,List[str]], return_summary: bool=False):
         """
