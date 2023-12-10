@@ -542,7 +542,7 @@ class PhenoLoader:
         Returns:
             str: the path to the file
         """
-        path = os.path.join(self.dataset_path, f'{dataset}_data_dictionary.csv')
+        path = os.path.join(self.dataset_path, 'metadata', f'{dataset}_data_dictionary.csv')
         if path.startswith('s3://'):
            return path
         return glob(path)[0]

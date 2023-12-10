@@ -200,12 +200,12 @@ class MetaLoader:
         """
         Load all dictionaries in the base_path.
         """
-        dicts = dd.read_csv(os.path.join(self.dataset_path, '*_dict*.csv'),
+        dicts = dd.read_csv(os.path.join(self.dataset_path, 'metadata', '*_dict*.csv'),
                             include_path_column=True, dtype={'parent_dataframe': 'object', 'sampling_rate': 'object'}).compute()
         if self.cohort is None:
-            dataset_ind = -2
-        else:
             dataset_ind = -3
+        else:
+            dataset_ind = -4
         dicts['dataset'] = dicts['path'].str.split('/').str[dataset_ind]
         dicts = dicts.drop(columns=['path'])
         self.fields = dicts['tabular_field_name'].unique()
