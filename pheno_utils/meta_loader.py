@@ -200,8 +200,17 @@ class MetaLoader:
         """
         Load all dictionaries in the base_path.
         """
-        dicts = dd.read_csv(os.path.join(self.dataset_path, 'metadata', '*_dict*.csv'),
-                            include_path_column=True, dtype={'parent_dataframe': 'object', 'sampling_rate': 'object'}).compute()
+        dicts = dd.read_csv(
+            os.path.join(self.dataset_path, 'metadata', '*_dict*.csv'),
+            include_path_column=True,
+            dtype={
+                'parent_dataframe': 'object',
+                'sampling_rate': 'object',
+                'dependency': 'object',
+                'max_plausible_value': 'object',
+                'min_plausible_value': 'object'
+                }
+            ).compute()
         if self.cohort is None:
             dataset_ind = -3
         else:
