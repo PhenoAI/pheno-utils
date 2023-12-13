@@ -101,6 +101,7 @@ class PhenoLoader:
         self.__load_dataframes__()
         if self.age_sex_dataset is not None:
             self.__load_age_sex__()
+        self.dict_prop = pd.read_csv(self.__get_dictionary_properties_file_path__(), index_col='field_type')
 
     def load_sample_data(
         self,
@@ -293,7 +294,9 @@ class PhenoLoader:
 
         # check whether any field points to a parent_dataframe
         seen_fields = set()
-        parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
+        parent_dict = dict()
+        if 'parent_dataframe' in self.dict.columns:
+            parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
         fields = np.hstack([parent_dict.get(field, field) for field in fields])
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
 
@@ -334,7 +337,12 @@ class PhenoLoader:
         return data[cols_order]
     
     def replace_bulk_data_path(self, data, fields):
-        bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('item_type == "Bulk"')
+        if "item_type" in self.dict.columns:
+            # TODO: remove. For now, its backward compatible with old data dictionaries
+            bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('item_type == "Bulk"')
+        else: 
+            bulk_field_types = self.dict_prop.loc[self.dict_prop.is_bulk == True].index.to_list()
+            bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('field_type in @bulk_field_types')
         cols = [col for col in bulk_fields.index.to_list() if col in data.columns] 
         dataset_bulk_data_path = {k:v.format(dataset=self.dataset) for k, v in BULK_DATA_PATH.items()}
         category_cols = self.dict.loc[self.dict.index.isin(fields)].query('pandas_dtype == "category"').index
@@ -506,7 +514,7 @@ class PhenoLoader:
             .dropna(subset='tabular_field_name')\
             .set_index('tabular_field_name')
 
-        if 'bulk_dictionary' not in self.dict.columns:
+        if 'bulk_dictionary' not in self.dict.columns or len(self.dict.dropna(subset='bulk_dictionary')['bulk_dictionary']) == 0:
             return
 
         # bulk dictionaries
@@ -546,7 +554,22 @@ class PhenoLoader:
         if path.startswith('s3://'):
            return path
         return glob(path)[0]
+    
+    def __get_dictionary_properties_file_path__(self) -> str:
+        """
+        Get the file path for dictionary properties - TODO: move to config file or DB.
+        At this point only includes field_type properties.
 
+        Args:
+
+        Returns:
+            str: the path to the file
+        """
+        path = os.path.join(self.base_path, 'metadata', '2 - Dictionary properties - field_type.csv')
+        if path.startswith('s3://'):
+           return path
+        return glob(path)[0]
+    
     def __get_dataset_path__(self, dataset):
         """
         Get the dataset path.

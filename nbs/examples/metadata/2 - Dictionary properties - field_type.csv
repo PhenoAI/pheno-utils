@@ -1,0 +1,17 @@
+field_type_id,field_type,load_func,parent_data_type,is_bulk,web_browser_icon,web_browser_distribution_type,web_browser_show_stats
+1,Continuous,read_parquet,tabular,FALSE,tabular,continuous,TRUE
+2,Integer,read_parquet,tabular,FALSE,tabular,continuous,TRUE
+3,Boolean,read_parquet,tabular,FALSE,tabular,categorical,FALSE
+4,Categorical (single),read_parquet,tabular,FALSE,tabular,categorical,FALSE
+5,Categorical (multiple),read_parquet,tabular,FALSE,tabular,categorical,FALSE
+6,Text,read_parquet,tabular,FALSE,tabular,,FALSE
+7,Date,read_parquet,tabular,FALSE,tabular,,FALSE
+8,Datetime,read_parquet,tabular,FALSE,tabular,,FALSE
+9,Time series file (individual),read_parquet,Time series (individual),TRUE,time series,,FALSE
+10,Time series file (group),read_parquet,Time series (group),TRUE,time series,,FALSE
+11,Dicom file (individual),,Bulk file (individual),TRUE,image,,FALSE
+12,Image file (individual),load_image,Bulk file (individual),TRUE,image,image,FALSE
+13,Fastq file (individual),,Bulk file (individual),TRUE,molecular,,FALSE
+14,Mapping table (group),read_parquet,Bulk file (group),TRUE,,,FALSE
+15,Bulk file (individual),,Bulk file (individual),TRUE,,,FALSE
+16,Bulk file (group),,Bulk file (group),TRUE,,,FALSE
