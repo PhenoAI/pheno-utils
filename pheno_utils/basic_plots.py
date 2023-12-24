@@ -12,6 +12,7 @@ import seaborn as sns
 from typing import Optional
 from PIL import Image
 from smart_open import open
+import warnings
 
 # %% ../nbs/01_basic_plots.ipynb 4
 from pheno_utils.config import (
@@ -21,6 +22,8 @@ from pheno_utils.config import (
     generate_synthetic_data, 
     generate_categorical_synthetic_data
     )
+
+from .bulk_data_loader import load_image
 
 # %% ../nbs/01_basic_plots.ipynb 5
 def data_histplot(data: pd.DataFrame, col: str, feature_str: Optional[str] = None,
@@ -278,17 +281,8 @@ def plot_data_collection(data: pd.DataFrame, date_col: str = "collection_date", 
 
 # %% ../nbs/01_basic_plots.ipynb 21
 def show_fundus(fname: str) -> None:
-    """
-    Display a fundus image from an input file path.
-    Args:
-        fname (str): The file path to the fundus image.
-    """
-    fig, ax = plt.subplots(1, 1, figsize=(6, 6))
-    img = Image.open(open(fname, 'rb'))
-    ax.imshow(img, cmap="gray")
-    ax.set_xticks([])
-    ax.set_yticks([])
-    ax.axis('off')
+    warnings.warn('show_fundus() is deprecated in favour of bulk_data_loader.load_image() and will be removed in a future version.')
+    load_image(fname)  
 
 # %% ../nbs/01_basic_plots.ipynb 22
 def plot_horizontal_count_bars(data, column_name, hue=None, n=20):

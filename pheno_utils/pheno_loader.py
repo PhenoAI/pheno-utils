@@ -22,10 +22,11 @@ from pheno_utils.config import (
     COHORT, 
     EVENTS_DATASET, 
     ERROR_ACTION, 
-    BULK_DATA_PATH
+    BULK_DATA_PATH,
+    DICT_PROPERTY_PATH
     )
 from .basic_analysis import custom_describe
-from .basic_plots import show_fundus
+from .bulk_data_loader import get_function_for_field_type
 
 # %% ../nbs/05_pheno_loader.ipynb 5
 class PhenoLoader:
@@ -101,7 +102,7 @@ class PhenoLoader:
         self.__load_dataframes__()
         if self.age_sex_dataset is not None:
             self.__load_age_sex__()
-        self.dict_prop = pd.read_csv(self.__get_dictionary_properties_file_path__(), index_col='field_type')
+        self.dict_prop = pd.read_csv(DICT_PROPERTY_PATH, index_col='field_type')
 
     def load_sample_data(
         self,
@@ -110,7 +111,7 @@ class PhenoLoader:
         research_stage: Union[None, str, List[str]] = None,
         array_index: Union[None, int, List[int]] = None,
         parent_bulk: Union[None, str] = None,
-        load_func: callable = pd.read_parquet,
+        load_func: callable = None,
         concat: bool = True,
         pivot=None, **kwargs
     ) -> Union[pd.DataFrame, None]:
@@ -136,7 +137,7 @@ class PhenoLoader:
         research_stage: Union[None, str, List[str]] = None,
         array_index: Union[None, int, List[int]] = None,
         parent_bulk: Union[None, str] = None,
-        load_func: callable = pd.read_parquet,
+        load_func: callable = None,
         concat: bool = True,
         pivot=None, **kwargs
     ) -> Union[pd.DataFrame, None]:
@@ -149,7 +150,7 @@ class PhenoLoader:
             participant_id (str or list, optional): The participant ID or IDs to load data for.
             research_stage (str or list, optional): The research stage or stages to load data for.
             array_index (int or list, optional): The array index or indices to load data for.
-            load_func (callable, optional): The function to use to load the data. Defaults to pd.read_parquet
+            load_func (callable, optional): [Deprecated] The function to use to load the data. Defaults to pd.read_parquet
             concat (bool, optional): Whether to concatenate the data into a single DataFrame. Automatically ignored if data is not a DataFrame. Defaults to True.
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
         """
@@ -204,6 +205,14 @@ class PhenoLoader:
             return None
 
         # load data
+        if load_func is not None:
+            warnings.warn("The 'load_func' is deprecated and will be removed in future versions.")
+        else: 
+            if 'field_type' not in self.dict:
+                field_type = None
+            else:
+                field_type = self.dict.loc[field_name, 'field_type'].values[0]
+            load_func = get_function_for_field_type(field_type)
         sample = sample.loc[:, col]
         sample = self.__slice_bulk_partition__(fields, sample)
         kwargs.update(self.__slice_bulk_data__(fields))
@@ -551,21 +560,6 @@ class PhenoLoader:
             str: the path to the file
         """
         path = os.path.join(self.dataset_path, 'metadata', f'{dataset}_data_dictionary.csv')
-        if path.startswith('s3://'):
-           return path
-        return glob(path)[0]
-    
-    def __get_dictionary_properties_file_path__(self) -> str:
-        """
-        Get the file path for dictionary properties - TODO: move to config file or DB.
-        At this point only includes field_type properties.
-
-        Args:
-
-        Returns:
-            str: the path to the file
-        """
-        path = os.path.join(self.base_path, 'metadata', '2 - Dictionary properties - field_type.csv')
         if path.startswith('s3://'):
            return path
         return glob(path)[0]
