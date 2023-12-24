@@ -9,6 +9,7 @@ from PIL import Image
 import warnings
 from smart_open import open
 import pandas as pd
+from pandas import read_parquet
 
 # %% ../nbs/14_bulk_data_loader.ipynb 4
 from pheno_utils.config import (
@@ -20,12 +21,11 @@ FIELD_TYPE_TO_FUNC = pd.read_csv(DICT_PROPERTY_PATH, index_col='field_type').to_
 
 # %% ../nbs/14_bulk_data_loader.ipynb 6
 def get_function_for_field_type(field_type):
-    function_name = FIELD_TYPE_TO_FUNC.get(field_type)
-    if function_name is not None:
+    function_name = FIELD_TYPE_TO_FUNC.get(field_type, "read_parquet")
+    try:
         return globals().get(function_name)
-    else:
-        # Handle the case where the field type is not found
-        return pd.read_parquet
+    except:
+        raise ValueError(f"Function {function_name} not found")
 
 
 # %% ../nbs/14_bulk_data_loader.ipynb 7

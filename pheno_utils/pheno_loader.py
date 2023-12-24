@@ -208,7 +208,10 @@ class PhenoLoader:
         if load_func is not None:
             warnings.warn("The 'load_func' is deprecated and will be removed in future versions.")
         else: 
-            field_type = self.dict.loc[field_name, 'field_type'].values[0]
+            if 'field_type' not in self.dict:
+                field_type = None
+            else:
+                field_type = self.dict.loc[field_name, 'field_type'].values[0]
             load_func = get_function_for_field_type(field_type)
         sample = sample.loc[:, col]
         sample = self.__slice_bulk_partition__(fields, sample)
