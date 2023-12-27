@@ -3,8 +3,8 @@
 # %% auto 0
 __all__ = ['REF_COLOR', 'FEMALE_COLOR', 'MALE_COLOR', 'ALL_COLOR', 'GLUC_COLOR', 'FOOD_COLOR', 'DATASETS_PATH', 'COHORT',
            'EVENTS_DATASET', 'ERROR_ACTION', 'CONFIG_FILES', 'BULK_DATA_PATH', 'config_found', 'DICT_PROPERTY_PATH',
-           'copy_tre_config', 'get_dictionary_properties_file_path', 'generate_synthetic_data',
-           'generate_synthetic_data_like', 'generate_categorical_synthetic_data']
+           'DATA_CODING_PATH', 'copy_tre_config', 'get_dictionary_properties_file_path', 'get_data_coding_file_path',
+           'generate_synthetic_data', 'generate_synthetic_data_like', 'generate_categorical_synthetic_data']
 
 # %% ../nbs/00_config.ipynb 3
 import os
@@ -118,9 +118,26 @@ def get_dictionary_properties_file_path() -> str:
     return glob(path)[0]
 
 # %% ../nbs/00_config.ipynb 8
-DICT_PROPERTY_PATH = get_dictionary_properties_file_path()
+def get_data_coding_file_path() -> str:
+    """
+    Get the file path for dictionary properties - TODO: move to config file or DB.
+    At this point only includes field_type properties.
+
+    Args:
+
+    Returns:
+        str: the path to the file
+    """
+    path = os.path.join(DATASETS_PATH, 'metadata', 'coding_mapping.parquet') 
+    if path.startswith('s3://'):
+        return path
+    return glob(path)[0]
 
 # %% ../nbs/00_config.ipynb 9
+DICT_PROPERTY_PATH = get_dictionary_properties_file_path()
+DATA_CODING_PATH = get_data_coding_file_path()
+
+# %% ../nbs/00_config.ipynb 10
 def generate_synthetic_data(n: int = 1000) -> pd.DataFrame:
     """
     Generates a sample DataFrame containing age, gender, and value data.
@@ -144,7 +161,7 @@ def generate_synthetic_data(n: int = 1000) -> pd.DataFrame:
     data["val2"] = data["val1"]*0.3 + 0.5*np.random.normal(0,50) + 0.2*10*data["sex"]
     return data
 
-# %% ../nbs/00_config.ipynb 10
+# %% ../nbs/00_config.ipynb 11
 def generate_synthetic_data_like(df: pd.DataFrame, n: int = 1000, random_seed: int = 42) -> pd.DataFrame:
     """
     Generate a sample DataFrame containing the same columns as `df`, but with random data.
@@ -178,7 +195,7 @@ def generate_synthetic_data_like(df: pd.DataFrame, n: int = 1000, random_seed: i
 
     return null
 
-# %% ../nbs/00_config.ipynb 11
+# %% ../nbs/00_config.ipynb 12
 def generate_categorical_synthetic_data(n: int = 1000) -> pd.DataFrame:
     """
     Generates a sample DataFrame containing age, gender, and categorical value data.

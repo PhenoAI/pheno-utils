@@ -6,12 +6,9 @@ __all__ = ['convert_to_string', 'normalize_answers', 'check_invalid_values', 'tr
 # %% ../nbs/13_questionnaire_handler.ipynb 3
 import pandas as pd
 import numpy as np
-
-# %% ../nbs/13_questionnaire_handler.ipynb 4
-# Here is a function that can convert a column to string, removing '.0' from floats
-import numpy as np
 import warnings
 
+# %% ../nbs/13_questionnaire_handler.ipynb 4
 def convert_to_string(x):
     return str(int(x)) if isinstance(x, float) and x.is_integer() else str(x)
 
@@ -66,28 +63,22 @@ def transform_answers(
     code_to = transform_to.lower()
     assert code_from in ["hebrew", "english", "coding"]
     assert code_to in ["hebrew", "english", "coding"]
-
+    
     # the index of the dict_df is the tabular_field_name
     if isinstance(dict_df.loc[tab_field_name]["data_coding"], pd.Series):
         code_string = convert_to_string(dict_df.loc[tab_field_name]["data_coding"].iloc[0])
     else:
         code_string = convert_to_string(dict_df.loc[tab_field_name]["data_coding"])
-
     code_df = mapping_df[mapping_df["code_number"] == code_string].copy()
     #Make sure no leading 0s for coding values
     code_df["coding"] = code_df["coding"].astype(int).astype(str)
-
     coding = dict(zip(code_df[code_from].astype(str), code_df[code_to]))
-
     normalized_answer = normalize_answers(orig_answer)
-
     check_invalid_values(code_df, code_from, normalized_answer)
     # Replace only valid values, preserving np.nan
     transformed_answer = normalized_answer.replace(coding)
-
     #transform to categorical varaible
     transformed_answer = transformed_answer.astype("category")
-
 
     return transformed_answer
 
@@ -100,33 +91,39 @@ def transform_dataframe(
     dict_df: pd.DataFrame,
     mapping_df: pd.DataFrame,
 ) -> pd.DataFrame:
+    if 'data_coding' not in dict_df.columns:
+        return df
+    
+    fields_for_translation = dict_df[pd.notna(dict_df.data_coding)].index.intersection(df.columns)
+    if len(fields_for_translation) == 0:
+        return df
     transformed_df = df.copy()
-    for column in transformed_df.columns:
-        if column in dict_df.index:
+    for column in fields_for_translation:
+        try: 
             data_coding = dict_df.loc[column, 'data_coding']
-            # Handle the case where data_coding is a Series (multiple entries)
-            if isinstance(data_coding, pd.Series):
-                # Proceed only if all data_codings are consistent
-                if data_coding.nunique() == 1 and pd.notna(data_coding.iloc[0]):
-                    transformed_df[column] = transform_answers(
-                        column,
-                        transformed_df[column],
-                        transform_from,
-                        transform_to,
-                        dict_df,
-                        mapping_df
-                    )
-            else:  # Single value for data_coding
-                if pd.notna(data_coding):
-                    transformed_df[column] = transform_answers(
-                        column,
-                        transformed_df[column],
-                        transform_from,
-                        transform_to,
-                        dict_df,
-                        mapping_df
-                    )
+        except Exception as e:
+            warnings.warn(f'Could not find data_coding for column {column}')
+            continue
+        # Handle the case where data_coding is a Series (multiple entries)
+        if isinstance(data_coding, pd.Series):
+            # Proceed only if all data_codings are consistent
+            if data_coding.nunique() == 1 and pd.notna(data_coding.iloc[0]):
+                transformed_df[column] = transform_answers(
+                    column,
+                    transformed_df[column],
+                    transform_from,
+                    transform_to,
+                    dict_df,
+                    mapping_df
+                )
+        else:  # Single value for data_coding
+            if pd.notna(data_coding):
+                transformed_df[column] = transform_answers(
+                    column,
+                    transformed_df[column],
+                    transform_from,
+                    transform_to,
+                    dict_df,
+                    mapping_df
+                )
     return transformed_df
-
-
-
