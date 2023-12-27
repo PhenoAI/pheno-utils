@@ -1,6 +1,8 @@
 import os 
 import json
 import argparse
+import shutil
+from pheno_utils import config
 
 base_json = {
 "DATASETS_PATH": "",
@@ -30,48 +32,46 @@ def handle_arguments():
     argparser.add_argument('-b', '--bulk_data_path', type=str, default=None, help='bulk data path')
     argparser.add_argument('-m', '--mode', type=str, default=None, help='enter "tre" if thats the case')
     argparser.add_argument('-c', '--client', type=str, default=None, help='client name')
+    argparser.add_argument('-l', '--preferred_language', type=str, default='english', help='Currently supported: "hebrew", "english", "coding"')
     
     
     return argparser.parse_args()
 
 
-def copy_tre_config():
-    default_config_found = False
-    script_path = os.path.dirname(os.path.abspath(__file__))
+# def copy_tre_config():
+#     default_config_found = False
+#     script_path = os.path.dirname(os.path.abspath(__file__))
     
-    env_config = os.path.join(script_path, 'env_config.json')
-    with open(env_config, 'r') as openfile:
-        env_json = json.load(openfile)
+#     env_config = os.path.join(script_path, 'env_config.json')
+#     with open(env_config, 'r') as openfile:
+#         env_json = json.load(openfile)
     
-    # where am I? 
-    config_name = ''
-    env = None
-    for k, v in env_json.items():
-        if os.path.exists(v['ident_path']):
-            env = k
-            config_name = v['config_name']
-            break
+#     # where am I? 
+#     config_name = ''
+#     env = None
+#     for k, v in env_json.items():
+#         if os.path.exists(v['ident_path']):
+#             env = k
+#             config_name = v['config_name']
+#             break
         
-    absolute_config_path = os.path.join(script_path, config_name)
-    # with open(absolute_config_path, 'r') as openfile:
-    #     json_object = json.load(openfile)
-                
-    # datasets_full_path = json_object['DATASETS_PATH']
-    if (env is not None) and (os.path.exists(absolute_config_path)):
-        default_config_found = True
-        if not os.path.exists(os.path.expanduser('~/.pheno')):
-            os.makedirs(os.path.expanduser('~/.pheno'))
-        
-        shutil.copy2(absolute_config_path, os.path.expanduser('~/.pheno/config.json'))
+#     absolute_config_path = os.path.join(script_path, config_name)
     
-    return default_config_found
+#     if (env is not None) and (os.path.exists(absolute_config_path)):
+#         default_config_found = True
+#         if not os.path.exists(os.path.expanduser('~/.pheno')):
+#             os.makedirs(os.path.expanduser('~/.pheno'))
+        
+#         shutil.copy2(absolute_config_path, os.path.expanduser('~/.pheno/config.json'))
+    
+#     return default_config_found
 
 
 
 def main():
     args = handle_arguments()
     
-    if not copy_tre_config(): 
+    if not config.copy_tre_config(): 
 
         print('S3 or Local Mode')
         if args.datasets_path is None: 
@@ -82,6 +82,7 @@ def main():
         base_json["EVENTS_DATASET"] = args.events_dataset
         base_json["COHORT"] = args.cohort
         base_json["ERROR_ACTION"] = args.error_action
+        base_json["PREFERRED_LANGUAGE"] = args.preferred_language
         base_json["BULK_DATA_PATH"]["\\./"] = args.datasets_path + "/{dataset}/"
         
         if args.bulk_data_path:

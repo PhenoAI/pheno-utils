@@ -61,8 +61,8 @@ def transform_answers(
 ) -> pd.Series:
     code_from = transform_from.lower()
     code_to = transform_to.lower()
-    assert code_from in ["hebrew", "english", "coding"]
-    assert code_to in ["hebrew", "english", "coding"]
+    assert code_from in ["hebrew", "english", "coding"], "transform_from must be one of 'hebrew', 'english', 'coding'"
+    assert code_to in ["hebrew", "english", "coding"], "transform_to must be one of 'hebrew', 'english', 'coding'"
     
     # the index of the dict_df is the tabular_field_name
     if isinstance(dict_df.loc[tab_field_name]["data_coding"], pd.Series):
@@ -91,7 +91,7 @@ def transform_dataframe(
     dict_df: pd.DataFrame,
     mapping_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    if 'data_coding' not in dict_df.columns:
+    if 'data_coding' not in dict_df.columns or transform_from == transform_to:
         return df
     
     fields_for_translation = dict_df[pd.notna(dict_df.data_coding)].index.intersection(df.columns)

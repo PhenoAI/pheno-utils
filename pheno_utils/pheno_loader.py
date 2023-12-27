@@ -24,7 +24,8 @@ from pheno_utils.config import (
     ERROR_ACTION, 
     BULK_DATA_PATH,
     DICT_PROPERTY_PATH, 
-    DATA_CODING_PATH
+    DATA_CODING_PATH,
+    PREFERRED_LANGUAGE
     )
 from .basic_analysis import custom_describe
 from .bulk_data_loader import get_function_for_field_type
@@ -66,7 +67,7 @@ class PhenoLoader:
         valid_stage (bool): Whether to ensure that all research stages in the data are valid.
         flexible_field_search (bool): Whether to allow regex field search.
         errors (str): Whether to raise an error or issue a warning if missing data is encountered.
-        auto_translate (bool): Whether to automatically translate the data from coding to english.
+        preferred_language (str): The preferred language for the questionnaires.
     """
 
     def __init__(
@@ -83,7 +84,7 @@ class PhenoLoader:
         squeeze: bool = False,
         errors: str = ERROR_ACTION,
         read_parquet_kwargs: Dict[str, Any] = {},
-        auto_translate: bool = True
+        preferred_language: str = PREFERRED_LANGUAGE
     ) -> None:
         self.dataset = dataset
         self.cohort = cohort
@@ -101,7 +102,7 @@ class PhenoLoader:
         self.squeeze = squeeze
         self.errors = errors
         self.read_parquet_kwargs = read_parquet_kwargs
-        self.auto_translate = auto_translate
+        self.preferred_language = preferred_language
         self.data_codings = pd.read_parquet(DATA_CODING_PATH) # TODO: convert to csv when it will be available
         self.__load_dictionary__()
         self.__load_dataframes__()
@@ -501,9 +502,8 @@ class PhenoLoader:
                 warnings.warn(f'Error loading {df_path}:\n{err}')
             return None
         
-        if self.auto_translate:
-            data = transform_dataframe(data, transform_from='coding', transform_to='english', 
-                                     dict_df=self.dict, mapping_df=self.data_codings)
+        data = transform_dataframe(data, transform_from='coding', transform_to=self.preferred_language, 
+                                   dict_df=self.dict, mapping_df=self.data_codings)
             
         # set the order of columns according to the dictionary
         dict_columns = self.dict.index.intersection(data.columns)

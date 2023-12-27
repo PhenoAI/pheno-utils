@@ -2,9 +2,10 @@
 
 # %% auto 0
 __all__ = ['REF_COLOR', 'FEMALE_COLOR', 'MALE_COLOR', 'ALL_COLOR', 'GLUC_COLOR', 'FOOD_COLOR', 'DATASETS_PATH', 'COHORT',
-           'EVENTS_DATASET', 'ERROR_ACTION', 'CONFIG_FILES', 'BULK_DATA_PATH', 'config_found', 'DICT_PROPERTY_PATH',
-           'DATA_CODING_PATH', 'copy_tre_config', 'get_dictionary_properties_file_path', 'get_data_coding_file_path',
-           'generate_synthetic_data', 'generate_synthetic_data_like', 'generate_categorical_synthetic_data']
+           'EVENTS_DATASET', 'ERROR_ACTION', 'CONFIG_FILES', 'BULK_DATA_PATH', 'PREFERRED_LANGUAGE', 'config_found',
+           'DICT_PROPERTY_PATH', 'DATA_CODING_PATH', 'copy_tre_config', 'get_dictionary_properties_file_path',
+           'get_data_coding_file_path', 'generate_synthetic_data', 'generate_synthetic_data_like',
+           'generate_categorical_synthetic_data']
 
 # %% ../nbs/00_config.ipynb 3
 import os
@@ -29,6 +30,7 @@ EVENTS_DATASET = 'events'
 ERROR_ACTION = 'raise'
 CONFIG_FILES = ['.pheno/config.json', '~/.pheno/config.json', '/efs/.pheno/config.json']
 BULK_DATA_PATH = {}
+PREFERRED_LANGUAGE = 'english'
 
 config_found = False
 
@@ -93,6 +95,8 @@ for cf in CONFIG_FILES:
         BULK_DATA_PATH = config['BULK_DATA_PATH']
     if 'EVENTS_DATASET' in config:
         EVENTS_DATASET = config['EVENTS_DATASET']
+    if 'PREFERRED_LANGUAGE' in config:
+        PREFERRED_LANGUAGE = config['PREFERRED_LANGUAGE']
     if 'COHORT' in config:
         if config['COHORT'] == 0 or config['COHORT']=='None' or config['COHORT']==None :
             COHORT = None
