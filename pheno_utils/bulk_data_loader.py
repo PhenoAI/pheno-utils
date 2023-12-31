@@ -17,7 +17,7 @@ from pheno_utils.config import (
     )
 
 # %% ../nbs/14_bulk_data_loader.ipynb 5
-FIELD_TYPE_TO_FUNC = pd.read_csv(DICT_PROPERTY_PATH, index_col='field_type').to_dict()['load_func']
+FIELD_TYPE_TO_FUNC = pd.read_csv(DICT_PROPERTY_PATH, index_col='field_type')['load_func'].dropna().to_dict()
 
 # %% ../nbs/14_bulk_data_loader.ipynb 6
 def get_function_for_field_type(field_type):
