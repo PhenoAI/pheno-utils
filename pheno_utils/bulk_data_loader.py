@@ -22,10 +22,10 @@ FIELD_TYPE_TO_FUNC = pd.read_csv(DICT_PROPERTY_PATH, index_col='field_type')['lo
 # %% ../nbs/14_bulk_data_loader.ipynb 6
 def get_function_for_field_type(field_type):
     function_name = FIELD_TYPE_TO_FUNC.get(field_type, "read_parquet")
-    try:
-        return globals().get(function_name)
-    except:
+    load_func = globals().get(function_name)
+    if load_func is None:
         raise ValueError(f"Function {function_name} not found")
+    return load_func
 
 
 # %% ../nbs/14_bulk_data_loader.ipynb 7
