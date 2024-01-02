@@ -277,6 +277,28 @@ class PhenoLoader:
             pd.DataFrame: Data for the specified fields from all tables
         """
         return self.get(fields)
+    
+    @staticmethod
+    def check_indices_overlap(df1, df2):
+        """
+        Check whether the indices of two dataframes overlap
+
+        Args:
+            df1 (pd.DataFrame): First dataframe
+            df2 (pd.DataFrame): Second dataframe
+
+        Returns:
+            bool: Whether the indices overlap in more then 1% of the rows
+        """
+        if df1.empty:
+            return True
+        if df2.empty:
+            return True
+        
+        min_cutoff = 0.01
+        return df2.index.isin(df1.index).sum() > min(df1.shape[0], df2.shape[0]) * min_cutoff
+        
+        
 
     def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None, return_fields: bool=False):
         """
@@ -316,13 +338,25 @@ class PhenoLoader:
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
 
         data = pd.DataFrame()
+        not_merged = list()
         for table_name, df in self.dfs.items():
             if 'mapping' in table_name:
                 continue
+            
             fields_in_col = df.columns.intersection(fields).difference(data.columns)
+            fields_in_index = np.setdiff1d(np.intersect1d(df.index.names, fields), data.columns)
+            
+            if len(fields_in_col) or len(fields_in_index):
+                if not self.check_indices_overlap(data, df):
+                    warnings.warn(f'No overlap between tables, this merge is not recommended. Please view tables separately.\
+                        This warning occurred while attempting to add columns from {table_name} to the rest of the data.')
+                    
+                    not_merged += list(fields_in_col) + list(fields_in_index)
+                    continue
+            
             if len(fields_in_col):
                 data = self.__concat__(data, df[fields_in_col])
-
+            
             fields_in_index = np.setdiff1d(np.intersect1d(df.index.names, fields), data.columns)
             for field in fields_in_index:
                 data = self.__concat__(
@@ -333,7 +367,7 @@ class PhenoLoader:
             data = data.loc[:, ~data.columns.duplicated()]
 
         not_found = np.setdiff1d(fields, data.columns)
-        if len(not_found) and not flexible:
+        if len(not_found) and not flexible and not len(not_merged):
             if self.errors == 'raise':
                 raise KeyError(f'Fields not found: {not_found}')
             elif self.errors == 'warn':
@@ -372,12 +406,13 @@ class PhenoLoader:
         return data
 
     def __concat__(self, df1, df2):
+
         if df1.empty:
             return df2
         if df2.empty:
             return df1
         return df1.join(df2, how='outer')
-
+        
     def __load_age_sex__(self) -> None:
         """
         Add sex and compute age from birth date.

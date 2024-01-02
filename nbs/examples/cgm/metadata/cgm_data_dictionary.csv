@@ -1,15 +1,15 @@
-tabular_field_name,field_string,description_string,parent_dataframe,relative_location,value_type,units,sampling_rate,item_type,array,cohorts,data_type,debut,pandas_dtype
-connection_id,ConnectionID,CGM device connection id,,cgm/cgm.parquet,Text,Text,,Data,Single,10K,tabular,2018-12-27,int
-cgm_filename,CGM timeseries,Name of the file containing the participants' CGM timeseries,,cgm/cgm.parquet,Text,,,Bulk,Single,10K,text,2018-12-27,string
-glucose,Glucose,cgm temporal glucose values,,cgm/cgm.parquet,"Series data, continous",mg/dl,15min,Data,Single,10K,time series,2018-12-27,float
-collection_timestamp,Collection timestamp,CGM connection first data point timestamp,,cgm/cgm.parquet,Time,Time,,Data,Single,10K,tabular,2018-12-27,"datetime64[ns, Asia/Jerusalem]"
-cgm_first_date,CGM first date,CGM connection first date,,cgm/cgm.parquet,Time,Time,,Data,Single,10K,tabular,2018-12-27,"datetime64[ns, Asia/Jerusalem]"
-cgm_last_date,CGM last date,CGM connection last date,,cgm/cgm.parquet,Time,Time,,Data,Single,10K,tabular,2018-12-27,"datetime64[ns, Asia/Jerusalem]"
-cgm_device_type,CGM Device type,CGM Device type,,cgm/cgm.parquet,Categorical (multiple),Text,,Data,Single,10K,tabular,2018-12-27,string
-cgm_datapoints_lost_in_qc,CGM datapoints lost in QC,Number of CGM datapoints lost in QC,,cgm/cgm.parquet,Integer,integer,,Data,Single,10K,tabular,2018-12-27,int
+tabular_field_name,field_string,description_string,parent_dataframe,relative_location,value_type,units,sampling_rate,field_type,array,cohorts,data_type,debut,pandas_dtype
+connection_id,ConnectionID,CGM device connection id,,cgm/cgm.parquet,Text,Text,,Integer,Single,10K,tabular,2018-12-27,int
+cgm_filename,CGM timeseries,Name of the file containing the participants' CGM timeseries,,cgm/cgm.parquet,Text,,,Time series file (individual),Single,10K,text,2018-12-27,string
+glucose,Glucose,cgm temporal glucose values,,cgm/cgm.parquet,"Series data, continous",mg/dl,15min,Continuous,Single,10K,time series,2018-12-27,float
+collection_timestamp,Collection timestamp,CGM connection first data point timestamp,,cgm/cgm.parquet,Time,Time,,Datetime,Single,10K,tabular,2018-12-27,"datetime64[us, Asia/Jerusalem]"
+cgm_first_date,CGM first date,CGM connection first date,,cgm/cgm.parquet,Time,Time,,Datetime,Single,10K,tabular,2018-12-27,"datetime64[us, Asia/Jerusalem]"
+cgm_last_date,CGM last date,CGM connection last date,,cgm/cgm.parquet,Time,Time,,Datetime,Single,10K,tabular,2018-12-27,"datetime64[us, Asia/Jerusalem]"
+cgm_device_type,CGM Device type,CGM Device type,,cgm/cgm.parquet,Categorical (multiple),Text,,Text,Single,10K,tabular,2018-12-27,string
+cgm_datapoints_lost_in_qc,CGM datapoints lost in QC,Number of CGM datapoints lost in QC,,cgm/cgm.parquet,Integer,integer,,Integer,Single,10K,tabular,2018-12-27,int
 percentage_of_cgm_datapoints_lost_in_qc,,,,cgm/cgm.parquet,,,,,,,,,float
-number_of_cgm_days_available,Number of CGM days available,Number of CGM days available for the connection,,cgm/cgm.parquet,Integer,integer,,Data,Single,10K,tabular,2018-12-27,int
-number_of_cgm_datapoints_available,Number of CGM datapoints available,Number of CGM datapoints available for the connection,,cgm/cgm.parquet,Integer,integer,,Data,Single,10K,tabular,2018-12-27,int
+number_of_cgm_days_available,Number of CGM days available,Number of CGM days available for the connection,,cgm/cgm.parquet,Integer,integer,,Integer,Single,10K,tabular,2018-12-27,int
+number_of_cgm_datapoints_available,Number of CGM datapoints available,Number of CGM datapoints available for the connection,,cgm/cgm.parquet,Integer,integer,,Integer,Single,10K,tabular,2018-12-27,int
 timezone,Timezone,TImezone of measurement,,cgm/cgm.parquet,,,,,,,,,"datetime64[ns, Asia/Jerusalem]"
 1st qu_,1st quantile,First quantile of all glucose values.,,cgm/cgm.parquet,Continuous,mg/dl,,Data,Single,10K,tabular,2018-12-27,float
 3rd qu_,3rd quantile,Third quantile of all glucose values.,,cgm/cgm.parquet,Continuous,mg/dl,,Data,Single,10K,tabular,2018-12-27,float
