@@ -657,6 +657,8 @@ class PhenoLoader:
         """
         # Identify common index levels
         common_index_levels = list(set(data.index.names).intersection(set(more_levels.index.names)))
+        if len(common_index_levels) == 0:
+            return data
         
         # Identify the extra index level in more_levels
         extra_index_levels = [l for l in more_levels.index.names if l not in common_index_levels]
