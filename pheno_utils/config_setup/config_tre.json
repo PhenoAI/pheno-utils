@@ -3,6 +3,7 @@
 "EVENTS_DATASET": "events",
 "COHORT": "None",
 "ERROR_ACTION": "warn",
+"PREFERRED_LANGUAGE": "english",
 "BULK_DATA_PATH": {
     "s3://.*/fundus/10k/": "/home/ec2-user/studies/fundus_bulk/", 
     "s3://.*/human_genetics/10k/": "/home/ec2-user/studies/human_genetics_bulk/", 
