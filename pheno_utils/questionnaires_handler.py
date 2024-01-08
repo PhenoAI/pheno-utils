@@ -148,7 +148,7 @@ def transform_answers(
     coding = dict(zip(code_df[code_from].astype(str), code_df[code_to]))
     
     
-    if dict_df.loc[tab_field_name]['field_type'].strip() == 'Categorical (multiple)':
+    if dict_df.loc[tab_field_name]['field_type'][0].strip() == 'Categorical (multiple)':
           # Convert dictionary keys to integers
         mapping_dict = {int(k): v for k, v in coding.items()}
         check_values( orig_answer , mapping_dict)
