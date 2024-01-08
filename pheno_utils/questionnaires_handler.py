@@ -9,7 +9,7 @@ import pandas as pd
 import numpy as np
 import warnings
 
-# %% ../nbs/13_questionnaire_handler.ipynb 4
+# %% ../nbs/13_questionnaire_handler.ipynb 5
 def convert_to_string(x):
     return str(int(x)) if isinstance(x, float) and x.is_integer() else str(x)
 
@@ -148,7 +148,9 @@ def transform_answers(
     coding = dict(zip(code_df[code_from].astype(str), code_df[code_to]))
     
     
-    if dict_df.loc[tab_field_name]['field_type'][0].strip() == 'Categorical (multiple)':
+    field_type =  dict_df.loc[tab_field_name]['field_type']
+    #if tab field is in 2 features sets it will be a series so just check the first case
+    if isinstance(field_type, pd.Series) and field_type.iloc[0].strip() == 'Categorical (multiple)' or isinstance(field_type, str) and field_type.strip() == 'Categorical (multiple)':
           # Convert dictionary keys to integers
         mapping_dict = {int(k): v for k, v in coding.items()}
         check_values( orig_answer , mapping_dict)
@@ -161,6 +163,8 @@ def transform_answers(
         transformed_answer = transformed_answer.astype("category")
 
     return transformed_answer
+
+   
 
 
 
@@ -179,6 +183,7 @@ def transform_dataframe(
         return df
     transformed_df = df.copy()
     for column in fields_for_translation:
+        print(column)
         try: 
             data_coding = dict_df.loc[column, 'data_coding']
         except Exception as e:
