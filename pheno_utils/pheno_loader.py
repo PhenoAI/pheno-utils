@@ -458,7 +458,6 @@ class PhenoLoader:
         if df2.empty:
             return df1
         
-        print('keep_undefined', keep_undefined)
         if self.is_value_in_index(df1, 'undefined', 'research_stage') and \
             self.is_value_in_index(df2, 'undefined', 'research_stage') and not keep_undefined:
         

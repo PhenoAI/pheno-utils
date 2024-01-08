@@ -107,11 +107,7 @@ class MetaLoader:
             if not len(loaded_fields):
                 loaded_fields = df
                 continue
-            
-            # if not PhenoLoader.check_indices_overlap(loaded_fields, df):
-            #     warnings.warn(f'No overlap between tables; this merge is not recommended. Please view tables separately. \
-            #         This warning occurred while attempting to add columns from {ds} to the rest of the data.')                
-            #     continue
+        
             
             loaded_fields = loaded_fields.join(df, how='outer')
 
