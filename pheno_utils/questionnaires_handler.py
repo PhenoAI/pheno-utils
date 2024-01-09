@@ -30,6 +30,7 @@ def normalize_answers(orig_answer: pd.Series) -> pd.Series:
     normalized_answer = normalized_answer.str.replace(r"\.0$", "", regex=True)
     normalized_answer = normalized_answer.replace("nan", np.nan)
     normalized_answer = normalized_answer.replace("<NA>", np.nan)
+    #check
 
     return normalized_answer
 
