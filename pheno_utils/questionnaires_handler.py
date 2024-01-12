@@ -66,9 +66,9 @@ def check_invalid_values(series: pd.Series, mapping_dict: dict ):
     This check is used to compare the data codings and actual values in the series to make sure there are no invalid values for categoircal single 
 
     Args:
-        code_df (pd.DataFrame): The DataFrame containing the code mappings.
-        code_from (str): The column name to check in code_df.
-        normalized_answer (pd.Series): The normalized answer series.
+        mapping_dict (dict): A dictionary where the keys represent original values
+                         and the values represent the values to replace with.
+        series (pd.Series): The normalized answer series.
 
     Returns:
         None: Prints the invalid values found, if any.
@@ -135,6 +135,7 @@ def transform_answers(
             code_string = convert_to_string(dict_df.loc[tab_field_name]["data_coding"].iloc[0])
         else:
             warnings.warn("data_coding has multiple values for tabular field {tab_field_name}, please check and update dictionary")
+            return orig_answer
     else:
         code_string = convert_to_string(dict_df.loc[tab_field_name]["data_coding"])
     
@@ -142,19 +143,20 @@ def transform_answers(
     code_df = mapping_df[mapping_df["code_number"] == code_string].copy()
     
     #Make sure no leading 0s for coding values
-    # code_df["coding"] =  convert_to_string(code_df["coding"])
     code_df["coding"] =  code_df["coding"].astype(int).astype(str)
     
     mapping_dict = dict(zip(code_df[code_from].astype(str), code_df[code_to]))
-    field_type =  dict_df.loc[tab_field_name]['field_type']
+    
   
   #adding fail safe incase older dictionaries don't have field type : TODO potentaily remove once older dictionaires are updated
     if 'field_type' in dict_df.columns:
+        field_type =  dict_df.loc[tab_field_name]['field_type']
         if isinstance(field_type, pd.Series):
             if field_type.nunique() == 1:
                 field_type = field_type.iloc[0]
             else:
-                warnings.warn("tabular field {tab_field_name} is used in 2 columns and have conflicting field types,please check and update dictionary")
+                warnings.warn("tabular field {tab_field_name} is used in 2 columns and have conflicting field types,please check and update dictionary. This field has not be converted.")
+                return orig_answer
         
         if field_type == 'Categorical (multiple)':
           # Convert dictionary keys to integers
@@ -200,7 +202,7 @@ def transform_dataframe(
         # Handle the case where data_coding is a Series (multiple entries)
         if isinstance(data_coding, pd.Series):
             # Proceed only if all data_codings are consistent
-            if data_coding.nunique() == 1 and pd.notna(data_coding.iloc[0]):
+            if pd.notna(data_coding.iloc[0]):
                 transformed_df[column] = transform_answers(
                     column,
                     transformed_df[column],
