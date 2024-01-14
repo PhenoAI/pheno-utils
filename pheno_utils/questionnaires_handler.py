@@ -11,12 +11,12 @@ import warnings
 
 # %% ../nbs/13_questionnaire_handler.ipynb 5
 def convert_to_string(x):
+    #function converts a float to a string and for floats of type 1.0 it becomes '1'
     return str(int(x)) if isinstance(x, float) and x.is_integer() else str(x)
 
 def normalize_answers(orig_answer: pd.Series, field_type: str) -> pd.Series:
     """
     Normalize the answers to be strings. Need to handle nulls which become strings initially and want them to still be na.
-
 
     Args:
         orig_answer (pd.Series): The original answer series.
@@ -176,8 +176,6 @@ def transform_answers(
     else:
         return orig_answer
 
-   
-
 
 def transform_dataframe(
     df: pd.DataFrame,
@@ -187,6 +185,7 @@ def transform_dataframe(
     mapping_df: pd.DataFrame,
 ) -> pd.DataFrame:
     if 'data_coding' not in dict_df.columns or transform_from == transform_to:
+        warnings.warn(f'Returned orignal df')
         return df
     
     fields_for_translation = dict_df[pd.notna(dict_df.data_coding)].index.intersection(df.columns)
@@ -194,14 +193,9 @@ def transform_dataframe(
         return df
     transformed_df = df.copy()
     for column in fields_for_translation:
-        try: 
-            data_coding = dict_df.loc[column, 'data_coding']
-        except Exception as e:
-            warnings.warn(f'Could not find data_coding for column {column}')
-            continue
+        data_coding = dict_df.loc[column, 'data_coding']
         # Handle the case where data_coding is a Series (multiple entries)
         if isinstance(data_coding, pd.Series):
-            # Proceed only if all data_codings are consistent
             if pd.notna(data_coding.iloc[0]):
                 transformed_df[column] = transform_answers(
                     column,
