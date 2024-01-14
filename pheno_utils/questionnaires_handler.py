@@ -74,7 +74,8 @@ def check_invalid_values(series: pd.Series, mapping_dict: dict ):
         None: Prints the invalid values found, if any.
     """
     # Check if series contains arrays if it does then it is categorical multiple and we need to flatten the serries first
-    contains_arrays = series.dropna().apply(lambda x:  isinstance(x, list))
+    contains_arrays = series.dropna().apply(lambda x:  isinstance(x, list) or isinstance(x, np.ndarray))
+    
     if True in contains_arrays.unique():
         answer_values = set(flatten_series(series))
     else:
@@ -85,6 +86,8 @@ def check_invalid_values(series: pd.Series, mapping_dict: dict ):
 
     if invalid_values:
         warnings.warn(f"Invalid values found: {invalid_values}")
+
+
 
 
 
@@ -104,13 +107,14 @@ def replace_values(row: pd.Series, mapping_dict: dict) -> [pd.Series, list, floa
                                is a list or an ndarray, it returns a list. If the
                                original value is NaN, it returns a float (np.nan).
     """
-    if isinstance(row, list) or isinstance(row, np.ndarray):
-        row = list(row) if isinstance(row, np.ndarray) else row
-        return [mapping_dict.get(item, item) for item in row]
-    elif pd.isna(row):
-        return np.nan
+    if isinstance(row, np.ndarray) or isinstance(row, list):
+        row = list(row)  if isinstance(row, np.ndarray) else row
+        return np.array([mapping_dict.get(item, item) for item in row])
+    elif pd.isna(row) or pd.isnull(row):
+        return None
     else:
-        return mapping_dict.get(row, row)
+        warnings.warn("warning: row is not a array or list")
+        return row
 
 def transform_answers(
     tab_field_name: str,
@@ -143,7 +147,7 @@ def transform_answers(
     code_df = mapping_df[mapping_df["code_number"] == code_string].copy()
     
     #Make sure no leading 0s for coding values
-    code_df["coding"] =  code_df["coding"].astype(int).astype(str)
+    code_df["coding"] =  code_df["coding"].apply(convert_to_string)
     
     mapping_dict = dict(zip(code_df[code_from].astype(str), code_df[code_to]))
     
@@ -196,18 +200,10 @@ def transform_dataframe(
         data_coding = dict_df.loc[column, 'data_coding']
         # Handle the case where data_coding is a Series (multiple entries)
         if isinstance(data_coding, pd.Series):
-            if pd.notna(data_coding.iloc[0]):
-                transformed_df[column] = transform_answers(
-                    column,
-                    transformed_df[column],
-                    transform_from,
-                    transform_to,
-                    dict_df,
-                    mapping_df
-                )
-        else:  # Single value for data_coding
-            if pd.notna(data_coding):
-                transformed_df[column] = transform_answers(
+            data_coding = data_coding.iloc[0]
+        
+        if pd.notna(data_coding):
+            transformed_df[column] = transform_answers(
                     column,
                     transformed_df[column],
                     transform_from,
