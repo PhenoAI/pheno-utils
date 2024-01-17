@@ -48,6 +48,7 @@ class PhenoLoader:
         valid_dates (bool, optional): Whether to ensure that all timestamps in the data are valid dates. Defaults to False.
         valid_stage (bool, optional): Whether to ensure that all research stages in the data are valid. Defaults to False.
         flexible_field_search (bool, optional): Whether to allow regex field search. Defaults to False.
+        keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to False.
         errors (str, optional): Whether to raise an error or issue a warning if missing data is encountered.
             Possible values are 'raise', 'warn' and 'ignore'. Defaults to ERROR_ACTION.
 
@@ -66,6 +67,7 @@ class PhenoLoader:
         valid_dates (bool): Whether to ensure that all timestamps in the data are valid dates.
         valid_stage (bool): Whether to ensure that all research stages in the data are valid.
         flexible_field_search (bool): Whether to allow regex field search.
+        keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage.
         errors (str): Whether to raise an error or issue a warning if missing data is encountered.
         preferred_language (str): The preferred language for the questionnaires.
     """
@@ -84,7 +86,8 @@ class PhenoLoader:
         squeeze: bool = False,
         errors: str = ERROR_ACTION,
         read_parquet_kwargs: Dict[str, Any] = {},
-        preferred_language: str = PREFERRED_LANGUAGE
+        preferred_language: str = PREFERRED_LANGUAGE,
+        keep_undefined_research_stage: bool = False
     ) -> None:
         self.dataset = dataset
         self.cohort = cohort
@@ -103,12 +106,13 @@ class PhenoLoader:
         self.errors = errors
         self.read_parquet_kwargs = read_parquet_kwargs
         self.preferred_language = preferred_language
-        self.data_codings = pd.read_parquet(DATA_CODING_PATH) # TODO: convert to csv when it will be available
+        self.data_codings = pd.read_csv(DATA_CODING_PATH) # TODO: convert to csv when it will be available
         self.__load_dictionary__()
         self.__load_dataframes__()
         if self.age_sex_dataset is not None:
             self.__load_age_sex__()
         self.dict_prop = pd.read_csv(DICT_PROPERTY_PATH, index_col='field_type')
+        self.keep_undefined_research_stage = keep_undefined_research_stage
 
     def load_sample_data(
         self,
@@ -119,7 +123,9 @@ class PhenoLoader:
         parent_bulk: Union[None, str] = None,
         load_func: callable = None,
         concat: bool = True,
-        pivot=None, **kwargs
+        pivot=None, 
+        keep_undefined_research_stage: Union[None, str] = None,
+        **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
         Load time series or bulk data for sample(s).
@@ -134,6 +140,7 @@ class PhenoLoader:
                                    load_func=load_func,
                                    concat=concat,
                                    pivot=pivot,
+                                   keep_undefined_research_stage=keep_undefined_research_stage,
                                    **kwargs)
 
     def load_bulk_data(
@@ -145,7 +152,9 @@ class PhenoLoader:
         parent_bulk: Union[None, str] = None,
         load_func: callable = None,
         concat: bool = True,
-        pivot=None, **kwargs
+        pivot=None,
+        keep_undefined_research_stage: Union[None, str] = None,
+        **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
         Load time series or bulk data for sample(s).
@@ -159,17 +168,21 @@ class PhenoLoader:
             load_func (callable, optional): [Deprecated] The function to use to load the data. Defaults to pd.read_parquet
             concat (bool, optional): Whether to concatenate the data into a single DataFrame. Automatically ignored if data is not a DataFrame. Defaults to True.
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
+            keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None.
         """
+        if keep_undefined_research_stage is None:
+            keep_undefined_research_stage = self.keep_undefined_research_stage
         # get path to bulk file
         if type(field_name) is str:
             field_name = [field_name]
-        sample, fields = self.get(field_name + ['participant_id'], return_fields=True)
+        sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage)
         fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
         # TODO: slice bulk data based on field_type
         if sample.shape[1] > 2:
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
-                sample = sample[[parent_bulk, 'participant_id']]
+                # sample = sample[[parent_bulk, 'participant_id']]
+                sample = sample.get([parent_bulk, 'participant_id'], keep_undefined_research_stage=keep_undefined_research_stage)
             else:
                 if self.errors == 'raise':
                     raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
@@ -277,8 +290,72 @@ class PhenoLoader:
             pd.DataFrame: Data for the specified fields from all tables
         """
         return self.get(fields)
+    
+    @staticmethod
+    def check_indices_overlap(df1, df2):
+        """
+        Check whether the indices of two dataframes overlap
 
-    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None, return_fields: bool=False):
+        Args:
+            df1 (pd.DataFrame): First dataframe
+            df2 (pd.DataFrame): Second dataframe
+
+        Returns:
+            bool: Whether the indices overlap in more then 1% of the rows
+        """
+        if df1.empty:
+            return True
+        if df2.empty:
+            return True
+        
+        df1_defined = df1[df1.index.get_level_values('research_stage') != 'undefined']
+        df2_defined = df2[df2.index.get_level_values('research_stage') != 'undefined']
+        
+        min_cutoff = 0.01
+        
+        return df2_defined.index.isin(df1_defined.index).sum() > min(df1_defined.shape[0], df2_defined.shape[0]) * min_cutoff
+    
+    def build_table_to_field_dict(self, data, fields):
+        ''' 
+        Build a dictionary of tables to fields of interest.
+        '''
+        ## pre_check for duplicated columns and overlapping indices
+        fields_of_interest_dict = dict()
+        for table_name, df in self.dfs.items():
+            fields_of_interest = df.columns.intersection(fields)
+            if self.check_indices_overlap(data, df[fields_of_interest]): 
+                fields_of_interest_dict[table_name] = fields_of_interest
+        return fields_of_interest_dict
+    
+    def get_duplicated_columns(self, table_name, fields_of_interest_dict):
+        '''
+        Get duplicated fields
+        '''
+        origin_fields_in_col = fields_of_interest_dict.get(table_name, list())
+        duplicated_fields = list()
+        for k, v in fields_of_interest_dict.items():
+            if k == table_name:
+                continue
+            if len(v):
+                duplicated_fields += set(origin_fields_in_col.intersection(v))
+        return duplicated_fields
+    
+    def rename_duplicated_columns(self, df, table_name, fields, dup_fields):
+        '''
+        Rename columns in case of duplicated columns
+        '''         
+        common_dict = {field: f'{table_name}_{field}' for field in dup_fields}
+        df = df.rename(columns=common_dict)
+        fields += common_dict.values()
+        return df, fields
+    
+    def get_not_found_fields(self, fields, renamed_cols, not_merged, data):
+        renamed_fields= np.setdiff1d(fields, renamed_cols)
+        only_merged_fields= np.setdiff1d(renamed_fields, not_merged)
+        not_found = np.setdiff1d(only_merged_fields, data.columns)
+        return not_found
+        
+    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None, return_fields: bool=False, keep_undefined_research_stage: bool=None):
         """
         Return data for the specified fields from all tables
 
@@ -295,6 +372,8 @@ class PhenoLoader:
             flexible = self.flexible_field_search
         if squeeze is None:
             squeeze = self.squeeze
+        if keep_undefined_research_stage is None:
+            keep_undefined_research_stage = self.keep_undefined_research_stage
         if isinstance(fields, str):
             fields = [fields]
 
@@ -316,23 +395,52 @@ class PhenoLoader:
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
 
         data = pd.DataFrame()
+        not_merged = list()
+        renamed_cols = list()
+        
+        fields_of_interest_dict = self.build_table_to_field_dict(data, fields)
+        
         for table_name, df in self.dfs.items():
             if 'mapping' in table_name:
                 continue
-            fields_in_col = df.columns.intersection(fields).difference(data.columns)
-            if len(fields_in_col):
-                data = self.__concat__(data, df[fields_in_col])
-
+            
+            duplicated_fields = self.get_duplicated_columns(table_name, fields_of_interest_dict)
+            df, fields = self.rename_duplicated_columns(df, table_name, fields, duplicated_fields)
+            
+            fields_in_col = df.columns.intersection(fields)
             fields_in_index = np.setdiff1d(np.intersect1d(df.index.names, fields), data.columns)
-            for field in fields_in_index:
-                data = self.__concat__(
-                    data,
-                    pd.DataFrame(df.index.get_level_values(field), index=df.index))
+            
+            if len(fields_in_col) or len(fields_in_index):
+                if not self.check_indices_overlap(data, df):
+                    warnings.warn(f'No overlap between tables, this merge is not recommended. Please view tables separately.\
+                        This warning occurred while attempting to add columns from {table_name} to the rest of the data.')
+                    
+                    not_merged += list(fields_in_col) + list(fields_in_index)
+                    continue
+            
+            index_data_df = pd.DataFrame()
+            if len(fields_in_index):
+                for field in fields_in_index:
+                    index_data_df[field] = df.index.get_level_values(field)
+                index_data_df = index_data_df.set_index(df.index)
 
+            
+            df_fields = pd.concat([df[fields_in_col], index_data_df], axis=1)
+            
+            if df_fields.empty:
+                continue
+            
+            data = self.__concat__(
+                data, 
+                df_fields, 
+                keep_undefined_research_stage
+                )
+            renamed_cols += duplicated_fields
+            
         if len(data):
             data = data.loc[:, ~data.columns.duplicated()]
-
-        not_found = np.setdiff1d(fields, data.columns)
+        
+        not_found = self.get_not_found_fields(fields, renamed_cols, not_merged, data)
         if len(not_found) and not flexible:
             if self.errors == 'raise':
                 raise KeyError(f'Fields not found: {not_found}')
@@ -371,13 +479,37 @@ class PhenoLoader:
             
         return data
 
-    def __concat__(self, df1, df2):
+    def has_index(self, df, value):
+        return value in df.index.names
+        
+    def is_value_in_index(self, df, value, index_name):
+        if self.has_index(df, index_name):
+            return value in df.index.get_level_values(index_name)
+        return False
+    
+    @staticmethod
+    def join_and_filter_undefined_research_stage(df1, df2):
+        df1_defined = df1[df1.index.get_level_values('research_stage') != 'undefined']
+        df2_defined = df2[df2.index.get_level_values('research_stage') != 'undefined']
+
+        return df1_defined.join(df2_defined, how='outer')
+
+    def __concat__(self, df1, df2, keep_undefined_research_stage=False):
+
         if df1.empty:
             return df2
         if df2.empty:
             return df1
+        
+        if self.is_value_in_index(df1, 'undefined', 'research_stage') and \
+            self.is_value_in_index(df2, 'undefined', 'research_stage') and not keep_undefined_research_stage:
+        
+            warnings.warn('filtering "undefined" research_stage..')
+            df = self.join_and_filter_undefined_research_stage(df1, df2)
+            return df
+        
         return df1.join(df2, how='outer')
-
+        
     def __load_age_sex__(self) -> None:
         """
         Add sex and compute age from birth date.
@@ -467,7 +599,8 @@ class PhenoLoader:
             internal_location = os.sep.join(relative_location.split(os.sep)[1:])
             
             if any([pattern in relative_location for pattern in self.skip_dfs]):
-                print(f'Skipping {relative_location}')
+                
+                (f'Skipping {relative_location}')
                 continue
             df = self.__load_one_dataframe__(internal_location)
             if df is None:

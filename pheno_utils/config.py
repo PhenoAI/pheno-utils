@@ -132,7 +132,7 @@ def get_data_coding_file_path() -> str:
     Returns:
         str: the path to the file
     """
-    path = os.path.join(DATASETS_PATH, 'metadata', 'coding_mapping.parquet') 
+    path = os.path.join(DATASETS_PATH, 'metadata', 'coding_mapping.csv') 
     if path.startswith('s3://'):
         return path
     return glob(path)[0]

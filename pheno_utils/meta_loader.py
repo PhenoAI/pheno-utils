@@ -21,6 +21,7 @@ from pheno_utils.config import (
     )
 from .pheno_loader import PhenoLoader
 
+
 # %% ../nbs/11_meta_loader.ipynb 5
 class MetaLoader:
     """
@@ -106,7 +107,8 @@ class MetaLoader:
             if not len(loaded_fields):
                 loaded_fields = df
                 continue
-
+        
+            
             loaded_fields = loaded_fields.join(df, how='outer')
 
         return loaded_fields
