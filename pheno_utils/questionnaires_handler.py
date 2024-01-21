@@ -113,7 +113,7 @@ def replace_values(row: pd.Series, mapping_dict: dict) -> [pd.Series, list, floa
     elif pd.isna(row) or pd.isnull(row):
         return None
     else:
-        warnings.warn("warning: row is not a array or list")
+        warnings.warn("row is not a array or list")
         return row
 
 def transform_answers(
@@ -138,7 +138,7 @@ def transform_answers(
         if dict_df.loc[tab_field_name]["data_coding"].nunique() == 1:
             code_string = convert_to_string(dict_df.loc[tab_field_name]["data_coding"].iloc[0])
         else:
-            warnings.warn("data_coding has multiple values for tabular field {tab_field_name}, please check and update dictionary")
+            warnings.warn(f"data_coding has multiple values for tabular field {tab_field_name}, please check and update dictionary")
             return orig_answer
     else:
         code_string = convert_to_string(dict_df.loc[tab_field_name]["data_coding"])
@@ -159,14 +159,12 @@ def transform_answers(
             if field_type.nunique() == 1:
                 field_type = field_type.iloc[0]
             else:
-                warnings.warn("tabular field {tab_field_name} is used in 2 columns and have conflicting field types,please check and update dictionary. This field has not be converted.")
+                warnings.warn(f"tabular field {tab_field_name} is used in 2 columns and have conflicting field types,please check and update dictionary. This field has not be converted.")
                 return orig_answer
         
-        if field_type == 'Categorical (multiple)':
-          # Convert dictionary keys to integers
-            # mapping_dict = {int(k): v for k, v in mapping_dict.items()}
+        if field_type == 'Categorical (multiple)': 
             normalise_answer = normalize_answers(orig_answer, field_type)
-            # return(normalise_answer, mapping_dict)
+
             check_invalid_values( normalise_answer , mapping_dict)
             transformed_answer = normalise_answer.apply(replace_values, mapping_dict = mapping_dict)
         else:
@@ -189,7 +187,6 @@ def transform_dataframe(
     mapping_df: pd.DataFrame,
 ) -> pd.DataFrame:
     if 'data_coding' not in dict_df.columns or transform_from == transform_to:
-        warnings.warn(f'Returned orignal df')
         return df
     
     fields_for_translation = dict_df[pd.notna(dict_df.data_coding)].index.intersection(df.columns)
