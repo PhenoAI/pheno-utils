@@ -423,7 +423,6 @@ class PhenoLoader:
                 for field in fields_in_index:
                     index_data_df[field] = df.index.get_level_values(field)
                 index_data_df = index_data_df.set_index(df.index)
-
             
             df_fields = pd.concat([df[fields_in_col], index_data_df], axis=1)
             
