@@ -254,9 +254,12 @@ class PhenoLoader:
         if concat and isinstance(data[0], pd.DataFrame):
             data = pd.concat(data, axis=0)
         if pivot is not None and isinstance(data, pd.DataFrame):
+            values = data.columns
+            if len(values) == 1:
+                values = values[0]
             if pivot in data.index.names:
                 data = data.reset_index(pivot)
-            data = data.pivot(columns=pivot)
+            data = data.pivot(columns=pivot, values=values)
 
         return data
 
