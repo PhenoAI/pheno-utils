@@ -432,10 +432,15 @@ class PhenoLoader:
             if df_fields.empty:
                 continue
             
+            if table_name == 'age_sex':
+                keep_undefined = True
+            else: 
+                keep_undefined = keep_undefined_research_stage
+                
             data = self.__concat__(
                 data, 
                 df_fields, 
-                keep_undefined_research_stage
+                keep_undefined
                 )
             renamed_cols += duplicated_fields
             
