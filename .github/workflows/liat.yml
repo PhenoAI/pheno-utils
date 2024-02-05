@@ -1,0 +1,53 @@
+name: CI/CD Workflow
+
+on:
+  push:
+    branches:
+      - liats/wip/ci_cd
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest  # Specifies the runner environment.
+
+    steps:
+    - name: Checkout Code
+      uses: actions/checkout@v2  # Checks out your repository under $GITHUB_WORKSPACE.
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v1
+      with:
+        role-to-assume: arn:aws:iam::081569964966:role/github_cicd
+        aws-region: eu-west-1
+
+     # Check the account role and region
+    - name: Check AWS Account
+      run: aws sts get-caller-identity
+
+    # - name: Launch EC2 Instance
+    #   id: launch-ec2
+    #   run: |
+    #     INSTANCE_ID=$(aws ec2 run-instances --image-id YOUR_AMI_ID --instance-type YOUR_INSTANCE_TYPE --query 'Instances[0].InstanceId' --output text)
+    #     echo "::set-output name=INSTANCE_ID::$INSTANCE_ID"
+    #     aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+    #     PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+    #     echo "Instance ID: $INSTANCE_ID, Public IP: $PUBLIC_IP"
+        
+    # - name: Execute Commands on EC2 Instance
+    #   run: |
+    #     INSTANCE_ID=${{ steps.launch-ec2.outputs.INSTANCE_ID }}
+    #     # Use SSH to run commands on the EC2 instance
+    #     # You might need to setup SSH keys and security groups to allow this
+    #     # Example command: ssh -o StrictHostKeyChecking=no ec2-user@$PUBLIC_IP 'your-command-here'
+        
+    # - name: Create and Upload Artifact to S3
+    #   run: |
+    #     # Example of creating a tar.gz archive and uploading it
+    #     tar -czvf artifact.tar.gz /path/to/your/files
+    #     aws s3 cp artifact.tar.gz s3://YOUR_S3_BUCKET_NAME/path/to/upload/
+      
+    # - name: Cleanup - Terminate EC2 Instance
+    #   if: always()
+    #   run: |
+    #     INSTANCE_ID=${{ steps.launch-ec2.outputs.INSTANCE_ID }}
+    #     aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+    #     aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
