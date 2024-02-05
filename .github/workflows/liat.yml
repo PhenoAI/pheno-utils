@@ -27,14 +27,16 @@ jobs:
     - name: Check AWS Account
       run: aws sts get-caller-identity
 
-    # - name: Launch EC2 Instance
-    #   id: launch-ec2
-    #   run: |
-    #     INSTANCE_ID=$(aws ec2 run-instances --image-id YOUR_AMI_ID --instance-type YOUR_INSTANCE_TYPE --query 'Instances[0].InstanceId' --output text)
-    #     echo "::set-output name=INSTANCE_ID::$INSTANCE_ID"
-    #     aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-    #     PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
-    #     echo "Instance ID: $INSTANCE_ID, Public IP: $PUBLIC_IP"
+    - name: Launch EC2 Instance
+      id: launch-ec2
+      run: |
+        AMI_ID=ami-019a4dd9d1bad0cec
+        ISNTANCE_TYPE=t3.large
+        INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --instance-type $ISNTANCE_TYPE --query 'Instances[0].InstanceId' --output text)
+        echo "::set-output name=INSTANCE_ID::$INSTANCE_ID"
+        aws ec2 wait instance-running --instance-ids $INSTANCE_ID
+        PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
+        echo "Instance ID: $INSTANCE_ID, Public IP: $PUBLIC_IP"
         
     # - name: Execute Commands on EC2 Instance
     #   run: |
@@ -49,9 +51,9 @@ jobs:
     #     tar -czvf artifact.tar.gz /path/to/your/files
     #     aws s3 cp artifact.tar.gz s3://YOUR_S3_BUCKET_NAME/path/to/upload/
       
-    # - name: Cleanup - Terminate EC2 Instance
-    #   if: always()
-    #   run: |
-    #     INSTANCE_ID=${{ steps.launch-ec2.outputs.INSTANCE_ID }}
-    #     aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-    #     aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
+    - name: Cleanup - Terminate EC2 Instance
+      if: always()
+      run: |
+        INSTANCE_ID=${{ steps.launch-ec2.outputs.INSTANCE_ID }}
+        aws ec2 terminate-instances --instance-ids $INSTANCE_ID
+        aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
