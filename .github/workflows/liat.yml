@@ -42,7 +42,7 @@ jobs:
     - name: Run command on EC2 instance
       run: |
         aws ssm send-command --document-name "AWS-RunShellScript" --document-version "1" \
-        --targets '[{"Key":"InstanceIds","Values":["$INSTANCE_ID"]}]' \
+        --targets '[{"Key":"InstanceIds","Values":["'"$INSTANCE_ID"'"]}]' \
         --parameters '{"commands":["echo Hello World > /tmp/hello_world.txt; cat /tmp/hello_world.txt"]}' \
         --timeout-seconds 600 --max-concurrency 50 --max-errors 0 --region eu-west-1
 
