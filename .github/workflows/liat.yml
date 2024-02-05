@@ -1,4 +1,4 @@
-name: CI/CD Workflow
+name: Liat Workflow
 
 on:
   push:
@@ -7,14 +7,14 @@ on:
 
 jobs:
   deploy:
-    runs-on: ubuntu-latest  # Specifies the runner environment.
+    runs-on: ubuntu-latest
 
     steps:
     - name: Checkout Code
-      uses: actions/checkout@v2  # Checks out your repository under $GITHUB_WORKSPACE.
+      uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v1
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::081569964966:role/github_cicd
         aws-region: eu-west-1
