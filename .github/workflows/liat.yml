@@ -32,7 +32,8 @@ jobs:
       run: |
         AMI_ID=ami-056d2deb35634ac41 # AmazonLinux2 Mate
         ISNTANCE_TYPE=t3.large
-        INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --instance-type $ISNTANCE_TYPE --query 'Instances[0].InstanceId' --output text)
+        SUBNET_ID=subnet-08f168b88d687e3ae # PhenoVPC-PublicSubnet1
+        INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --instance-type $ISNTANCE_TYPE --subnet-id $SUBNET_ID --query 'Instances[0].InstanceId' --output text)
         echo "::set-output name=INSTANCE_ID::$INSTANCE_ID"
         aws ec2 wait instance-running --instance-ids $INSTANCE_ID
         PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
