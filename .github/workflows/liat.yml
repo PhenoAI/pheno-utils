@@ -30,7 +30,7 @@ jobs:
     - name: Launch EC2 Instance
       id: launch-ec2
       run: |
-        AMI_ID=ami-019a4dd9d1bad0cec
+        AMI_ID=ami-056d2deb35634ac41 # AmazonLinux2 Mate
         ISNTANCE_TYPE=t3.large
         INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --instance-type $ISNTANCE_TYPE --query 'Instances[0].InstanceId' --output text)
         echo "::set-output name=INSTANCE_ID::$INSTANCE_ID"
