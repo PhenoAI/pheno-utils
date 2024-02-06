@@ -314,6 +314,11 @@ class PhenoLoader:
         df1_defined = df1[df1.index.get_level_values('research_stage') != 'undefined']
         df2_defined = df2[df2.index.get_level_values('research_stage') != 'undefined']
         
+        if df1_defined.empty:
+            return True
+        if df2_defined.empty:
+            return True
+        
         min_cutoff = 0.01
         
         return df2_defined.index.isin(df1_defined.index).sum() > min(df1_defined.shape[0], df2_defined.shape[0]) * min_cutoff
