@@ -600,6 +600,24 @@ class PhenoLoader:
         age_sex['sex'] = age_sex['sex'].fillna(age_sex['sex_miss'])
         self.dfs['age_sex'] = age_sex[['age', 'sex']]
 
+    def convert_us_to_ns(self, df):
+        """
+        Convert timestamps in microseconds to nanoseconds.
+
+        Args:
+            df (pd.DataFrame): The DataFrame to convert.
+
+
+        Returns:
+            pd.DataFrame: The DataFrame with timestamps converted to nanoseconds.
+        """
+        for col in df.select_dtypes(include=['datetime64']).columns:
+            if df[col].dtype == 'datetime64[us]':
+                df[col] = df[col].astype('datetime64[ns]')
+            if df[col].dtype == 'datetime64[us, Asia/Jerusalem]':
+                df[col] = df[col].astype('datetime64[ns, Asia/Jerusalem]')
+        return df
+    
     def __load_dataframes__(self) -> None:
         """
         Load all tables in the dataset dictionary.
@@ -618,6 +636,7 @@ class PhenoLoader:
             if df is None:
                 continue
             table_name = parquet_name.split('.')[0]
+            df = self.convert_us_to_ns(df)
             self.dfs[table_name] = df
             if not df.index.is_unique:
                 print('Warning: index is not unique for', table_name)
