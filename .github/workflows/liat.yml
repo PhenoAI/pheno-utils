@@ -26,8 +26,9 @@ jobs:
         export PATH=$GITHUB_WORKSPACE:$PATH
         echo "PATH: $PATH"
 
-    # - name: Checkout Code
-    #   uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
+    - name: Checkout Code
+      continue-on-error: true
+      uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
     
     - name: Show workspace
       run: echo $GITHUB_WORKSPACE
@@ -36,20 +37,17 @@ jobs:
       run: |
         curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
         bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
-        # echo "export PATH=$HOME/miniconda/bin:$PATH" >> $HOME/.bashrc
+        echo "export PATH=$HOME/miniconda/bin:$PATH" >> $HOME/.bashrc
         source $HOME/.bashrc
         conda init bash
         # conda config --set always_yes yes --set changeps1 no
         conda update -q conda
         conda info -a
-        conda create -n test-env python=3.10
-        conda activate test-env
-        conda install pheno-utils
 
     - name: Create conda environment
       run : |
-        conda create -n test-env2 python=3.10
-        conda activate test-env2
+        conda create -n test-env python=3.10
+        conda activate test-env
         conda install pheno-utils
         conda list
 
@@ -58,18 +56,10 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::081569964966:role/github_cicd
         aws-region: eu-west-1
-  
-    # Check the account role and region
-    - name: Check AWS Account
-      run: aws sts get-caller-identity
 
-    # - name: Create and Upload Artifact to S3
-    #   run: |
-    #     # Example of creating a tar.gz archive and uploading it
+    - name: Create and Upload Artifact to S3
+      run: |
+        # Example of creating a tar.gz archive and uploading it
+        echo "Uploading artifact to S3"
     #     tar -czvf artifact.tar.gz /path/to/your/files
     #     aws s3 cp artifact.tar.gz s3://YOUR_S3_BUCKET_NAME/path/to/upload/
-      
-    - name: Cleanup - Terminate EC2 Instance
-      if: always()
-      run: |
-        echo "cleanup"
