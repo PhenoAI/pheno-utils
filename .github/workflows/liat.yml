@@ -26,8 +26,9 @@ jobs:
         export PATH=$GITHUB_WORKSPACE:$PATH
         echo "PATH: $PATH"
 
+    # Install tar and gzip for code checkout
     - name: Install tar
-      run: yum install -y tar
+      run: yum install -y tar gzip
 
     - name: Checkout Code
       continue-on-error: true
@@ -43,14 +44,14 @@ jobs:
         echo "export PATH=$HOME/miniconda/bin:$PATH" >> $HOME/.bashrc
         source $HOME/.bashrc
         conda init bash
-        # conda config --set always_yes yes --set changeps1 no
+        conda config --set always_yes yes --set changeps1 no
         conda update -q conda
         conda info -a
 
     - name: Create conda environment
-      env: 
-        PATH: $HOME/miniconda/bin:$PATH
       run : |
+        export PATH=$HOME/miniconda/bin:$PATH
+        which conda
         conda create -n test-env python=3.10
         conda activate test-env
         conda install pheno-utils
