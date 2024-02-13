@@ -66,4 +66,9 @@ jobs:
         echo "Uploading artifact to S3"
         DATE=$(date +%Y-%m-%d)
         BRANCH=${GITHUB_REF#refs/heads/}
-        aws s3 cp $HOME/pheno.tar.gz s3://pheno-ds-github/conda_envs/pheno_${BRANCH}_${DATE}.tar.gz
+        BRANCH=${BRANCH//\//_} # Replace / with _ in branch name
+        echo "ls buckets in region:"
+        aws s3 ls --region eu-west-1
+        echo "ls inside bucket:"
+        aws s3 ls --region eu-west-1 s3://pheno-ds-github/conda_envs/
+        echo "aws s3 cp $HOME/pheno.tar.gz s3://pheno-ds-github/conda_envs/pheno_${BRANCH}_${DATE}.tar.gz"
