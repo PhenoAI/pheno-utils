@@ -28,30 +28,24 @@ jobs:
         miniconda-version: "latest"
         activate-environment: pheno
         python-version: 3.11
-    - name: Conda info
-      shell: bash -el {0}
-      run: conda list
-    - name: Pheno Utils
+        # environment-file: etc/example-environment.yml
+
+    - name: Install pheno-utils
       shell: bash -el {0}
       run: |
-        conda list
-        pip install pheno-utils
+        cd $GITHUB_WORKSPACE
+        pip install .
         conda list
 
-    # - name: Install conda
-    #   continue-on-error: true
-    #   run: |
-    #     curl -sS -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-    #     bash Miniconda3-latest-Linux-x86_64.sh -b -u -p $HOME/miniconda
-
-    # - name: Create conda environment
-    #   run : |
-    #     export PATH=$HOME/miniconda/bin:$PATH
-    #     conda init bash
-    #     # conda create -q -n test-env python=3.10 > /dev/null
-    #     # conda init bash > /dev/null
-    #     # conda activate test-env
-    #     # conda install pheno-utils
+    - name: Pack Conda
+      shell: bash -el {0}
+      run: |
+        # Enable adding the kernel to JupyterLab 
+        pip install ipykernel
+        python -m ipykernel install --user --name pheno --display-name "Pheno"
+        pip install conda-pack
+        conda pack -n pheno -o $HOME/pheno.tar.gz
+        ls -l
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v3
@@ -59,9 +53,9 @@ jobs:
         role-to-assume: arn:aws:iam::081569964966:role/github_cicd
         aws-region: eu-west-1
 
-    - name: Create and Upload Artifact to S3
+    - name: Upload to S3
       run: |
-        # Example of creating a tar.gz archive and uploading it
         echo "Uploading artifact to S3"
-        # tar -czvf artifact.tar.gz /path/to/your/files
-        # aws s3 cp artifact.tar.gz s3://YOUR_S3_BUCKET_NAME/path/to/upload/
+        DATE=$(date +%Y-%m-%d)
+        BRANCH=${GITHUB_REF#refs/heads/}
+        aws s3 cp $HOME/pheno.tar.gz s3://pheno-ds-github/conda_envs/pheno_${BRANCH}_${DATE}.tar.gz
