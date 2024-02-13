@@ -1,9 +1,9 @@
-name: Liat Workflow
+name: Conda Env Workflow
 
 on:
   push:
     branches:
-      - liats/wip/ci_cd
+      - '*'
 
 permissions:
   id-token: write
@@ -17,8 +17,7 @@ jobs:
     container:
       image: amazonlinux:2
     steps:
-    # Install tar and gzip for code checkout
-    - name: Install tar
+    - name: Install tar (for code checkout)
       run: yum install -y tar gzip
 
     - name: Checkout Code
@@ -36,7 +35,7 @@ jobs:
       shell: bash -el {0}
       run: |
         cd $GITHUB_WORKSPACE
-        pip install .
+        pip install . # Install pheno-utils from the current directory
         conda list
 
     - name: Pack Conda
@@ -52,7 +51,7 @@ jobs:
       uses: aws-actions/configure-aws-credentials@v3
       with:
         role-to-assume: arn:aws:iam::081569964966:role/github_cicd
-        aws-region: eu-west-1
+        aws-region: ${{ env.AWS_DEFAULT_REGION }}
 
     - name: Setup AWS CLI
       run: |
@@ -69,5 +68,4 @@ jobs:
         DATE=$(date +%Y-%m-%d)
         BRANCH=${GITHUB_REF#refs/heads/}
         BRANCH=${BRANCH//\//_} # Replace / with _ in branch name
-        aws s3 cp $HOME/pheno.tar.gz "s3://pheno-ds-github-cicd-eu-west-1/conda_envs/pheno_${BRANCH}_${DATE}.tar.gz"
-        aws s3 ls s3://pheno-ds-github-cicd-eu-west-1/conda_envs/
+        aws s3 cp $HOME/pheno.tar.gz "s3://pheno-ds-github-cicd-${{ env.AWS_DEFAULT_REGION }}/conda_envs/pheno_${BRANCH}_${DATE}.tar.gz"
