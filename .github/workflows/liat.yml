@@ -18,6 +18,8 @@ jobs:
     steps:
     - name: Show OS version
       run: cat /etc/os-release
+    - name: Check user
+      run: whoami
 
     - name: Checkout Code
       uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
