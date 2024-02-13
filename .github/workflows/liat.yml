@@ -25,6 +25,7 @@ jobs:
     - name: Setup conda
       uses: conda-incubator/setup-miniconda@v2
       with:
+        miniconda-version: "latest"
         activate-environment: pheno
         python-version: 3.11
     - name: Conda info
