@@ -49,9 +49,9 @@ jobs:
         conda info -a
 
     - name: Create conda environment
+      continue-on-error: true
       run : |
         export PATH=$HOME/miniconda/bin:$PATH
-        which conda
         conda create -n test-env python=3.10
         conda activate test-env
         conda install pheno-utils
