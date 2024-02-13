@@ -52,6 +52,7 @@ jobs:
       continue-on-error: true
       run : |
         export PATH=$HOME/miniconda/bin:$PATH
+        conda init bash
         conda create -n test-env python=3.10
         conda activate test-env
         conda install pheno-utils
