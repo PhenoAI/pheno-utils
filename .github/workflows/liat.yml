@@ -36,10 +36,10 @@ jobs:
       run: |
         curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
         bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
-        echo "export PATH=$HOME/miniconda/bin:$PATH" >> $HOME/.bashrc
+        # echo "export PATH=$HOME/miniconda/bin:$PATH" >> $HOME/.bashrc
         source $HOME/.bashrc
         conda init bash
-        conda config --set always_yes yes --set changeps1 no
+        # conda config --set always_yes yes --set changeps1 no
         conda update -q conda
         conda info -a
         conda create -n test-env python=3.10
@@ -48,9 +48,10 @@ jobs:
 
     - name: Create conda environment
       run : |
-        conda create -n test-env python=3.10
-        conda activate test-env
+        conda create -n test-env2 python=3.10
+        conda activate test-env2
         conda install pheno-utils
+        conda list
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
