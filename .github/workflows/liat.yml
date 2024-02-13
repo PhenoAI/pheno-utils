@@ -28,6 +28,26 @@ jobs:
 
     - name: Checkout Code
       uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
+    
+    - name: Show workspace
+      run: echo $GITHUB_WORKSPACE
+
+    - name: Install conda
+      run: |
+        curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+        bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
+        echo "export PATH=$HOME/miniconda/bin:$PATH" >> $HOME/.bashrc
+        source $HOME/.bashrc
+        conda init bash
+        conda config --set always_yes yes --set changeps1 no
+        conda update -q conda
+        conda info -a
+
+    - name: Create conda environment
+      run : |
+        conda create -n test-env python=3.10
+        conda activate test-env
+        conda install pheno-utils
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
