@@ -21,7 +21,7 @@ jobs:
 
     - name: Checkout Code
       continue-on-error: true
-      uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
+      uses: actions/checkout@v4  # Checks out the repository under $GITHUB_WORKSPACE.
 
     - name: Install conda
       run: |
@@ -36,14 +36,14 @@ jobs:
       continue-on-error: true
       run : |
         export PATH=$HOME/miniconda/bin:$PATH
-        conda init bash > /dev/null
         conda create -n test-env python=3.10 > /dev/null
+        conda init bash > /dev/null
         conda activate test-env
         conda install pheno-utils
         conda list
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v3
+      uses: aws-actions/configure-aws-credentials@v4
       with:
         role-to-assume: arn:aws:iam::081569964966:role/github_cicd
         aws-region: eu-west-1
