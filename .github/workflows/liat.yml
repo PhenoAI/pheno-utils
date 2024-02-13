@@ -69,8 +69,5 @@ jobs:
         DATE=$(date +%Y-%m-%d)
         BRANCH=${GITHUB_REF#refs/heads/}
         BRANCH=${BRANCH//\//_} # Replace / with _ in branch name
-        echo "ls buckets in region:"
-        aws s3 ls
-        echo "ls inside bucket:"
-        aws s3 cp $HOME/pheno.tar.gz s3://pheno-ds-github-cicd-eu-west-1/conda_envs/pheno_${BRANCH}_${DATE}.tar.gz"
+        aws s3 cp $HOME/pheno.tar.gz "s3://pheno-ds-github-cicd-eu-west-1/conda_envs/pheno_${BRANCH}_${DATE}.tar.gz"
         aws s3 ls s3://pheno-ds-github-cicd-eu-west-1/conda_envs/
