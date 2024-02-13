@@ -43,6 +43,7 @@ jobs:
         # conda config --set always_yes yes --set changeps1 no
         conda update -q conda
         conda info -a
+      shell: bash -l {0}
 
     - name: Create conda environment
       run : |
@@ -50,6 +51,7 @@ jobs:
         conda activate test-env
         conda install pheno-utils
         conda list
+      shell: bash -l {0}
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
