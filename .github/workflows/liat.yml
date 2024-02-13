@@ -42,6 +42,9 @@ jobs:
         conda config --set always_yes yes --set changeps1 no
         conda update -q conda
         conda info -a
+        conda create -n test-env python=3.10
+        conda activate test-env
+        conda install pheno-utils
 
     - name: Create conda environment
       run : |
