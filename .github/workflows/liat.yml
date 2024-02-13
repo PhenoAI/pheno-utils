@@ -26,6 +26,9 @@ jobs:
         export PATH=$GITHUB_WORKSPACE:$PATH
         echo "PATH: $PATH"
 
+    - name: Install tar
+      run: yum install -y tar
+
     - name: Checkout Code
       continue-on-error: true
       uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
@@ -43,15 +46,15 @@ jobs:
         # conda config --set always_yes yes --set changeps1 no
         conda update -q conda
         conda info -a
-      shell: bash -l {0}
 
     - name: Create conda environment
+      env: 
+        PATH: $HOME/miniconda/bin:$PATH
       run : |
         conda create -n test-env python=3.10
         conda activate test-env
         conda install pheno-utils
         conda list
-      shell: bash -l {0}
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v4
