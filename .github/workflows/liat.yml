@@ -14,12 +14,14 @@ jobs:
     runs-on: ubuntu-latest
     container:
       image: amazonlinux:2
-      options: --user root
     steps:
     - name: Show OS version
       run: cat /etc/os-release
     - name: Check user
-      run: whoami
+      run: |
+        whoami
+        echo "HOME: $HOME"
+        echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
 
     - name: Checkout Code
       uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
