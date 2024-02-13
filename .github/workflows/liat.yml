@@ -26,8 +26,8 @@ jobs:
         export PATH=$GITHUB_WORKSPACE:$PATH
         echo "PATH: $PATH"
 
-    - name: Checkout Code
-      uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
+    # - name: Checkout Code
+    #   uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
     
     - name: Show workspace
       run: echo $GITHUB_WORKSPACE
