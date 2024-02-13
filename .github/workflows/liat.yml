@@ -10,10 +10,14 @@ permissions:
   contents: read
 
 jobs:
-  deploy:
+  create-conda-env:
     runs-on: ubuntu-latest
-
+    container:
+      image: amazonlinux:2
     steps:
+    - name: Show OS version
+      run: cat /etc/os-release
+      
     - name: Checkout Code
       uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
 
@@ -22,29 +26,10 @@ jobs:
       with:
         role-to-assume: arn:aws:iam::081569964966:role/github_cicd
         aws-region: eu-west-1
-
-     # Check the account role and region
+  
+    # Check the account role and region
     - name: Check AWS Account
       run: aws sts get-caller-identity
-
-    - name: Launch EC2 Instance
-      id: launch-ec2
-      run: |
-        AMI_ID=ami-056d2deb35634ac41 # AmazonLinux2 Mate
-        ISNTANCE_TYPE=t3.large
-        SUBNET_ID=subnet-08f168b88d687e3ae # PhenoVPC-PublicSubnet1
-        INSTANCE_ID=$(aws ec2 run-instances --image-id $AMI_ID --instance-type $ISNTANCE_TYPE --subnet-id $SUBNET_ID --query 'Instances[0].InstanceId' --output text --tag-specifications 'ResourceType=instance,Tags=[{Key=Name,Value=GitHubActionsInstance}]')
-        echo "::set-output name=INSTANCE_ID::$INSTANCE_ID"
-        aws ec2 wait instance-running --instance-ids $INSTANCE_ID
-        PUBLIC_IP=$(aws ec2 describe-instances --instance-ids $INSTANCE_ID --query 'Reservations[0].Instances[0].PublicIpAddress' --output text)
-        echo "Instance ID: $INSTANCE_ID, Public IP: $PUBLIC_IP"
-        
-    - name: Run command on EC2 instance
-      run: |
-        aws ssm send-command --document-name "AWS-RunShellScript" --document-version "1" \
-        --targets '[{"Key":"InstanceIds","Values":["'"$INSTANCE_ID"'"]}]' \
-        --parameters '{"commands":["echo Hello World > /tmp/hello_world.txt; cat /tmp/hello_world.txt"]}' \
-        --timeout-seconds 600 --max-concurrency 50 --max-errors 0 --region eu-west-1
 
     # - name: Create and Upload Artifact to S3
     #   run: |
@@ -55,6 +40,4 @@ jobs:
     - name: Cleanup - Terminate EC2 Instance
       if: always()
       run: |
-        INSTANCE_ID=${{ steps.launch-ec2.outputs.INSTANCE_ID }}
-        aws ec2 terminate-instances --instance-ids $INSTANCE_ID
-        aws ec2 wait instance-terminated --instance-ids $INSTANCE_ID
+        echo "cleanup"
