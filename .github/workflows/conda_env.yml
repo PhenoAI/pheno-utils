@@ -1,9 +1,6 @@
 name: Conda Env Workflow
 
-on:
-  push:
-    branches:
-      - '*'
+on: push
 
 permissions:
   id-token: write
