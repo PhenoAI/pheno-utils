@@ -72,6 +72,5 @@ jobs:
         echo "ls buckets in region:"
         aws s3 ls
         echo "ls inside bucket:"
-        aws s3 ls s3://pheno-ds-github-cicd-eu-west-1/conda_envs/
         aws s3 cp $HOME/pheno.tar.gz s3://pheno-ds-github-cicd-eu-west-1/conda_envs/pheno_${BRANCH}_${DATE}.tar.gz"
         aws s3 ls s3://pheno-ds-github-cicd-eu-west-1/conda_envs/
