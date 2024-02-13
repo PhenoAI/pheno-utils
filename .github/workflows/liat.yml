@@ -23,6 +23,7 @@ jobs:
       uses: actions/checkout@v3.6.0  # Checks out the repository under $GITHUB_WORKSPACE.
 
     - name: Install conda
+      continue-on-error: true
       run: |
         curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
         bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
@@ -32,6 +33,7 @@ jobs:
         conda info -a
 
     - name: Create conda environment
+      continue-on-error: true
       run : |
         export PATH=$HOME/miniconda/bin:$PATH
         conda create -n test-env python=3.10 > /dev/null
