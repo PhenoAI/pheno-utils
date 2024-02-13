@@ -22,20 +22,32 @@ jobs:
     - name: Checkout Code
       uses: actions/checkout@v3  # Checks out the repository under $GITHUB_WORKSPACE.
 
-    - name: Install conda
-      continue-on-error: true
-      run: |
-        curl -sS -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
-        bash Miniconda3-latest-Linux-x86_64.sh -b -u -p $HOME/miniconda
+    - name: Setup conda
+      uses: conda-incubator/setup-miniconda@v3
+      with:
+        activate-environment: pheno
+        python-version: 3.11
+        # environment-file: etc/example-environment.yml
+    - name: Conda info
+      shell: bash -el {0}
+      run: conda info
+    - name: Pheno Utils
+      shell: bash -el {0}
+      run: conda install pheno-utils
+    # - name: Install conda
+    #   continue-on-error: true
+    #   run: |
+    #     curl -sS -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
+    #     bash Miniconda3-latest-Linux-x86_64.sh -b -u -p $HOME/miniconda
 
-    - name: Create conda environment
-      run : |
-        export PATH=$HOME/miniconda/bin:$PATH
-        conda init bash
-        # conda create -q -n test-env python=3.10 > /dev/null
-        # conda init bash > /dev/null
-        # conda activate test-env
-        # conda install pheno-utils
+    # - name: Create conda environment
+    #   run : |
+    #     export PATH=$HOME/miniconda/bin:$PATH
+    #     conda init bash
+    #     # conda create -q -n test-env python=3.10 > /dev/null
+    #     # conda init bash > /dev/null
+    #     # conda activate test-env
+    #     # conda install pheno-utils
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v3
