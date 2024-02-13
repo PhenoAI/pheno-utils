@@ -41,17 +41,24 @@ jobs:
       shell: bash -el {0}
       run: |
         # Enable adding the kernel to JupyterLab 
-        pip install ipykernel
+        pip install -q ipykernel
         python -m ipykernel install --user --name pheno --display-name "Pheno"
-        pip install conda-pack
-        conda pack -n pheno -o $HOME/pheno.tar.gz
-        ls -l
+        pip install -q conda-pack
+        conda pack --quiet -n pheno -o $HOME/pheno.tar.gz
 
     - name: Configure AWS Credentials
       uses: aws-actions/configure-aws-credentials@v3
       with:
         role-to-assume: arn:aws:iam::081569964966:role/github_cicd
         aws-region: eu-west-1
+
+    - name: Setup AWS CLI
+      run: |
+        echo "Installing AWS CLI"
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        sudo ./aws/install
+        aws --version
 
     - name: Upload to S3
       run: |
