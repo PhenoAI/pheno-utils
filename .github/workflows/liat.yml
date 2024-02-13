@@ -15,17 +15,6 @@ jobs:
     container:
       image: amazonlinux:2
     steps:
-    - name: Show OS version
-      run: cat /etc/os-release
-    - name: Check user
-      run: |
-        whoami
-        echo "HOME: $HOME"
-        echo "GITHUB_WORKSPACE: $GITHUB_WORKSPACE"
-        echo "PATH: $PATH"
-        export PATH=$GITHUB_WORKSPACE:$PATH
-        echo "PATH: $PATH"
-
     # Install tar and gzip for code checkout
     - name: Install tar
       run: yum install -y tar gzip
@@ -33,17 +22,11 @@ jobs:
     - name: Checkout Code
       continue-on-error: true
       uses: actions/checkout@v2  # Checks out the repository under $GITHUB_WORKSPACE.
-    
-    - name: Show workspace
-      run: echo $GITHUB_WORKSPACE
 
     - name: Install conda
       run: |
         curl -O https://repo.anaconda.com/miniconda/Miniconda3-latest-Linux-x86_64.sh
         bash Miniconda3-latest-Linux-x86_64.sh -b -p $HOME/miniconda
-        echo "export PATH=$HOME/miniconda/bin:$PATH" >> $HOME/.bashrc
-        source $HOME/.bashrc
-        conda init bash
         conda config --set always_yes yes --set changeps1 no
         conda update -q conda
         conda info -a
@@ -59,7 +42,7 @@ jobs:
         conda list
 
     - name: Configure AWS Credentials
-      uses: aws-actions/configure-aws-credentials@v4
+      uses: aws-actions/configure-aws-credentials@v3
       with:
         role-to-assume: arn:aws:iam::081569964966:role/github_cicd
         aws-region: eu-west-1
