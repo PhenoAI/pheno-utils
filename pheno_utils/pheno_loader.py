@@ -607,11 +607,10 @@ class PhenoLoader:
         Args:
             df (pd.DataFrame): The DataFrame to convert.
 
-
         Returns:
             pd.DataFrame: The DataFrame with timestamps converted to nanoseconds.
         """
-        for col in df.select_dtypes(include=['datetime64']).columns:
+        for col in df.columns:
             if df[col].dtype == 'datetime64[us]':
                 df[col] = df[col].astype('datetime64[ns]')
             if df[col].dtype == 'datetime64[us, Asia/Jerusalem]':
