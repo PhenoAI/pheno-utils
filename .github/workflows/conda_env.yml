@@ -1,0 +1,68 @@
+name: Conda Env Workflow
+
+on: push
+
+permissions:
+  id-token: write
+  contents: read
+
+jobs:
+  create-conda-env:
+    runs-on: ubuntu-latest
+    env:
+      AWS_DEFAULT_REGION: eu-west-1
+    container:
+      image: amazonlinux:2
+    steps:
+    - name: Install tar (for code checkout)
+      run: yum install -y tar gzip
+
+    - name: Checkout Code
+      uses: actions/checkout@v3  # Checks out the repository under $GITHUB_WORKSPACE.
+
+    - name: Setup conda
+      uses: conda-incubator/setup-miniconda@v2
+      with:
+        miniconda-version: "latest"
+        activate-environment: pheno
+        python-version: 3.11
+        # environment-file: etc/example-environment.yml
+
+    - name: Install pheno-utils
+      shell: bash -el {0}
+      run: |
+        cd $GITHUB_WORKSPACE
+        pip install . # Install pheno-utils from the current directory
+        conda list
+
+    - name: Pack Conda
+      shell: bash -el {0}
+      run: |
+        # Enable adding the kernel to JupyterLab 
+        pip install -q ipykernel
+        python -m ipykernel install --user --name pheno --display-name "Pheno"
+        pip install -q conda-pack
+        conda pack --quiet -n pheno -o $HOME/pheno.tar.gz
+
+    - name: Configure AWS Credentials
+      uses: aws-actions/configure-aws-credentials@v3
+      with:
+        role-to-assume: arn:aws:iam::081569964966:role/github_cicd
+        aws-region: ${{ env.AWS_DEFAULT_REGION }}
+
+    - name: Setup AWS CLI
+      run: |
+        yum install -y unzip > /dev/null
+        echo "Installing AWS CLI"
+        curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+        unzip awscliv2.zip
+        ./aws/install
+        aws --version
+
+    - name: Upload to S3
+      run: |
+        echo "Uploading artifact to S3"
+        DATE=$(date +%Y-%m-%d-%H-%S)
+        BRANCH=${GITHUB_REF#refs/heads/}
+        BRANCH=${BRANCH//\//_} # Replace / with _ in branch name
+        aws s3 cp $HOME/pheno.tar.gz "s3://pheno-ds-github-cicd-${{ env.AWS_DEFAULT_REGION }}/conda_envs/${BRANCH}_${DATE}.tar.gz"
