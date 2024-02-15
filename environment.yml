@@ -35,7 +35,6 @@ dependencies:
   - parso=0.8.3=pyhd8ed1ab_0
   - pexpect=4.9.0=pyhd8ed1ab_0
   - pickleshare=0.7.5=py_1003
-  - pip=23.3.1=py311h06a4308_0
   - platformdirs=4.2.0=pyhd8ed1ab_0
   - prompt-toolkit=3.0.42=pyha770c72_0
   - psutil=5.9.0=py311h5eee18b_0
@@ -114,6 +113,7 @@ dependencies:
       - pandocfilters==1.5.1
       - partd==1.4.1
       - pillow==10.2.0
+      - pip==24.0
       - pluggy==1.4.0
       - progressbar2==4.3.2
       - pyarrow==15.0.0
