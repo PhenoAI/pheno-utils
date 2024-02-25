@@ -1,4 +1,4 @@
-name: conda_env3
+name: pheno
 channels:
   - conda-forge
   - defaults
@@ -93,7 +93,6 @@ dependencies:
       - numpy==1.26.4
       - pandas==2.1.0
       - partd==1.4.1
-      - pheno-utils==0.4.0
       - pillow==10.2.0
       - progressbar2==4.4.1
       - pyarrow==15.0.0
@@ -116,4 +115,4 @@ dependencies:
       - urllib3==2.0.7
       - wrapt==1.16.0
       - yarl==1.9.4
-prefix: /home/ec2-user/miniconda3/envs/conda_env3
+prefix: /home/ec2-user/miniconda3/envs/pheno
