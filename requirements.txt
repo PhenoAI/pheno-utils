@@ -1,6 +1,5 @@
 dask==2023.8.0
 matplotlib==3.7.2
-neurokit2==0.2.5
 numpy==1.25.2
 pandas==2.0.3
 Pillow==10.0.0
