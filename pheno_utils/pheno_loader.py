@@ -472,12 +472,8 @@ class PhenoLoader:
         return data[cols_order]
     
     def replace_bulk_data_path(self, data, fields):
-        if "item_type" in self.dict.columns:
-            # TODO: remove. For now, its backward compatible with old data dictionaries
-            bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('item_type == "Bulk"')
-        else: 
-            bulk_field_types = self.dict_prop.loc[self.dict_prop.is_bulk == True].index.to_list()
-            bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('field_type in @bulk_field_types')
+        bulk_field_types = self.dict_prop.loc[self.dict_prop.is_bulk == True].index.to_list()
+        bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('field_type in @bulk_field_types')
         cols = [col for col in bulk_fields.index.to_list() if col in data.columns] 
         dataset_bulk_data_path = {k:v.format(dataset=self.dataset) for k, v in BULK_DATA_PATH.items()}
         category_cols = self.dict.loc[self.dict.index.isin(fields)].query('pandas_dtype == "category"').index
