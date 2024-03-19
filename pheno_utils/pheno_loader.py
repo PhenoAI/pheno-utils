@@ -389,7 +389,10 @@ class PhenoLoader:
         search_dict = self.dict.copy()
         for k, v in kwargs.items():
             if k in search_dict.columns:
-                search_dict = search_dict[search_dict[k] == v]
+                if isinstance(v, list):
+                    search_dict = search_dict[search_dict[k].isin(v)]
+                else:
+                    search_dict = search_dict[search_dict[k] == v]
 
         matches = fields
         if flexible:
