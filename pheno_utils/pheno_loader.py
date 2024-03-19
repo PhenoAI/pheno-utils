@@ -411,6 +411,10 @@ class PhenoLoader:
         parent_dict = dict()
         if 'parent_dataframe' in search_dict.columns:
             parent_dict = search_dict.loc[search_dict.index.isin(fields), 'parent_dataframe'].dropna()
+            field_counts = search_dict.loc[search_dict.index.isin(fields), 'parent_dataframe']\
+                .value_counts().dropna().to_frame().reset_index()
+            if len(field_counts):
+                field_counts.apply(lambda x: print(f'{x["count"]}\tbulk fields found in {x["parent_dataframe"]}'), axis=1)
         fields = np.hstack([parent_dict.get(field, field) for field in fields])
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
 
