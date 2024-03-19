@@ -176,18 +176,17 @@ class PhenoLoader:
         if type(field_name) is str:
             field_name = [field_name]
         sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage)
-        fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
         # TODO: slice bulk data based on field_type
         if sample.shape[1] > 2:
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
-                # sample = sample[[parent_bulk, 'participant_id']]
-                sample = sample.get([parent_bulk, 'participant_id'], keep_undefined_research_stage=keep_undefined_research_stage)
+                sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage, parent_dataframe=parent_bulk)
             else:
                 if self.errors == 'raise':
                     raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
                 elif self.errors == 'warn':
                     warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
+        fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
         col = sample.columns.drop('participant_id')[0]  # can be different from field_name if parent_dataframe is implied
         sample = sample.astype({col: str})
 
@@ -230,7 +229,7 @@ class PhenoLoader:
             if 'field_type' not in self.dict:
                 field_type = None
             else:
-                field_type = self.dict.loc[field_name, 'field_type'].values[0]
+                field_type = self.dict.loc[fields, 'field_type'].values[0]
             load_func = get_function_for_field_type(field_type)
         sample = sample.loc[:, col]
         sample = self.__slice_bulk_partition__(fields, sample)
