@@ -362,8 +362,8 @@ class PhenoLoader:
         only_merged_fields= np.setdiff1d(renamed_fields, not_merged)
         not_found = np.setdiff1d(only_merged_fields, data.columns)
         return not_found
-        
-    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None, return_fields: bool=False, keep_undefined_research_stage: bool=None):
+
+    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None, return_fields: bool=False, keep_undefined_research_stage: bool=None, **kwargs):
         """
         Return data for the specified fields from all tables
 
@@ -372,6 +372,8 @@ class PhenoLoader:
             flexible (bool, optional): Whether to use fuzzy matching to find fields. Defaults to None, which uses the PhenoLoader's flexible_field_search attribute.
             squeeze (bool, optional): Whether to squeeze the output if only one field is requested. Defaults to None, which uses the PhenoLoader's squeeze attribute.
             return_fields (bool, optional): Whether to return the list of fields that were found. Defaults to False.
+            keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None, which uses the PhenoLoader's keep_undefined_research_stage attribute.
+            **kwargs: Additional keyword arguments to filter the data based on dictionary properties.
 
         Returns:
             pd.DataFrame: Data for the specified fields from all tables
@@ -385,20 +387,25 @@ class PhenoLoader:
         if isinstance(fields, str):
             fields = [fields]
 
+        search_dict = self.dict.copy()
+        for k, v in kwargs.items():
+            if k in search_dict.columns:
+                search_dict = search_dict[search_dict[k] == v]
+
         matches = fields
         if flexible:
             # 1. searching in dictionary, so we can access bulk fields as well as tabular fields
             # 2. keeping the given fields, so we can access fields (e.g., index levels) that are not in the dictionary
             # 3. approximate matches will appear after exact matches
-            matches = [self.dict.index[self.dict.index.str.contains(field, case=False)].tolist()
+            matches = [search_dict.index[search_dict.index.str.contains(field, case=False)].tolist()
                        for field in fields]
             fields = np.hstack(fields + matches)
 
         # check whether any field points to a parent_dataframe
         seen_fields = set()
         parent_dict = dict()
-        if 'parent_dataframe' in self.dict.columns:
-            parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
+        if 'parent_dataframe' in search_dict.columns:
+            parent_dict = search_dict.loc[search_dict.index.isin(fields), 'parent_dataframe'].dropna()
         fields = np.hstack([parent_dict.get(field, field) for field in fields])
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
 
