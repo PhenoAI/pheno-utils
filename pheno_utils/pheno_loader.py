@@ -176,18 +176,17 @@ class PhenoLoader:
         if type(field_name) is str:
             field_name = [field_name]
         sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage)
-        fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
         # TODO: slice bulk data based on field_type
         if sample.shape[1] > 2:
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
-                # sample = sample[[parent_bulk, 'participant_id']]
-                sample = sample.get([parent_bulk, 'participant_id'], keep_undefined_research_stage=keep_undefined_research_stage)
+                sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage, parent_dataframe=parent_bulk)
             else:
                 if self.errors == 'raise':
                     raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
                 elif self.errors == 'warn':
                     warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
+        fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
         col = sample.columns.drop('participant_id')[0]  # can be different from field_name if parent_dataframe is implied
         sample = sample.astype({col: str})
 
@@ -230,7 +229,7 @@ class PhenoLoader:
             if 'field_type' not in self.dict:
                 field_type = None
             else:
-                field_type = self.dict.loc[field_name, 'field_type'].values[0]
+                field_type = self.dict.loc[fields, 'field_type'].values[0]
             load_func = get_function_for_field_type(field_type)
         sample = sample.loc[:, col]
         sample = self.__slice_bulk_partition__(fields, sample)
@@ -362,16 +361,19 @@ class PhenoLoader:
         only_merged_fields= np.setdiff1d(renamed_fields, not_merged)
         not_found = np.setdiff1d(only_merged_fields, data.columns)
         return not_found
-        
-    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None, return_fields: bool=False, keep_undefined_research_stage: bool=None):
+
+    def get(self, fields: Union[str,List[str]], flexible: bool=None, not_bulk_field=False, squeeze: bool=None, return_fields: bool=False, keep_undefined_research_stage: bool=None, **kwargs):
         """
         Return data for the specified fields from all tables
 
         Args:
             fields (List[str]): Fields to return
             flexible (bool, optional): Whether to use fuzzy matching to find fields. Defaults to None, which uses the PhenoLoader's flexible_field_search attribute.
+            not_bulk_field (bool, optional): Whether to return only fields that are not bulk fields. Defaults to False.
             squeeze (bool, optional): Whether to squeeze the output if only one field is requested. Defaults to None, which uses the PhenoLoader's squeeze attribute.
             return_fields (bool, optional): Whether to return the list of fields that were found. Defaults to False.
+            keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None, which uses the PhenoLoader's keep_undefined_research_stage attribute.
+            **kwargs: Additional keyword arguments to filter the data based on dictionary properties.
 
         Returns:
             pd.DataFrame: Data for the specified fields from all tables
@@ -385,20 +387,34 @@ class PhenoLoader:
         if isinstance(fields, str):
             fields = [fields]
 
+        search_dict = self.dict.copy()
+        if not_bulk_field:
+            search_dict = search_dict.loc[search_dict['parent_dataframe'].isnull()]
+        for k, v in kwargs.items():
+            if k in search_dict.columns:
+                if isinstance(v, list):
+                    search_dict = search_dict[search_dict[k].isin(v)]
+                else:
+                    search_dict = search_dict[search_dict[k] == v]
+
         matches = fields
         if flexible:
             # 1. searching in dictionary, so we can access bulk fields as well as tabular fields
             # 2. keeping the given fields, so we can access fields (e.g., index levels) that are not in the dictionary
             # 3. approximate matches will appear after exact matches
-            matches = [self.dict.index[self.dict.index.str.contains(field, case=False)].tolist()
+            matches = [search_dict.index[search_dict.index.str.contains(field, case=False)].tolist()
                        for field in fields]
             fields = np.hstack(fields + matches)
 
         # check whether any field points to a parent_dataframe
         seen_fields = set()
         parent_dict = dict()
-        if 'parent_dataframe' in self.dict.columns:
-            parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
+        if 'parent_dataframe' in search_dict.columns:
+            parent_dict = search_dict.loc[search_dict.index.isin(fields), 'parent_dataframe'].dropna()
+            field_counts = search_dict.loc[search_dict.index.isin(fields), 'parent_dataframe']\
+                .value_counts().dropna().to_frame().reset_index()
+            if len(field_counts):
+                field_counts.apply(lambda x: print(f'{x["count"]}\tbulk fields found in {x["parent_dataframe"]}'), axis=1)
         fields = np.hstack([parent_dict.get(field, field) for field in fields])
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
 
