@@ -22,10 +22,14 @@ from pheno_utils.config import (
     COHORT, 
     EVENTS_DATASET, 
     ERROR_ACTION, 
-    BULK_DATA_PATH
+    BULK_DATA_PATH,
+    DICT_PROPERTY_PATH, 
+    DATA_CODING_PATH,
+    PREFERRED_LANGUAGE
     )
 from .basic_analysis import custom_describe
-from .basic_plots import show_fundus
+from .bulk_data_loader import get_function_for_field_type
+from .questionnaires_handler import transform_dataframe
 
 # %% ../nbs/05_pheno_loader.ipynb 5
 class PhenoLoader:
@@ -44,8 +48,9 @@ class PhenoLoader:
         valid_dates (bool, optional): Whether to ensure that all timestamps in the data are valid dates. Defaults to False.
         valid_stage (bool, optional): Whether to ensure that all research stages in the data are valid. Defaults to False.
         flexible_field_search (bool, optional): Whether to allow regex field search. Defaults to False.
+        keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to False.
         errors (str, optional): Whether to raise an error or issue a warning if missing data is encountered.
-            Possible values are 'raise', 'warn' and 'ignore'. Defaults to 'raise'.
+            Possible values are 'raise', 'warn' and 'ignore'. Defaults to ERROR_ACTION.
 
     Attributes:
     
@@ -62,7 +67,9 @@ class PhenoLoader:
         valid_dates (bool): Whether to ensure that all timestamps in the data are valid dates.
         valid_stage (bool): Whether to ensure that all research stages in the data are valid.
         flexible_field_search (bool): Whether to allow regex field search.
+        keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage.
         errors (str): Whether to raise an error or issue a warning if missing data is encountered.
+        preferred_language (str): The preferred language for the questionnaires.
     """
 
     def __init__(
@@ -78,7 +85,9 @@ class PhenoLoader:
         flexible_field_search: bool = False,
         squeeze: bool = False,
         errors: str = ERROR_ACTION,
-        read_parquet_kwargs: Dict[str, Any] = {}
+        read_parquet_kwargs: Dict[str, Any] = {},
+        preferred_language: str = PREFERRED_LANGUAGE,
+        keep_undefined_research_stage: bool = False
     ) -> None:
         self.dataset = dataset
         self.cohort = cohort
@@ -96,34 +105,92 @@ class PhenoLoader:
         self.squeeze = squeeze
         self.errors = errors
         self.read_parquet_kwargs = read_parquet_kwargs
-
+        self.preferred_language = preferred_language
+        self.data_codings = pd.read_csv(DATA_CODING_PATH) # TODO: convert to csv when it will be available
         self.__load_dictionary__()
         self.__load_dataframes__()
         if self.age_sex_dataset is not None:
             self.__load_age_sex__()
+        self.dict_prop = pd.read_csv(DICT_PROPERTY_PATH, index_col='field_type')
+        self.keep_undefined_research_stage = keep_undefined_research_stage
 
     def load_sample_data(
         self,
-        field_name: str,
+        field_name: Union[str, List[str]],
         participant_id: Union[None, int, List[int]] = None,
         research_stage: Union[None, str, List[str]] = None,
         array_index: Union[None, int, List[int]] = None,
-        load_func: callable = pd.read_parquet,
+        parent_bulk: Union[None, str] = None,
+        load_func: callable = None,
         concat: bool = True,
-        pivot=None, **kwargs
+        pivot=None, 
+        keep_undefined_research_stage: Union[None, str] = None,
+        **kwargs
+    ) -> Union[pd.DataFrame, None]:
+        """
+        Load time series or bulk data for sample(s).
+        Deprecated function. See load_bulk_data().
+        """
+        warnings.warn('load_sample_data() is deprecated in favour of load_bulk_data() and will be removed in a future version.')
+        return self.load_bulk_data(field_name,
+                                   participant_id=participant_id,
+                                   research_stage=research_stage,
+                                   array_index=array_index,
+                                   parent_bulk=parent_bulk,
+                                   load_func=load_func,
+                                   concat=concat,
+                                   pivot=pivot,
+                                   keep_undefined_research_stage=keep_undefined_research_stage,
+                                   **kwargs)
+
+    def load_bulk_data(
+        self,
+        field_name: Union[str, List[str]],
+        participant_id: Union[None, int, List[int]] = None,
+        research_stage: Union[None, str, List[str]] = None,
+        array_index: Union[None, int, List[int]] = None,
+        parent_bulk: Union[None, str] = None,
+        load_func: callable = None,
+        concat: bool = True,
+        pivot=None,
+        keep_undefined_research_stage: Union[None, str] = None,
+        **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
         Load time series or bulk data for sample(s).
 
         Args:
-            field_name (str): The name of the field to load.
+            field_name (str or List): The name of the field(s) to load.
+            parent_bulk (str, optional): The name of the field that points to the bulk data file. Defaults to None (inferred from field_name).
             participant_id (str or list, optional): The participant ID or IDs to load data for.
             research_stage (str or list, optional): The research stage or stages to load data for.
             array_index (int or list, optional): The array index or indices to load data for.
-            load_func (callable, optional): The function to use to load the data. Defaults to pd.read_parquet
+            load_func (callable, optional): [Deprecated] The function to use to load the data. Defaults to pd.read_parquet
             concat (bool, optional): Whether to concatenate the data into a single DataFrame. Automatically ignored if data is not a DataFrame. Defaults to True.
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
+            keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None.
         """
+        if keep_undefined_research_stage is None:
+            keep_undefined_research_stage = self.keep_undefined_research_stage
+        # get path to bulk file
+        if type(field_name) is str:
+            field_name = [field_name]
+        sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage)
+        # TODO: slice bulk data based on field_type
+        if sample.shape[1] > 2:
+            if parent_bulk is not None:
+                # get the field_name associated with parent_bulk
+                sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage, parent_dataframe=parent_bulk)
+            else:
+                if self.errors == 'raise':
+                    raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
+                elif self.errors == 'warn':
+                    warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
+        fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
+        col = sample.columns.drop('participant_id')[0]  # can be different from field_name if parent_dataframe is implied
+        sample = sample.astype({col: str})
+
+        # filter by participant_id, research_stage and array_index
         query_str = []
         if participant_id is not None:
             query_str.append('participant_id in @participant_id')
@@ -138,12 +205,10 @@ class PhenoLoader:
                 array_index = [array_index]
             query_str.append('array_index in @array_index')
         query_str = ' and '.join(query_str)
-
-        sample = self[[field_name] + ['participant_id']]
         if query_str:
             sample = sample.query(query_str)
-        col = sample.columns[0]  # can be different from field_name is a parent_dataframe is implied
-        sample = sample.astype({col: str})
+
+        # check for missing samples
         if participant_id is not None:
             missing_participants = np.setdiff1d(participant_id, sample['participant_id'].unique())
         else:
@@ -156,9 +221,19 @@ class PhenoLoader:
                 warnings.warn(f'Missing samples: {missing_participants}')
         if len(sample) == 0:
             return None
-        sample = sample.loc[:, col]
 
-        # Load data
+        # load data
+        if load_func is not None:
+            warnings.warn("The 'load_func' is deprecated and will be removed in future versions.")
+        else: 
+            if 'field_type' not in self.dict:
+                field_type = None
+            else:
+                field_type = self.dict.loc[fields, 'field_type'].values[0]
+            load_func = get_function_for_field_type(field_type)
+        sample = sample.loc[:, col]
+        sample = self.__slice_bulk_partition__(fields, sample)
+        kwargs.update(self.__slice_bulk_data__(fields))
         data = []
         for p in sample.unique():
             try:
@@ -174,13 +249,16 @@ class PhenoLoader:
                 elif self.errors == 'warn':
                     warnings.warn(f'Error loading {p}: {e}')
 
-        # Format the final result
+        # format the final result
         if concat and isinstance(data[0], pd.DataFrame):
             data = pd.concat(data, axis=0)
         if pivot is not None and isinstance(data, pd.DataFrame):
+            values = data.columns
+            if len(values) == 1:
+                values = values[0]
             if pivot in data.index.names:
                 data = data.reset_index(pivot)
-            data = data.pivot(columns=pivot)
+            data = data.pivot(columns=pivot, values=values)
 
         return data
 
@@ -214,14 +292,88 @@ class PhenoLoader:
             pd.DataFrame: Data for the specified fields from all tables
         """
         return self.get(fields)
+    
+    @staticmethod
+    def check_indices_overlap(df1, df2):
+        """
+        Check whether the indices of two dataframes overlap
 
-    def get(self, fields: Union[str,List[str]], flexible: bool=None, squeeze: bool=None):
+        Args:
+            df1 (pd.DataFrame): First dataframe
+            df2 (pd.DataFrame): Second dataframe
+
+        Returns:
+            bool: Whether the indices overlap in more then 1% of the rows
+        """
+        if df1.empty:
+            return True
+        if df2.empty:
+            return True
+        
+        df1_defined = df1[df1.index.get_level_values('research_stage') != 'undefined']
+        df2_defined = df2[df2.index.get_level_values('research_stage') != 'undefined']
+        
+        if df1_defined.empty:
+            return True
+        if df2_defined.empty:
+            return True
+        
+        min_cutoff = 0.01
+        
+        return df2_defined.index.isin(df1_defined.index).sum() > min(df1_defined.shape[0], df2_defined.shape[0]) * min_cutoff
+    
+    def build_table_to_field_dict(self, data, fields):
+        ''' 
+        Build a dictionary of tables to fields of interest.
+        '''
+        ## pre_check for duplicated columns and overlapping indices
+        fields_of_interest_dict = dict()
+        for table_name, df in self.dfs.items():
+            fields_of_interest = df.columns.intersection(fields)
+            if self.check_indices_overlap(data, df[fields_of_interest]): 
+                fields_of_interest_dict[table_name] = fields_of_interest
+        return fields_of_interest_dict
+    
+    def get_duplicated_columns(self, table_name, fields_of_interest_dict):
+        '''
+        Get duplicated fields
+        '''
+        origin_fields_in_col = fields_of_interest_dict.get(table_name, list())
+        duplicated_fields = list()
+        for k, v in fields_of_interest_dict.items():
+            if k == table_name:
+                continue
+            if len(v):
+                duplicated_fields += set(origin_fields_in_col.intersection(v))
+        return duplicated_fields
+    
+    def rename_duplicated_columns(self, df, table_name, fields, dup_fields):
+        '''
+        Rename columns in case of duplicated columns
+        '''         
+        common_dict = {field: f'{table_name}_{field}' for field in dup_fields}
+        df = df.rename(columns=common_dict)
+        fields += common_dict.values()
+        return df, fields
+    
+    def get_not_found_fields(self, fields, renamed_cols, not_merged, data):
+        renamed_fields= np.setdiff1d(fields, renamed_cols)
+        only_merged_fields= np.setdiff1d(renamed_fields, not_merged)
+        not_found = np.setdiff1d(only_merged_fields, data.columns)
+        return not_found
+
+    def get(self, fields: Union[str,List[str]], flexible: bool=None, not_bulk_field=False, squeeze: bool=None, return_fields: bool=False, keep_undefined_research_stage: bool=None, **kwargs):
         """
         Return data for the specified fields from all tables
 
         Args:
             fields (List[str]): Fields to return
             flexible (bool, optional): Whether to use fuzzy matching to find fields. Defaults to None, which uses the PhenoLoader's flexible_field_search attribute.
+            not_bulk_field (bool, optional): Whether to return only fields that are not bulk fields. Defaults to False.
+            squeeze (bool, optional): Whether to squeeze the output if only one field is requested. Defaults to None, which uses the PhenoLoader's squeeze attribute.
+            return_fields (bool, optional): Whether to return the list of fields that were found. Defaults to False.
+            keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None, which uses the PhenoLoader's keep_undefined_research_stage attribute.
+            **kwargs: Additional keyword arguments to filter the data based on dictionary properties.
 
         Returns:
             pd.DataFrame: Data for the specified fields from all tables
@@ -230,41 +382,93 @@ class PhenoLoader:
             flexible = self.flexible_field_search
         if squeeze is None:
             squeeze = self.squeeze
+        if keep_undefined_research_stage is None:
+            keep_undefined_research_stage = self.keep_undefined_research_stage
         if isinstance(fields, str):
             fields = [fields]
 
+        search_dict = self.dict.copy()
+        if not_bulk_field:
+            search_dict = search_dict.loc[search_dict['parent_dataframe'].isnull()]
+        for k, v in kwargs.items():
+            if k in search_dict.columns:
+                if isinstance(v, list):
+                    search_dict = search_dict[search_dict[k].isin(v)]
+                else:
+                    search_dict = search_dict[search_dict[k] == v]
+
+        matches = fields
+        if flexible:
+            # 1. searching in dictionary, so we can access bulk fields as well as tabular fields
+            # 2. keeping the given fields, so we can access fields (e.g., index levels) that are not in the dictionary
+            # 3. approximate matches will appear after exact matches
+            matches = [search_dict.index[search_dict.index.str.contains(field, case=False)].tolist()
+                       for field in fields]
+            fields = np.hstack(fields + matches)
+
         # check whether any field points to a parent_dataframe
-        # has_parent = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna()
         seen_fields = set()
-        parent_dict = self.dict.loc[self.dict.index.isin(fields), 'parent_dataframe'].dropna().to_dict()
-        fields = [parent_dict.get(field, field) for field in fields]
+        parent_dict = dict()
+        if 'parent_dataframe' in search_dict.columns:
+            parent_dict = search_dict.loc[search_dict.index.isin(fields), 'parent_dataframe'].dropna()
+            field_counts = search_dict.loc[search_dict.index.isin(fields), 'parent_dataframe']\
+                .value_counts().dropna().to_frame().reset_index()
+            if len(field_counts):
+                field_counts.apply(lambda x: print(f'{x["count"]}\tbulk fields found in {x["parent_dataframe"]}'), axis=1)
+        fields = np.hstack([parent_dict.get(field, field) for field in fields])
         fields = [field for field in fields if field not in seen_fields and not seen_fields.add(field)]
-        # fields += has_parent.unique().tolist()
-        flexi_fields = list()
 
         data = pd.DataFrame()
+        not_merged = list()
+        renamed_cols = list()
+        
+        fields_of_interest_dict = self.build_table_to_field_dict(data, fields)
+        
         for table_name, df in self.dfs.items():
             if 'mapping' in table_name:
                 continue
-            if flexible:
-                # use fuzzy matching including regex to find fields
-                fields_in_col = np.unique([col for f in fields for col in df.columns if re.search(f, col)])
-                flexi_fields += fields_in_col.tolist()
-            else:
-                fields_in_col = df.columns.intersection(fields).difference(data.columns)
-            if len(fields_in_col):
-                data = self.__concat__(data, df[fields_in_col])
-
+            
+            duplicated_fields = self.get_duplicated_columns(table_name, fields_of_interest_dict)
+            df, fields = self.rename_duplicated_columns(df, table_name, fields, duplicated_fields)
+            
+            fields_in_col = df.columns.intersection(fields)
             fields_in_index = np.setdiff1d(np.intersect1d(df.index.names, fields), data.columns)
-            for field in fields_in_index:
-                data = self.__concat__(
-                    data,
-                    pd.DataFrame(df.index.get_level_values(field), index=df.index))
-
+            
+            if len(fields_in_col) or len(fields_in_index):
+                if not self.check_indices_overlap(data, df):
+                    warnings.warn(f'No overlap between tables, this merge is not recommended. Please view tables separately.\
+                        This warning occurred while attempting to add columns from {table_name} to the rest of the data.')
+                    
+                    not_merged += list(fields_in_col) + list(fields_in_index)
+                    continue
+            
+            index_data_df = pd.DataFrame()
+            if len(fields_in_index):
+                for field in fields_in_index:
+                    index_data_df[field] = df.index.get_level_values(field)
+                index_data_df = index_data_df.set_index(df.index)
+            
+            df_fields = pd.concat([df[fields_in_col], index_data_df], axis=1)
+            
+            if df_fields.empty:
+                continue
+            
+            if table_name == 'age_sex':
+                keep_undefined = True
+            else: 
+                keep_undefined = keep_undefined_research_stage
+                
+            data = self.__concat__(
+                data, 
+                df_fields, 
+                keep_undefined
+                )
+            renamed_cols += duplicated_fields
+            
         if len(data):
             data = data.loc[:, ~data.columns.duplicated()]
-
-        not_found = np.setdiff1d(fields, data.columns)
+        
+        not_found = self.get_not_found_fields(fields, renamed_cols, not_merged, data)
         if len(not_found) and not flexible:
             if self.errors == 'raise':
                 raise KeyError(f'Fields not found: {not_found}')
@@ -274,15 +478,18 @@ class PhenoLoader:
         data = self.replace_bulk_data_path(data, fields)
         
         cols_order = [field for field in fields if field in data.columns]
-        cols_order += [field for field in flexi_fields if (field in data.columns and field not in fields)]
 
         if squeeze and len(cols_order) == 1:
             return data[cols_order[0]]
 
+        if return_fields:
+            return data[cols_order], np.unique(np.hstack(matches)).tolist()
+
         return data[cols_order]
     
     def replace_bulk_data_path(self, data, fields):
-        bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('item_type == "Bulk"')
+        bulk_field_types = self.dict_prop.loc[self.dict_prop.is_bulk == True].index.to_list()
+        bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('field_type in @bulk_field_types')
         cols = [col for col in bulk_fields.index.to_list() if col in data.columns] 
         dataset_bulk_data_path = {k:v.format(dataset=self.dataset) for k, v in BULK_DATA_PATH.items()}
         category_cols = self.dict.loc[self.dict.index.isin(fields)].query('pandas_dtype == "category"').index
@@ -296,13 +503,37 @@ class PhenoLoader:
             
         return data
 
-    def __concat__(self, df1, df2):
+    def has_index(self, df, value):
+        return value in df.index.names
+        
+    def is_value_in_index(self, df, value, index_name):
+        if self.has_index(df, index_name):
+            return value in df.index.get_level_values(index_name)
+        return False
+    
+    @staticmethod
+    def join_and_filter_undefined_research_stage(df1, df2):
+        df1_defined = df1[df1.index.get_level_values('research_stage') != 'undefined']
+        df2_defined = df2[df2.index.get_level_values('research_stage') != 'undefined']
+
+        return df1_defined.join(df2_defined, how='outer')
+
+    def __concat__(self, df1, df2, keep_undefined_research_stage=False):
+
         if df1.empty:
             return df2
         if df2.empty:
             return df1
+        
+        if self.is_value_in_index(df1, 'undefined', 'research_stage') and \
+            self.is_value_in_index(df2, 'undefined', 'research_stage') and not keep_undefined_research_stage:
+        
+            warnings.warn('filtering "undefined" research_stage..')
+            df = self.join_and_filter_undefined_research_stage(df1, df2)
+            return df
+        
         return df1.join(df2, how='outer')
-
+        
     def __load_age_sex__(self) -> None:
         """
         Add sex and compute age from birth date.
@@ -381,24 +612,42 @@ class PhenoLoader:
         age_sex['sex'] = age_sex['sex'].fillna(age_sex['sex_miss'])
         self.dfs['age_sex'] = age_sex[['age', 'sex']]
 
+    def convert_us_to_ns(self, df):
+        """
+        Convert timestamps in microseconds to nanoseconds.
+
+        Args:
+            df (pd.DataFrame): The DataFrame to convert.
+
+        Returns:
+            pd.DataFrame: The DataFrame with timestamps converted to nanoseconds.
+        """
+        for col in df.columns:
+            if df[col].dtype == 'datetime64[us]':
+                df[col] = df[col].astype('datetime64[ns]')
+            if df[col].dtype == 'datetime64[us, Asia/Jerusalem]':
+                df[col] = df[col].astype('datetime64[ns, Asia/Jerusalem]')
+        return df
+    
     def __load_dataframes__(self) -> None:
         """
         Load all tables in the dataset dictionary.
         """
         self.dfs = {}
         self.fields = set()
-        for relative_location in self.dict['relative_location'].dropna().unique(): 
+        for relative_location in self.dict['relative_location'].dropna().unique():
             parquet_name = relative_location.split(os.sep)[-1]
             internal_location = os.sep.join(relative_location.split(os.sep)[1:])
             
-            
             if any([pattern in relative_location for pattern in self.skip_dfs]):
-                print(f'Skipping {relative_location}')
+                
+                (f'Skipping {relative_location}')
                 continue
             df = self.__load_one_dataframe__(internal_location)
             if df is None:
                 continue
             table_name = parquet_name.split('.')[0]
+            df = self.convert_us_to_ns(df)
             self.dfs[table_name] = df
             if not df.index.is_unique:
                 print('Warning: index is not unique for', table_name)
@@ -427,7 +676,10 @@ class PhenoLoader:
             if self.errors == 'warn':
                 warnings.warn(f'Error loading {df_path}:\n{err}')
             return None
-
+        
+        data = transform_dataframe(data, transform_from='coding', transform_to=self.preferred_language, 
+                                   dict_df=self.dict, mapping_df=self.data_codings)
+            
         # set the order of columns according to the dictionary
         dict_columns = self.dict.index.intersection(data.columns)
         other_columns = data.columns.difference(self.dict.index)
@@ -452,8 +704,18 @@ class PhenoLoader:
         Load dataset dictionary.
         """
         self.dict = pd.read_csv(self.__get_dictionary_file_path__(self.dataset))\
+            .dropna(subset='tabular_field_name')\
             .set_index('tabular_field_name')
-        self.fields = self.dict.index.tolist()
+
+        if 'bulk_dictionary' not in self.dict.columns or len(self.dict.dropna(subset='bulk_dictionary')['bulk_dictionary']) == 0:
+            return
+
+        # bulk dictionaries
+        bulk_dicts = self.dataset_path + '/metadata/' + \
+            self.dict.dropna(subset='bulk_dictionary')['bulk_dictionary'] + '_bulk_dictionary.csv'
+        self.dict = pd.concat([self.dict] +
+            [pd.read_csv(bd).set_index('tabular_field_name').assign(parent_dataframe=tfn)
+             for tfn, bd in bulk_dicts.items()], axis=0)
 
     def __get_file_path__(self, dataset: str, extension: str) -> str:
         """
@@ -481,11 +743,11 @@ class PhenoLoader:
         Returns:
             str: the path to the file
         """
-        path = os.path.join(self.dataset_path, f'{dataset}_data_dictionary.csv')
+        path = os.path.join(self.dataset_path, 'metadata', f'{dataset}_data_dictionary.csv')
         if path.startswith('s3://'):
            return path
         return glob(path)[0]
-
+    
     def __get_dataset_path__(self, dataset):
         """
         Get the dataset path.
@@ -534,32 +796,90 @@ class PhenoLoader:
         index(levels: A, B, C), columns: [value]
         """
         # Identify common index levels
-        common_index_levels = set(data.index.names).intersection(set(more_levels.index.names))
+        common_index_levels = list(set(data.index.names).intersection(set(more_levels.index.names)))
+        if len(common_index_levels) == 0:
+            return data
         
         # Identify the extra index level in more_levels
-        extra_index_levels = list(set(more_levels.index.names) - common_index_levels)
+        extra_index_levels = [l for l in more_levels.index.names if l not in common_index_levels]
         
         if not extra_index_levels:
             # If there are no additional index levels in more_levels, return data as is
             return data
 
-        extra_index_level = extra_index_levels[0]
-        
         # Reset the index of more_levels to convert all index levels to columns
         more_levels_reset = more_levels.reset_index()
         
         # Select only the common and extra index levels
-        more_levels_subset = more_levels_reset[list(common_index_levels) + [extra_index_level]].drop_duplicates()
+        more_levels_subset = more_levels_reset[common_index_levels + extra_index_levels].drop_duplicates()
         
         # Merge the dataframes on the common index levels using a left join
-        new_data = pd.merge(data.reset_index(), more_levels_subset, how='left', on=list(common_index_levels))
+        new_data = pd.merge(data.reset_index(), more_levels_subset, how='left', on=common_index_levels)
         
-        # Explicitly set the order of the new index levels to maintain the original order in 'data' and append the new level
-        new_index_order = data.index.names + [extra_index_level]
+        # Explicitly set the order of the new index levels to maintain
+        # the original order in 'more_levels' and append the extra remaining levels
+        new_index_order = more_levels.index.names + \
+            [l for l in data.index.names if l not in more_levels.index.names]
         
         new_data.set_index(new_index_order, inplace=True)
         
         return new_data
+
+    def __slice_bulk_partition__(self, field_name: str, paths: pd.Series) -> pd.Series:
+        """
+        Slice the bulk partition based on the field name.
+
+        Args:
+            field_name (str): The name of the field.
+            paths (pd.Series): The paths to be sliced.
+
+        Returns:
+            pd.Series: The sliced paths.
+        """
+        if 'field_type' not in self.dict:
+            return paths
+
+        partition = self.dict.loc[field_name, 'field_type']
+        if isinstance(partition, pd.Series):
+            partition = partition.iloc[0]
+        if type(partition) is not str:
+            return paths
+        if 'partition' not in partition:
+            return paths
+        partition = partition.split(':')[1].strip()
+
+        paths[paths.str[-1] != '/'] += '/'
+        paths += partition + '=' + field_name + '/'
+        return paths
+
+    def __slice_bulk_data__(self, field_name: str) -> dict:
+        """
+        Generate keyword arguments for pd.read_parquet based on the field name.
+
+        Args:
+            field_name (str): The name of the field.
+
+        Returns:
+            dict: The keyword arguments for pd.read_parquet.
+        """
+        if 'field_type' not in self.dict:
+            return {}
+
+        slice_by = self.dict.loc[field_name, 'field_type']
+        if type(field_name) is str:
+            field_name = [field_name]
+        if isinstance(slice_by, pd.Series):
+            # get all fields that have the same field_type (first type)
+            field_name = slice_by[slice_by == slice_by.iloc[0]].index.tolist()
+            slice_by = slice_by.iloc[0]
+        if type(slice_by) is not str:
+            return {}
+        if 'column' in slice_by:
+            return {'columns': field_name}
+        if 'rows' in slice_by:
+            return {'filters': [[(slice_by.split(':')[1].strip(), '==', f)] for f in field_name],
+                    'engine': 'pyarrow'}
+        return {}
 
     def describe_field(self, fields: Union[str,List[str]], return_summary: bool=False):
         """

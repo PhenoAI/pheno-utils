@@ -21,6 +21,7 @@ from pheno_utils.config import (
     )
 from .pheno_loader import PhenoLoader
 
+
 # %% ../nbs/11_meta_loader.ipynb 5
 class MetaLoader:
     """
@@ -106,7 +107,8 @@ class MetaLoader:
             if not len(loaded_fields):
                 loaded_fields = df
                 continue
-
+        
+            
             loaded_fields = loaded_fields.join(df, how='outer')
 
         return loaded_fields
@@ -200,12 +202,15 @@ class MetaLoader:
         """
         Load all dictionaries in the base_path.
         """
-        dicts = dd.read_csv(os.path.join(self.dataset_path, '*_dict*.csv'),
-                            include_path_column=True, dtype={'parent_dataframe': 'object', 'sampling_rate': 'object'}).compute()
+        dicts = dd.read_csv(os.path.join(self.dataset_path, 'metadata', '*_dict*.csv'),
+                            include_path_column=True,
+                            dtype='object'  # Setting the default dtype for all columns as 'object
+                            ).compute()
+        
         if self.cohort is None:
-            dataset_ind = -2
-        else:
             dataset_ind = -3
+        else:
+            dataset_ind = -4
         dicts['dataset'] = dicts['path'].str.split('/').str[dataset_ind]
         dicts = dicts.drop(columns=['path'])
         self.fields = dicts['tabular_field_name'].unique()

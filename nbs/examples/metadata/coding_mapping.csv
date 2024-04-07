@@ -1,0 +1,1341 @@
+,code_number,coding,english,hebrew
+0,062_02,1.0,BRCA-1,BRCA-1
+1,062_02,2.0,BRCA-2,BRCA-2
+2,062_02,-1.0,Do not know,לא יודע/ת
+0,062_03,1.0,"Familiarity/Tea Cancer, ovarian, or Prostate (Prostate)","קרוב/ת משפחה חלה/תה בסרטן השד, השחלה, או הערמונית (פרוסטטה)"
+1,062_03,2.0,Close to a family diagnosed as a BRCA carrier,קרוב/ת משפחה אובחנ/ה כנשא/ית BRCA
+2,062_03,3.0,I got sick with breast cancer,חליתי בסרטן השד
+3,062_03,4.0,I have had ovarian cancer (relevant to women),חליתי בסרטן השחלה (רלוונטי לנשים)
+4,062_03,5.0,I got into prostate cancer (prostate) (relevant to men),חליתי בסרטן הערמונית (פרוסטטה) (רלוונטי לגברים)
+5,062_03,6.0,As part of a survey test,במסגרת בדיקת סקר
+6,062_03,7.0,I asked to be tested for no special reason,ביקשתי להיבדק ללא סיבה מיוחדת
+7,062_03,8.0,"Other, detail:","אחר, פרט/י:"
+0,062_05,1.0,Breast augmentation,כריתת שדיים
+1,062_05,2.0,Handsmark (Relevant to Women),כריתת שחלות (רלוונטי לנשים)
+2,062_05,3.0,Hormone Treatment - Taking Combined Pills (Relevant to Women),טיפול הורמונאלי - נטילת גלולות משולבות (רלוונטי לנשים)
+3,062_05,4.0,"Frequent tracking tests (mammography, breast ultrasound, breast surgeon, MRI)","בדיקות מעקב תכופות (ממוגרפיה, אולטרסאונד שד, כירורג שד, MRI)"
+4,062_05,5.0,Maintaining a special diet,שמירה על תזונה מיוחדת
+5,062_05,6.0,Exercise,פעילות גופנית
+6,062_05,7.0,Other,"אחר, פרט/י:"
+0,062_06,1.0,Less than a year,פחות משנה
+1,062_06,2.0,Over a year,למעלה משנה
+0,062_09,1.0,my partner,בן זוגי
+1,062_09,2.0,my spouse,בת זוגי
+2,062_09,3.0,grandmother,סבתא
+3,062_09,4.0,grandfather,סבא
+4,062_09,5.0,mother,אמא
+5,062_09,6.0,father,אבא
+6,062_09,7.0,aunt,דודה
+7,062_09,8.0,Uncle,דוד
+8,062_09,9.0,brother,אח
+9,062_09,10.0,Nurse,אחות
+10,062_09,11.0,son,בן
+11,062_09,12.0,a girl,בת
+12,062_09,13.0,grandson,נכד
+13,062_09,14.0,granddaughter,נכדה
+14,062_09,15.0,Other,"אחר, פרט/י:"
+0,062_10,1.0,Does not participate in such activity,לא משתתפ/ת בפעילות כזאת
+1,062_10,2.0,Group of companies/friends,קבוצת חברות/חברים
+2,062_10,3.0,Facebook Group,קבוצת פייסבוק
+3,062_10,4.0,Whatsapp Group,קבוצת וואטסאפ
+4,062_10,5.0,Physical support group hosted by a professional,קבוצת תמיכה פיזית בהנחיית איש מקצוע
+5,062_10,6.0,"A group that deals with joint activity, such as sports","קבוצה שעוסקת בפעילות משותפת, כגון ספורט"
+6,062_10,7.0,Other,"אחר, פרט/י:"
+0,062_11,1.0,Very influenced - for the better,השפיע מאוד - לטובה
+1,062_11,2.0,Affected slightly - for the better,השפיע מעט - לטובה
+2,062_11,3.0,Did not affect at all,לא השפיע בכלל
+3,062_11,4.0,Affected slightly - for the worse,השפיע מעט - לרעה
+4,062_11,5.0,Very influential - for the worse,השפיע מאוד - לרעה
+5,062_11,6.0,Do not know,לא יודע/ת
+6,062_11,7.0,Irrelevant,לא רלוונטי
+0,062_12,1.0,Yes,כן
+1,062_12,0.0,No,לא
+2,062_12,-1.0,Do not know,לא יודע/ת
+3,062_12,-2.0,Irrelevant,לא רלוונטי
+0,062_13,1.0,I preceded the age of entry to my/my wife's,הקדמתי את גיל הכניסה להריון שלי/של אשתי
+1,062_13,2.0,I was crowded with pregnancies,צופפתי את ההריונות
+2,062_13,3.0,I decided to give birth/to give birth to fewer children than planned,החלטתי ללדת/להוליד פחות ילדים מהמתוכנן
+3,062_13,4.0,I have made PGD - choosing non -carriers,ביצעתי PGD - בחירת עוברים שאינם נשאים
+4,062_13,5.0,I have shortened the breastfeeding period or I have not shredded (relevant to women),קיצרתי את תקופת ההנקה או לא הינקתי (רלוונטי לנשים)
+5,062_13,6.0,I have extended the breastfeeding period (relevant to women),הארכתי את תקופת ההנקה (רלוונטי לנשים)
+6,062_13,7.0,"Other, detail:","אחר, פרט/י:"
+7,062_13,-1.0,Don't know/prefer not to reply,לא יודע/ת / מעדיפ/ה לא להשיב
+0,007_02,1.0,Given,נָתוּן
+1,007_02,2.0,Not given,לא ניתן
+0,015_01,1.0,normal variant of ECG,גרסה רגילה של א.ק.ג
+1,015_01,2.0,ECG without significant abnormalities,א.ק.ג ללא חריגות משמעותיות
+2,015_01,3.0,normal ECG,א.ק.ג רגיל
+3,015_01,4.0,abnormal ECG,א.ק.ג לא תקין
+4,015_01,5.0,possibly abnormal ECG,"אולי אק""ג לא תקין"
+0,017_01,1.0,abbott_freestyle_libre_pro,nan
+1,017_01,2.0,abbott_freestyle_libre_pro_iq,nan
+0,P100388,1.0,Butter/spreadable butter,חמאה/ממרח חמאה
+1,P100388,3.0,Other type of spread/margarine,סוג אחר של ממרח/מרגרינה
+2,P100388,0.0,Never/rarely use spread,אף פעם/ לעיתים נדירות צורכ/ת ממרח
+3,P100388,-1.0,Do not know,לא יודע/ת
+4,P100388,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,7,1.0,Yes,כן
+1,7,0.0,No,לא
+0,040_01,1.0,Keep kosher several hours between meat and dairy,שומר על הפרדה של מספר שעות
+1,040_01,2.0,Keep kosher not mixing meat and dairy,לא מערבב בשר וחלב
+2,040_01,3.0,Do not keep kosher,לא שומר
+3,040_01,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,040_02,1.0,Rarely,לעיתים רחוקות
+1,040_02,2.0,Often,לעיתים קרובות
+2,040_02,-1.0,Do not know,לא יודע/ת
+0,040_03,1.0,Olive oil,שמן זית
+1,040_03,2.0,Canola oil,שמן קנולה
+2,040_03,3.0,Sunflower oil,שמן חמניות
+3,040_03,4.0,Soy Oil,שמן סויה
+4,040_03,5.0,Coconut oil,שמן קוקוס
+5,040_03,6.0,Butter,חמאה
+6,040_03,7.0,Margarine,מרגרינה
+7,040_03,8.0,Vegetable oil - unknown type,שמן צמחי - לא ידוע סוג
+0,040_04,1.0,Cold pressed olive oil,שמן זית בכבישה קרה
+1,040_04,2.0,Other cold pressed oil,שמן אחר בכבישה קרה
+2,040_04,3.0,Refined oil,שמן מזוכך
+3,040_04,4.0,Oil - unknown type of pickling.,שמן – לא ידוע סוג כבישה.
+4,040_04,5.0,Butter,חמאה
+5,040_04,6.0,Margarine,מרגרינה
+0,040_05,1.0,Beef,בקר
+1,040_05,2.0,Goats,עיזים
+2,040_05,3.0,Sheep,כבשים
+3,040_05,4.0,Other,אחר
+4,040_05,0.0,I do not eat cheese,לא אוכל/ת גבינות
+0,040_06,1.0,3% fat or less cheese,"אם ניתן, קונה גבינה עם 3% שומן ופחות"
+1,040_06,2.0,9% fat or less cheese,מקפיד/ה לקנות גבינות רזות עם 9% שומן או פחות
+2,040_06,3.0,Fat cheese,אוכל/ת בעיקר גבינות שמנות
+3,040_06,4.0,Any cheese,לא מקפיד/ה על אחוז השומן בגבינה
+0,040_07,1.0,Once or twice a week,בין פעם לפעמיים בשבוע
+1,040_07,2.0,Once or twice a months,בין פעם לפעמיים בחודש
+2,040_07,3.0,Once every few months,אחת לכמה חודשים
+3,040_07,0.0,No,לא
+0,040_08,1.0,With added sugar,עם תוספת סוכר
+1,040_08,2.0,Without added sugar,ללא תוספת סוכר
+2,040_08,3.0,With artificial sweetener,עם ממתיק מלאכותי
+3,040_08,0.0,Do not eat,לא אוכל/ת
+0,040_09,1.0,Dog,כלב
+1,040_09,2.0,Cat,חתול
+2,040_09,3.0,Fish,דגים
+3,040_09,4.0,Parrot,תוכי
+4,040_09,5.0,Birds (not parrot),ציפורים (לא תוכי)
+5,040_09,6.0,Other,אחר
+0,040_10,1.0,Village,כפר
+1,040_10,2.0,Settelment,מושב
+2,040_10,3.0,Kibutz,קיבוץ
+3,040_10,4.0,City,עיר
+4,040_10,5.0,Other,אחר
+0,040_11,1.0,Yes,כן
+1,040_11,2.0,No,לא
+2,040_11,3.0,Partial service,חלקי
+3,040_11,4.0,Alternative service,שירות לאומי
+0,040_12,1.0,Combat soldier,לוחם
+1,040_12,2.0,Combat support soldier,תומך לחימה
+2,040_12,3.0,Office position,תפקיד משרדי
+0,040_13,0.0,No,לא
+1,040_13,1.0,Yes,כן
+2,040_13,2.0,Alternately,לסירוגין
+0,040_14,1.0,Fullness and congestion in the breasts,מלאוּת וגודש בשדיים
+1,040_14,2.0,Fatigue and sleep disorders,עייפות והפרעות בשינה
+2,040_14,3.0,"Abdominal pain and discomfort in the stomach, constipation or diarrhea","כאבי בטן והרגשת אי־נוחות בבטן, עצירות או שלשולים"
+3,040_14,4.0,Nausea,בחילות
+4,040_14,5.0,Headaches,כאבי ראש
+5,040_14,6.0,Changes in appetite,שינויים בתיאבון
+6,040_14,7.0,Heavy and full,הרגשת כבדוּת ומלאוּת
+7,040_14,8.0,Edemas,בצקות
+8,040_14,9.0,Muscle pain or joint pain,כאבי שרירים או כאבי מפרקים
+9,040_14,10.0,"Mental stress, irritability, extreme mood swings, concentration and memory difficulties","מתח נפשי, עצבנות, שינויים קיצוניים במצב הרוח, קשיי ריכוז וזיכרון"
+10,040_14,11.0,Changes in hair or skin,שינויים בשיער או בעור
+0,040_15,1.0,Counting safe days,ספירת ימים בטוחים
+1,040_15,2.0,Condoms,קונדומים
+2,040_15,3.0,diaphragm,דיאפרגמה
+3,040_15,4.0,birth control pills,גלולות למניעת הריון
+4,040_15,5.0,A patch that secretes hormones,מדבקה מפרישת הורמונים
+5,040_15,6.0,intrauterine device,התקן תוך רחמי
+6,040_15,7.0,Vaginal ring (Nuvaring),טבעת נרתיקית (Nuvaring)
+7,040_15,8.0,Progesterone injection,זריקת פרוגסטרון
+0,040_16,1.0,heat waves,גלי חום
+1,040_16,2.0,Vaginal dryness,יובש בנרתיק
+2,040_16,3.0,Decreased libido,ירידה בחשק המיני
+3,040_16,4.0,Mood changes,שינוים במצב רוח
+4,040_16,5.0,Dryness and changes in the skin,יובש ושינויים בעור
+5,040_16,6.0,Other (Please specify),אחר (אנא פרט/י)
+0,100301,1.0,Never/rarely,אף פעם או באופן נדיר
+1,100301,2.0,Sometimes,לפעמים
+2,100301,3.0,Usually,בדרך כלל
+3,100301,4.0,Always,תמיד
+4,100301,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100401,1.0,Never/rarely,אף פעם/לעיתים רחוקות
+1,100401,2.0,Sometimes,לפעמים
+2,100401,3.0,Often,לעיתים קרובות
+3,100401,4.0,Always,תמיד
+4,100401,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+5,100401,-1.0,Do not know,לא יודע/ת
+0,100391,1.0,White,לבן
+1,100391,2.0,Brown,כהה
+2,100391,3.0,Wholemeal or wholegrain,מחיטה מלאה
+3,100391,4.0,Other type of bread,סוג אחר של לחם
+4,100391,-1.0,Do not know,לא יודע/ת
+5,100391,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100397,1.0,Decaffeinated coffee,קפה נטול קפאין
+1,100397,2.0,Instant coffee,קפה נמס
+2,100397,3.0,"Ground coffee (include espresso, filter etc)","קפה טחון כגון אספרסו, פילטר וכדומה"
+3,100397,4.0,Other type of coffee,סוג אחר של קפה
+4,100397,-1.0,Do not know,לא יודע/ת
+5,100397,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100400,0.0,No,לא
+1,100400,1.0,"Yes, because of illness","כן, בגלל מחלה"
+2,100400,2.0,"Yes, because of other reasons","כן, בגלל סיבות אחרות"
+3,100400,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100398,1.0,Very hot,חם מאוד
+1,100398,2.0,Hot,חם
+2,100398,3.0,Warm,חמים
+3,100398,-2.0,Do not drink hot drinks,לא שותה משקאות חמים
+4,100398,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100394,1.0,Never/rarely,אף פעם/לעיתים רחוקות
+1,100394,2.0,Sometimes,לפעמים
+2,100394,3.0,Usually,בדרך כלל
+3,100394,4.0,Always,תמיד
+4,100394,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+5,100394,,nan,nan
+0,P100393,1.0,Cornflakes or branflakes,קורנפלקס או ברנפלקס
+1,P100393,2.0,Cornflakes with sugar,"קורנפלס עם סוכר (עוגי, כריות וכדומה)"
+2,P100393,3.0,Oatmeal,דייסת קוואקר
+3,P100393,4.0,Granola,גרנולה
+4,P100393,-1.0,Do not know,לא יודע/ת
+5,P100393,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100673,1.0,Soft margarine,מרגרינה רכה
+1,P100673,2.0,Hard margarine,מרגרינה קשה
+2,P100673,3.0,Olive oil based spread,ממרח מבוסס שמן זית
+3,P100673,6.0,Sunflower oil based spread,ממרח מבוסס שמן חמניות
+4,P100673,5.0,Other type of spread/margarine,סוג אחר של ממרח/מרגרינה
+5,P100673,4.0,Other type of reduced fat spread,ממרח אחר מופחת שומן
+6,P100673,-1.0,Do not know,לא יודע/ת
+7,P100673,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100387,1.0,1%,1%
+1,100387,2.0,2%,2%
+2,100387,3.0,3%,3%
+3,100387,4.0,Soya,סויה
+4,100387,5.0,Other type of milk,סוג אחר של חלב
+5,100387,6.0,Never/rarely have milk,אף פעם/לעיתים נדירות צורכ/ת חלב
+6,100387,-1.0,Do not know,לא יודע/ת
+7,100387,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100291,-1.0,Do not know,לא יודע/ת
+1,100291,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+2,100291,,Enter age,הכנס/י גיל
+0,100385,1.0,Eggs or foods containing eggs,ביצים או מאכלים שמכילים ביצים
+1,100385,2.0,Dairy products,מוצרי חלב
+2,100385,3.0,Wheat products,מוצרי חיטה
+3,100385,4.0,Sugar or foods/drinks containing sugar,סוכר או מאכלים/משקאות שמכילים סוכר
+4,100385,5.0,I eat all of the above,אני אוכל/ת כל מה שלמעלה
+5,100385,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100200,1.0,Mother,אם
+1,P100200,2.0,Father,אב
+2,P100200,3.0,Sister,אחות
+3,P100200,4.0,Brother,אח
+4,P100200,5.0,Daughter,בת
+5,P100200,6.0,Son,בן
+0,100370,1.0,"Yes, one household member smokes","כן, בן בית אחד מעשן"
+1,100370,2.0,"Yes, more than one household member smokes","כן, יותר מבן בית אחד מעשן"
+2,100370,0.0,No,לא
+3,100370,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100369,1.0,"Yes, definitely","כן, בהחלט"
+1,100369,2.0,"Yes, probably","כן, כנראה"
+2,100369,3.0,"No, probably not","לא, כנראה שלא"
+3,100369,4.0,"No, definitely not","לא, בהחלט לא"
+4,100369,-1.0,Do not know,לא יודע/ת
+5,100369,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100291_1,1.0,Insert number,הכנס/י מספר
+1,P100291_1,-1.0,Do not know,לא יודע/ת
+2,P100291_1,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100373,,Insert number,הכנס/י מספר
+1,100373,-1.0,Do not know,לא יודע/ת
+2,100373,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+3,100373,-10.0,Less than one,פחות מ1
+0,100377,0.0,Never,אף פעם
+1,100377,1.0,Less than once a week,פחות מפעם בשבוע
+2,100377,2.0,Once a week,פעם בשבוע
+3,100377,3.0,2-4 times a week,2-4 פעמים בשבוע
+4,100377,4.0,5-6 times a week,5-6 פעמים בשבוע
+5,100377,5.0,Once or more daily,פעם אחת או יותר ביום
+6,100377,-1.0,Do not know,לא יודע/ת
+7,100377,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100361,1.0,Illness or ill health,מחלה או בריאות לקויה
+1,100361,2.0,Doctor's advice,המלצת רופא
+2,100361,3.0,Health precaution,כאמצעי זהירות רפואי
+3,100361,4.0,Financial reasons,סיבות כלכליות
+4,100361,-7.0,None of the above,אף אחד מהרשומים
+5,100361,-1.0,Do not know,לא יודע/ת
+6,100361,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100360,1.0,More nowadays?,יותר היום
+1,100360,2.0,About the same?,בערך אותו הדבר
+2,100360,2.0,About the same?,בערך אותו דבר
+3,100360,3.0,Less nowadays?,פחות היום
+4,100360,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100359,1.0,"Yes, definitely","כן, בהחלט"
+1,100359,2.0,"Yes, probably","כן, כנראה"
+2,100359,3.0,"No, probably not","לא, כנראה שלא"
+3,100359,4.0,"No, definitely not","לא, בהחלט לא"
+4,100359,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100358,1.0,"Yes, tried but was not able to stop or stopped for less than 6 months","כן, ניסיתי, אבל לא הצלחתי להפסיק לעשן או הפסקתי לעשן אבל לפרק זמן של פחות מ 6 חודשים"
+1,P100358,2.0,"Yes, tried and stopped for at least 6 months","כן, ניסיתי , והצלחתי להפסיק לעשן לפרק זמן של יותר מ 6 חודשים"
+2,P100358,0.0,No,לא
+3,P100358,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100357,1.0,Very easy,מאוד קל
+1,100357,2.0,Fairly easy,קל יחסית
+2,100357,3.0,Fairly difficult,קשה יחסית
+3,100357,4.0,Very difficult,מאוד קשה
+4,100357,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100356,1.0,Less than 5 minutes,פחות מ 5 דקות
+1,100356,2.0,Between 5-15 minutes,בין 5-15 דקות
+2,100356,3.0,Between 30 minutes - 1 hour,בין 30-60 דקות
+3,100356,4.0,Between 1 and 2 hours,בין שעה לשעתיים
+4,100356,5.0,Longer than 2 hours,יותר משעתיים
+5,100356,-1.0,Do not know,לא יודע/ת
+6,100356,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100355,1.0,More than one a day,יותר מאחת ליום
+1,P100355,-10.0,Less than one a day,פחות מאחת ליום
+2,P100355,-1.0,Do not know,לא יודע/ת
+3,P100355,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100353,1.0,More than one a day,יותר מאחת ביום
+1,P100353,-10.0,Less than one a day,פחות מאחת ביום
+2,P100353,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100291,1.0,Insert age,הכנס גיל
+1,P100291,-1.0,Do not know,לא יודע/ת
+2,P100291,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100352,1.0,Yes,כן
+1,100352,0.0,No,לא
+2,100352,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100352,1.0,Yes,כן
+1,P100352,0.0,No,לא
+2,P100352,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100351,1.0,Manufactured cigarettes,סיגריות מוכנות
+1,100351,2.0,Hand-rolled cigarettes,סיגריות מגולגלות ידנית
+2,100351,3.0,Cigars or pipes,סיגרים ו/או מקטרות
+3,100351,4.0,Hookahs,נרגילות
+4,100351,5.0,Electronic cigarettes,סיגריות אלקטרוניות
+5,100351,6.0,Evaporators,מכשירי אידוי
+6,100351,7.0,Another device,מכשיר אחר
+7,100351,-7.0,None of the above,אף אחד מהרשומים
+8,100351,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100349,1.0,Yes,כן
+1,100349,0.0,No,לא
+2,100349,-1.0,Do not know,לא יודע/ת
+3,100349,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100348,1.0,Smoked on most or all days,עישנתי ברוב או בכל הימים
+1,100348,2.0,Smoked occasionally,עישנתי לפעמים
+2,100348,3.0,Just tried once or twice,ניסיתי פעם או פעמיים בלבד
+3,100348,4.0,I have never smoked,מעולם לא עישנתי
+4,100348,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100347,1.0,"Yes, on most or all days","כן, ברוב או בכל הימים"
+1,100347,2.0,Only occasionally,רק לפעמים
+2,100347,0.0,No,לא
+3,100347,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100346,0.0,Never/rarely,לא/לעיתים רחוקות
+1,P100346,1.0,Sometimes,מדי פעם
+2,P100346,2.0,Often,לעיתים קרובות
+3,P100346,-1.0,Do not know,לא יודע/ת
+4,P100346,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100345,1.0,Yes,כן
+1,100345,2.0,No,לא
+2,100345,-1.0,Do not know,לא יודע/ת
+3,100345,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100343,1.0,Never/rarely,לא/לעיתים רחוקות
+1,100343,2.0,Sometimes,מדי פעם
+2,100343,3.0,Usually,בדרך כלל כן
+3,100343,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100342,1.0,Definitely a 'morning' person,אני לחלוטין ׳איש/ה של בוקר׳
+1,100342,2.0,More a 'morning' than 'evening' person,אני יותר ׳איש/ה של בוקר׳ מאשר של ׳ערב׳
+2,100342,3.0,More an 'evening' than a 'morning' person,אני יותר ׳איש/ה של ערב׳ מאשר של ׳בוקר׳
+3,100342,4.0,Definitely an 'evening' person,אני לחלוטין ׳איש/ה של ערב׳
+4,100342,-1.0,Do not know,לא יודע/ת
+5,100342,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100341,1.0,Not at all easy,קשה מאוד לי להתעורר
+1,100341,2.0,Not very easy,לא מתעורר/ת בקלות
+2,100341,3.0,Fairly easy,מתעורר/ת די בקלות
+3,100341,4.0,Very easy,מתעורר/ת בקלות רבה
+4,100341,-1.0,Do not know,לא יודע/ת
+5,100341,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100339,1.0,Left,שמאל
+1,100339,2.0,Right,ימין
+2,100339,3.0,Equally left and right,שווה בשני הצדדים
+3,100339,-1.0,Do not know,לא יודע/ת
+4,100339,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100336,0.0,Less than 5mins,פחות מ- 5 דקות
+1,100336,1.0,5-29 mins,5-29 דקות
+2,100336,2.0,30-59 mins,30-59 דקות
+3,100336,3.0,1-3 hours,1-3 שעות
+4,100336,4.0,4-6 hours,4-6 שעות
+5,100336,5.0,More than 6 hours,יותר מ- 6 שעות
+6,100336,-1.0,Do not know,לא יודע/ת
+7,100336,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100335,0.0,Uses cell phone less often than once a week,משתמש בטלפון הנייד בתדירות קטנה מפעם בשבוע
+1,100335,1.0,One year or less,שנה או פחות
+2,100335,2.0,Two to four years,2-4 שנים
+3,100335,3.0,Five to eight years,5-8 שנים
+4,100335,4.0,More than eight years,מעל ל-8 שנים
+5,100335,-1.0,Do not know,לא יודע/ת
+6,100335,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100334,1.0,Never/rarely,אף פעם או לעיתים רחוקות
+1,100334,2.0,Sometimes,לפעמים
+2,100334,3.0,Often,בדרך כלל
+3,100334,4.0,Most of the time,רוב הזמן
+4,100334,5.0,Do not drive on the motorway,לא נוהג/ת בכביש המהיר
+5,100334,-1.0,Do not know,לא יודע/ת
+6,100334,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100328,1.0,Sports club or gym,מועדון ספורט או חדר כושר
+1,100328,2.0,Pub or social club,פאב או מועדון חברתי
+2,100328,3.0,Religious group,קבוצות דתיות
+3,100328,4.0,Adult education class,כיתות לימוד למבוגרים
+4,100328,5.0,Other group activity,פעילות קבוצתית נוספת
+5,100328,-7.0,None of the above,"אף אחד מהנ""ל"
+6,100328,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100327,1.0,Almost daily,באופן יומיומי
+1,100327,2.0,2-4 times a week,2-4 פעמים בשבוע
+2,100327,3.0,About once a week,פעם בשבוע
+3,100327,4.0,About once a month,פעם בחודש
+4,100327,5.0,Once every few months,פעם בכמה חודשים
+5,100327,6.0,Never or almost never,כמעט אף פעם או אף פעם
+6,100327,7.0,No friends/family outside household,אין משפחה או חברים מחוץ למשק הבית
+7,100327,-1.0,Do not know,לא יודע/ת
+8,100327,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100318,1.0,Less than 15 minutes,פחות מרבע שעה
+1,100318,2.0,Between 15 and 30 minutes,בין רבע שעה לחצי שעה
+2,100318,3.0,Between 30 minutes and 1 hour,בין חצי שעה לשעה
+3,100318,4.0,Between 1 and 1.5 hours,בין שעה לשעה וחצי
+4,100318,5.0,Between 1.5 and 2 hours,בין שעה וחצי לשעתיים
+5,100318,6.0,Between 2 and 3 hours,בין 2 ל- 3 שעות
+6,100318,7.0,Over 3 hours,מעל 3 שעות
+7,100318,-1.0,Do not know,לא יודע/ת
+8,100318,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100317,1.0,Once in the last 4 weeks,פעם אחת בחודש האחרון
+1,100317,2.0,2-3 times in the last 4 weeks,2-3 פעמים בחודש האחרון
+2,100317,3.0,Once a week,אחת לשבוע
+3,100317,4.0,2-3 times a week,2-3 פעמים בשבוע
+4,100317,5.0,4-5 times a week,4-5 פעמים בשבוע
+5,100317,6.0,Every day,כל יום
+6,100317,-1.0,Do not know,לא יודע/ת
+7,100317,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100317,1.0,Once in the last 4 weeks,פעם אחת בחודש האחרון
+1,P100317,2.0,2-3 times in the last 4 weeks,שתיים-שלוש פעמים בחודש האחרון
+2,P100317,3.0,Once a week,אחת לשבוע
+3,P100317,4.0,2-3 times a week,פעמיים-שלוש בשבוע
+4,P100317,5.0,4-5 times a week,ארבע-חמש פעמים בשבוע
+5,P100317,6.0,Every day,כל יום
+6,P100317,-1.0,Do not know,לא יודע/ת
+7,P100317,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100316,1.0,Walking for pleasure (not as a means of transport),(הליכה לשם הנאה (לא על מנת להתנייד ממקום למקום
+1,100316,2.0,"Other exercises (eg: swimming, cycling, keep fit, bowling)",פעילות גופניות אחרת
+2,100316,3.0,Strenuous sports,פעילות גופנית מאומצת
+3,100316,4.0,"Light DIY (eg: pruning, watering the lawn)","(פעילות שוטפת הדורשת מאמץ גופני קל (כגון השקיה, גיזום"
+4,100316,5.0,"Heavy DIY (eg: weeding, lawn mowing, carpentry, digging)","(פעילות שוטפת הדורשת מאמץ גופני גבוה (כגון חפירה, נגרות, ניכוש עשבים"
+5,100316,-7.0,None of the above,"אף אחד מהנ""ל"
+6,100316,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100299,1.0,Car/motor vehicle,מכונית או אופנוע
+1,100299,2.0,Walk,הליכה
+2,100299,3.0,Public transport,תחבורה ציבורית
+3,100299,4.0,Cycle,אופניים
+4,100299,-7.0,None of the above,"אף אחת מהנ""ל"
+5,100299,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100314,0.0,nan,אפס
+1,100314,1.0,1-5 times a day,1-5
+2,100314,2.0,6-10 times a day,6-10
+3,100314,3.0,11-15 times a day,11-15
+4,100314,4.0,16-20 times a day,16-20
+5,100314,5.0,More than 20 times a day,יותר מ-20 פעמים
+6,100314,-1.0,Do not know,לא יודע/ת
+7,100314,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100313,1.0,Slow pace,איטי
+1,P100313,4.0,Moderate pace,מתון
+2,P100313,2.0,Steady average pace,ממוצע
+3,P100313,3.0,Brisk pace,מהיר
+4,P100313,-7.0,None of the above,"אף אחד מהנ""ל"
+5,P100313,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100305,0.0,10 years of schooling,10 שנות לימוד
+1,P100305,1.0,12 school years,12 שנות לימוד
+2,P100305,2.0,Professional high-school,תיכון מקצועי
+3,P100305,3.0,Practical engineer,הנדסאי
+4,P100305,4.0,Electrician,חשמלאי
+5,P100305,5.0,Bachelor's degree,תואר ראשון
+6,P100305,6.0,Master's degree,תואר שני
+7,P100305,7.0,Doctorate,דוקטורט
+0,P100299,1.0,Car/motor vehicle,מכונית / אופנוע
+1,P100299,4.0,Cycle,אופניים
+2,P100299,5.0,Electric Bike,אופניים חשמליים
+3,P100299,6.0,Electric Scooter,קורקינט חשמלי
+4,P100299,7.0,Train,רכבת
+5,P100299,8.0,Bus,אוטובוס
+6,P100299,9.0,Taxi,מונית
+7,P100299,2.0,Walk,הליכה רגלית
+8,P100299,-7.0,None of the above,"אף אחד מהנ""ל"
+9,P100299,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100295,1.0,In paid employment or self-employed,מועסק בשכר או עצמאי
+1,P100295,2.0,Retired,פרישה
+2,P100295,4.0,Unable to work because of sickness or disability,לא מסוגל לעבוד בגלל מחלה או נכות
+3,P100295,9.0,Unpaid leave,חל״ת
+4,P100295,5.0,Unemployed,מובטל
+5,P100295,6.0,Doing unpaid or voluntary work,עובד ללא תשלום מרצון
+6,P100295,7.0,Full or part-time student,סטודנט
+7,P100295,8.0,Studying in a yeshiva,לומד בישיבה
+8,P100295,-7.0,None of the above,אף אחת מהאפשרויות
+9,P100295,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100294,1.0,"Less than NIS 6,000",פחות מ- 6000 שקלים
+1,P100294,2.0,"6000 - 11,000","6000 - 11,000"
+2,P100294,3.0,"11,000 - 15,000","11,000 - 15,000"
+3,P100294,4.0,"15,000 - 21,000","15,000 - 21,000"
+4,P100294,5.0,"21,000 - 36,000","21,000 - 36,000"
+5,P100294,6.0,"Over 36,000","מעל 36,000"
+6,P100294,-1.0,Do not know,לא יודע/ת
+7,P100294,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100293,1.0,nan,0
+1,100293,2.0,One,1
+2,100293,3.0,Two,2
+3,100293,4.0,Three,3
+4,100293,5.0,Four or more,ארבע או יותר
+5,100293,-1.0,Do not know,לא יודע/ת
+6,100293,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100292,1.0,"Husband, wife or partner","בעל, אישה או בן/בת זוג"
+1,P100292,9.0,Roommate,שותף
+2,P100292,2.0,Son and/or daughter (include step-children),"בן, בת או שניהם"
+3,P100292,3.0,Brother and/or sister,"אח, אחות או שניהם"
+4,P100292,4.0,Mother and/or father,הורים
+5,P100292,5.0,Grandparent,סבים/ סבתות
+6,P100292,6.0,Grandchild,נכדים/ נכדות
+7,P100292,7.0,Other related,קשר אחר
+8,P100292,8.0,Other unrelated,אחר שאינו קשור
+9,P100292,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100288,1.0,A gas hob or gas cooker,תנור גז או כיריים גז
+1,P100288,2.0,A gas fire that you use regularly in winter time,גז לחימום לשימוש בתקופת החורף
+2,P100288,3.0,Air-Conditioner,מזגן
+3,P100288,4.0,Fan,מאוורר
+4,P100288,5.0,Ceiling Fan,מאוורר תקרה
+5,P100288,-3.0,Do not know,לא יודע/ת
+6,P100288,-7.0,None of the above,אף אחת מהאפשרויות
+7,P100288,-1.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100286,1.0,A house or bungalow,בית קרקע
+1,100286,2.0,"A flat, maisonette or apartment",דירה
+2,100286,3.0,Mobile or temporary structure (i.e. caravan),מבנה זמני או נייד (קראוון)
+3,100286,4.0,Sheltered accommodation,דיור מוגן
+4,100286,5.0,Care home,בית אבות
+5,100286,-7.0,None of the above,אף אחת מהאפשרויות
+6,100286,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100402,1.0,Daily or almost daily,יומי או כמעט יומי
+1,100402,2.0,Three or four times a week,3-4 פעמים בשבוע
+2,100402,3.0,Once or twice a week,1-2 פעמים בשבוע
+3,100402,4.0,One to three times a month,1-3 פעמים בחודש
+4,100402,5.0,Special occasions only,במקרים מיוחדים בלבד
+5,100402,6.0,Never,אף פעם
+6,100402,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100418,1.0,Illness or ill health,מחלה או בריאות לקויה
+1,100418,2.0,Doctor's advice,בעצת הרופא
+2,100418,3.0,Health precaution,זהירות רפואית
+3,100418,4.0,Financial reasons,סיבות כלכליות
+4,100418,5.0,Other reason,סיבות אחרות
+5,100418,-1.0,Do not know,לא יודע/ת
+6,100418,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100416,1.0,Yes,כן
+1,100416,0.0,No,לא
+2,100416,-6.0,It varies,משתנה
+3,100416,-1.0,Do not know,לא יודע/ת
+4,100416,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100417,1.0,More nowadays,היום יותר
+1,100417,2.0,About the same,בערך אותו דבר
+2,100417,3.0,Less nowadays,היום פחות
+3,100417,-1.0,Do not know,מעדיפ/ה לא לענות
+4,100417,-3.0,Prefer not to answer,לא יודע/ת
+0,100428,1.0,Thinner,רזה יותר
+1,100428,2.0,Plumper,שמן/ה יותר
+2,100428,3.0,About average,ממוצע
+3,100428,-1.0,Do not know,לא יודע/ת
+4,100428,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100429,1.0,Shorter,נמוך/ה
+1,100429,2.0,Taller,גבוה/ה
+2,100429,3.0,About average,בממוצע
+3,100429,-1.0,Do not know,לא יודע/ת
+4,100429,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100430,1.0,Right-handed,ימין
+1,100430,2.0,Left-handed,שמאל
+2,100430,3.0,Use both right and left hands equally,משתמש/ת בשתי ידיי
+3,100430,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100431,1.0,Very fair,לבן מאוד/שקוף מעט
+1,100431,2.0,Fair,לבן
+2,100431,3.0,Light olive,חום בהיר
+3,100431,4.0,Dark olive,חום
+4,100431,5.0,Brown,חום כהה
+5,100431,6.0,Black,שחור
+6,100431,-1.0,Do not know,לא יודע/ת
+7,100431,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100432,1.0,Get very tanned,משתזף מאוד
+1,100432,2.0,Get moderately tanned,משתזף
+2,100432,3.0,Get mildly or occasionally tanned,משתזף קלות
+3,100432,4.0,"Never tan, only burn","לעולם לא משתזף, אלא נכווה."
+4,100432,-1.0,Do not know,לא יודע/ת
+5,100432,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100434,1.0,Blonde,צהוב בהיר (בלונד סקנדינבי)
+1,100434,2.0,Red,אדום (ג'ינגי)
+2,100434,3.0,Yellow-Brown,צהוב- חום
+3,100434,4.0,Dark brown,חום כהה
+4,100434,5.0,Black,שחור
+5,100434,6.0,Other,אחר
+6,100434,7.0,Light brown,חום בהיר
+7,100434,-1.0,Do not know,לא יודע/ת
+8,100434,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100435,1.0,Younger than you are,צעיר מגילך
+1,100435,2.0,Older than you are,מבוגר מגילך
+2,100435,3.0,About your age,נראה בגילך
+3,100435,-1.0,Do not know,לא יודע/ת
+4,100435,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,1010,14.0,Hip fracture,שבר בירך
+1,1010,13.0,Prostate cancer,סרטן הערמונית
+2,1010,12.0,Severe depression,דיכאון חריף
+3,1010,11.0,Parkinson's disease,מחלת פרקינסון
+4,1010,10.0,Alzheimer's disease/dementia,מחלת אלצהיימר/ דמנציה (שיטיון)
+5,1010,9.0,Diabetes,סכרת
+6,1010,8.0,High blood pressure,לחץ דם
+7,1010,6.0,Chronic bronchitis/emphysema,"דלקת הסימפונות, ברונכיט/ נפחת (Bronchitis/ Emphysema)"
+8,1010,5.0,Breast cancer,סרטן השד
+9,1010,4.0,Bowel cancer,סרטן המעי
+10,1010,3.0,Lung cancer,סרטן ריאות
+11,1010,2.0,Stroke,שבץ
+12,1010,1.0,Heart disease,מחלת לב
+13,1010,-11.0,Do not know (group 1),לא יודע/ת
+14,1010,-13.0,Prefer not to answer (group 1),מעדיפ/ה לא לענות
+15,1010,-17.0,None of the above (group 1),"אף אחד מהנ""ל"
+16,1010,-21.0,Do not know (group 2),לא יודע/ת
+17,1010,-23.0,Prefer not to answer (group 2),מעדיפ/ה לא לענות
+18,1010,-27.0,None of the above (group 2),"אף אחד מהנ""ל"
+0,100478,1.0,Extremely happy,מאושר/ת במיוחד
+1,100478,1.0,Extremely happy,מרוצה מאוד באופן קיצוני
+2,100478,2.0,Very happy,מרוצה מאוד
+3,100478,3.0,Moderately happy,מרוצה במידה בינונית
+4,100478,4.0,Moderately unhappy,לא מרוצה במידה בינונית
+5,100478,5.0,Very unhappy,מאוד לא מרוצה
+6,100478,6.0,Extremely unhappy,לא מרוצה באופן קיצוני
+7,100478,-1.0,Do not know,לא יודע/ת
+8,100478,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,P100478,1.0,Extremely happy,מאושר/ת במיוחד
+1,P100478,1.0,Extremely happy,מאושר/ת מאוד באופן קיצוני
+2,P100478,2.0,Very happy,מאושר/ת מאוד
+3,P100478,3.0,Moderately happy,מאושר/ת במידה בינונית
+4,P100478,4.0,Moderately unhappy,לא מאושר/ת במידה בינונית
+5,P100478,5.0,Very unhappy,מאוד לא מאושר/ת
+6,P100478,6.0,Extremely unhappy,לא מאושר/ת באופן קיצוני
+7,P100478,-1.0,Do not know,לא יודע/ת
+8,P100478,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100479,1.0,Extremely happy,מאושר/ת במיוחד
+1,100479,1.0,Extremely happy,מרוצה מאוד באופן קיצוני
+2,100479,2.0,Very happy,מרוצה מאוד
+3,100479,3.0,Moderately happy,מרוצה במידה בינונית
+4,100479,4.0,Moderately unhappy,לא מרוצה במידה בינונית
+5,100479,5.0,Very unhappy,מאוד לא מרוצה
+6,100479,6.0,Extremely unhappy,לא מרוצה באופן קיצוני
+7,100479,7.0,I am not employed,אינני מועסק בעבודה
+8,100479,-1.0,Do not know,לא יודע/ת
+9,100479,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100484,1.0,Not at all,כלל לא
+1,100484,2.0,Several days,ימים בודדים
+2,100484,3.0,More than half the days,יותר ממחצית מהימים
+3,100484,4.0,Nearly every day,כמעט בכל יום
+4,100484,-1.0,Do not know,לא יודע/ת
+5,100484,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100498,11.0,I was more active than usual,הייתי פעיל/ה יותר מהרגיל
+1,100498,12.0,I was more talkative than usual,הייתי יותר דברן/ית מהרגיל
+2,100498,13.0,I needed less sleep than usual,הייתי זקוק/ה לפחות שינה מהרגיל
+3,100498,14.0,I was more creative or had more ideas than usual,הייתי יצירתי/ת יותר והיו לי רעיונות רבים יותר מהרגיל
+4,100498,15.0,All of the above,כל האפשרויות מתאימות
+5,100498,-7.0,None of the above,אף אחת מהאפשרויות לא מתאימה
+0,100499,11.0,"At least two days, but less than a week",לפחות יומיים אך פחות משבוע
+1,100499,12.0,Less than a week,פחות משבוע
+2,100499,13.0,A week or more,שבוע או יותר
+3,100499,-1.0,Do not know,לא יודע/ת
+4,100499,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100500,11.0,No problems,כלל לא
+1,100500,12.0,"Needed treatment or caused problems with work, relationships, finances, the law or other aspects of life","נזקקתי לטיפול או שנגרמו לי בעיות בעבודה, ביחסים האישיים, נזק כלכלי, בעיות עם החוק או כל נזק בתחום אחר של החיים"
+2,100500,-1.0,Do not know,לא יודע/ת
+3,100500,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100501,5.0,Almost daily,כמעט על בסיס יומי
+1,100501,4.0,2-4 times a week,2-4 פעמים בשבוע
+2,100501,3.0,About once a week,בערך פעם בשבוע
+3,100501,2.0,About once a month,בערך פעם בחודש
+4,100501,1.0,Once every few months,אחת לכמה חודשים
+5,100501,0.0,Never or almost never,לעולם לא או כמעט
+6,100501,-1.0,Do not know,לא יודע/ת
+7,100501,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100502,1.0,"Serious illness, injury or assault to yourself",מחלה קשה או פציעה קשה
+1,100502,2.0,"Serious illness, injury or assault of a close relative",מחלה קשה או פציעה של אדם קרוב
+2,100502,3.0,Death of a close relative,מוות של קרוב משפחה
+3,100502,4.0,Death of a spouse or partner,מוות של בן/ת זוג
+4,100502,5.0,Marital separation/divorce,גירושין
+5,100502,6.0,Financial difficulties,קשיים כלכליים
+6,100502,-7.0,None of the above,אף אחד מאלה
+7,100502,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100508,1.0,Excellent,מצויינת
+1,100508,2.0,Good,טובה
+2,100508,3.0,Fair,ממוצעת
+3,100508,4.0,Poor,גרועה
+4,100508,-1.0,Do not know,לא יודע/ת
+5,100508,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100514,1.0,"For short-sightedness, i.e. only or mainly for distance viewing such as driving, cinema etc (called 'myopia')",קוצר ראיה (לא רואה טוב במרחק)
+1,100514,2.0,"For long-sightedness, i.e. for distance and near, but particularly for near tasks like reading (called 'hypermetropia')",ראיה ארוכה (לא רואה טוב מקרוב)
+2,100514,3.0,For just reading/near work as you are getting older (called 'presbyopia'),משקפי קריאה
+3,100514,4.0,For 'astigmatism',"אסטיגמציה (""צילינדר"")"
+4,100514,5.0,For a 'squint' or 'turn' in an eye since childhood (called 'strabismus'),פזילה
+5,100514,6.0,For a 'lazy' eye or an eye with poor vision since childhood (called 'amblyopia'),עין עצלה
+6,100514,7.0,Other eye condition,בעיה אחרת
+7,100514,-1.0,Do not know,לא יודע/ת
+8,100514,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100515,1.0,Right eye,שמאל
+1,100515,2.0,Left eye,ימין
+2,100515,3.0,Both eyes,שתי העיניים
+0,100523,1.0,Diabetes related eye disease,בעיות ראיה הקשורות לסכרת
+1,100523,2.0,Glaucoma,גלאוקומה
+2,100523,3.0,Injury or trauma resulting in loss of vision,עוורון כתוצאה מחבלה או תאונה
+3,100523,4.0,Cataract,קטרקט
+4,100523,5.0,Macular degeneration,ניוון מקולרי
+5,100523,6.0,Other serious eye condition,בעית עיניים חמורה אחרת
+6,100523,-7.0,None of the above,אף תשובה לא נכונה
+7,100523,-3.0,Prefer not to answer,לא יודע/ת
+8,100523,-1.0,Do not know,מעדיפ/ה לא לענות
+0,100536,1.0,Never/rarely,אף פעם
+1,100536,2.0,Sometimes,לפעמים
+2,100536,3.0,Most of the time,בדרך כלל
+3,100536,4.0,Always,תמיד
+4,100536,5.0,Do not go out in sunshine,איני יוצא/ת לשמש
+5,100536,-1.0,Do not know,לא יודע/ת
+6,100536,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100538,1.0,Mouth ulcers,פצעים בפה
+1,100538,2.0,Painful gums,כאבי חניכיים
+2,100538,3.0,Bleeding gums,דימום מהחניכיים
+3,100538,4.0,Loose teeth,שיניים מתנדנדות
+4,100538,5.0,Toothache,כאבי שיניים
+5,100538,6.0,Dentures,שיניים תותבות
+6,100538,-7.0,None of the above,לא יודע/ת
+7,100538,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100539,1.0,No falls,לא
+1,100539,2.0,Only one fall,פעם אחת
+2,100539,3.0,More than one fall,יותר מפעם אחת
+3,100539,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100540,0.0,No - weigh about the same,נשארתי בערך באותו משקל
+1,100540,2.0,Yes - gained weight,עליתי במשקל
+2,100540,3.0,Yes - lost weight,ירדתי במשקל
+3,100540,-1.0,Do not know,לא יודע/ת
+4,100540,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100549,1.0,Stop,עוצר/ת
+1,100549,2.0,Slow down,מאיט/ה
+2,100549,3.0,Continue at same pace,ממשיך/ה באותו קצב
+3,100549,-1.0,Do not know,לא יודע/ת
+4,100549,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100550,1.0,Pain usually continues for more than 10 minutes,הכאב נמשך יותר מ-10 דקות
+1,100550,2.0,Pain usually disappears in less than 10 minutes,הכאב נעלם בפחות מ-10 דקות
+2,100550,-1.0,Do not know,לא יודע/ת
+3,100550,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100552,0.0,No,לא
+1,100552,1.0,"Yes, toes",בהן
+2,100552,2.0,"Yes, leg below the knee",רגל מתחת לברך
+3,100552,3.0,"Yes, leg above the knee",רגל מעל לברך
+4,100552,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100553,1.0,Headache,כאב ראש
+1,100553,2.0,Facial pain,כאב בפנים
+2,100553,3.0,Neck or shoulder pain,כאבי צוואר או כתפיים
+3,100553,4.0,Back pain,כאבי גב
+4,100553,5.0,Stomach or abdominal pain,כאבי בטן
+5,100553,6.0,Hip pain,כאבי ירכיים
+6,100553,7.0,Knee pain,כאבי ברכיים
+7,100553,8.0,Pain all over the body,כאב בכל הגוף
+8,100553,-7.0,None of the above,לא סבלתי
+9,100553,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100563,1.0,Yes,כן
+1,100563,0.0,No,לא
+2,100563,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100564,1.0,Yes,כן
+1,100564,0.0,No,לא
+2,100564,-1.0,Unable to walk up hills or to hurry,לא מסוגל/ת ללכת מהר או בעליה
+3,100564,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100570,1.0,Younger than average,צעיר מהממוצע
+1,100570,2.0,About average age,ממוצע
+2,100570,3.0,Older than average,מאוחר מהממוצע
+3,100570,-1.0,Do not know,לא יודע/ת
+4,100570,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,100572,1.0,Pattern 1,1
+1,100572,2.0,Pattern 2,2
+2,100572,3.0,Pattern 3,3
+3,100572,4.0,Pattern 4,4
+4,100572,-1.0,Do not know,לא יודע/ת
+5,100572,-3.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,007_01,1.0,Right,ימין
+1,007_01,2.0,Left,שמאל
+0,003_01,0.0,Good quality,איכות טובה
+1,003_01,1.0,Usable quality,איכות סבירה
+2,003_01,2.0,Bad quality,איכות גרועה
+0,003_02,0.0,central,מרכזי
+1,003_02,1.0,nasal,אפי
+0,B2,1.0,BRCA-1,BRCA-1
+1,B2,2.0,BRCA-2,BRCA-2
+2,B2,-1.0,Do not know,לא יודע/ת
+0,B11,1.0,Very influenced - for the better,השפיע מאוד - לטובה
+1,B11,2.0,Affected slightly - for the better,השפיע מעט - לטובה
+2,B11,3.0,Did not affect at all,לא השפיע בכלל
+3,B11,4.0,Affected slightly - for the worse,השפיע מעט - לרעה
+4,B11,5.0,Very influential - for the worse,השפיע מאוד - לרעה
+5,B11,6.0,Do not know,לא יודע/ת
+6,B11,7.0,Irrelevant,לא רלוונטי
+7,B11,8.0,"Your quality of life, in general","איכות החיים שלך, באופן כללי"
+8,B11,9.0,"Your emotional state, in general","מצבך הרגשי, באופן כללי"
+9,B11,10.0,Your relationship,היחסים הזוגיים שלך
+10,B11,11.0,Choosing a professional career,בחירת קריירה מקצועית
+11,B11,12.0,Your social connections,הקשרים החברתיים שלך
+12,B11,13.0,Your family ties,הקשרים המשפחתיים שלך
+0,B9,1.0,my partner,בן זוגי
+1,B9,2.0,my spouse,בת זוגי
+2,B9,3.0,grandmother,סבתא
+3,B9,4.0,grandfather,סבא
+4,B9,5.0,mother,אמא
+5,B9,6.0,father,אבא
+6,B9,7.0,aunt,דודה
+7,B9,8.0,Uncle,דוד
+8,B9,9.0,brother,אח
+9,B9,10.0,Nurse,אחות
+10,B9,11.0,son,בן
+11,B9,12.0,a girl,בת
+12,B9,13.0,grandson,נכד
+13,B9,14.0,granddaughter,נכדה
+14,B9,15.0,Other,"אחר, פרט/י:"
+0,B10,1.0,Does not participate in such activity,לא משתתפ/ת בפעילות כזאת
+1,B10,2.0,Group of companies/friends,קבוצת חברות/חברים
+2,B10,3.0,Facebook Group,קבוצת פייסבוק
+3,B10,4.0,Whatsapp Group,קבוצת וואטסאפ
+4,B10,5.0,Physical support group hosted by a professional,קבוצת תמיכה פיזית בהנחיית איש מקצוע
+5,B10,6.0,"A group that deals with joint activity, such as sports","קבוצה שעוסקת בפעילות משותפת, כגון ספורט"
+6,B10,7.0,Other,"אחר, פרט/י:"
+0,B12,1.0,Yes,כן
+1,B12,0.0,No,לא
+2,B12,-1.0,Do not know,לא יודע/ת
+3,B12,-2.0,Irrelevant,לא רלוונטי
+0,B13,1.0,I preceded the age of entry to my/my wife's,הקדמתי את גיל הכניסה להריון שלי/של אשתי
+1,B13,2.0,I was crowded with pregnancies,צופפתי את ההריונות
+2,B13,3.0,I decided to give birth/to give birth to fewer children than planned,החלטתי ללדת/להוליד פחות ילדים מהמתוכנן
+3,B13,4.0,I have made PGD - choosing non -carriers,ביצעתי PGD - בחירת עוברים שאינם נשאים
+4,B13,5.0,I have shortened the breastfeeding period or I have not shredded (relevant to women),קיצרתי את תקופת ההנקה או לא הינקתי (רלוונטי לנשים)
+5,B13,6.0,I have extended the breastfeeding period (relevant to women),הארכתי את תקופת ההנקה (רלוונטי לנשים)
+6,B13,7.0,"Other, detail:","אחר, פרט/י:"
+7,B13,-1.0,Don't know/prefer not to reply,לא יודע/ת / מעדיפ/ה לא להשיב
+0,8,1.0,Yes,nan
+1,8,0.0,No,nan
+2,8,-1.0,Don't know,לא יודע/ת
+0,9,0.0,Female,נקבה
+1,9,1.0,Male,זכר
+0,90,0.0,Never,nan
+1,90,1.0,Previous,nan
+2,90,2.0,Current,nan
+3,90,-3.0,Prefer not to answer,nan
+0,999,0.0,Weizmann,ויצמן
+0,1000,10.0,10k,nan
+1,1000,1001.0,Cardio,nan
+2,1000,6.0,colorectal_cancer_recovered,nan
+3,1000,7.0,breast_cancer_recovered,nan
+4,1000,8.0,brca,nan
+5,1000,4.0,ichilov-crc-recovered,nan
+6,1000,5.0,ichilov-bc-recovered,nan
+7,1000,2.0,lis_cancer,nan
+0,1001,0.0,call,שיחה
+1,1001,1.0,visit,ביקור
+0,6143,1.0,Car/motor vehicle,nan
+1,6143,2.0,Walk,nan
+2,6143,3.0,Public transport,nan
+3,6143,4.0,Cycle,nan
+4,6143,-7.0,None of the above,nan
+5,6143,-3.0,Prefer not to answer,nan
+0,1862,-701.0,Self-diagnosis from symptoms,אבחון עצמי בעקבות סימפטומים
+1,1862,-702.0,Doctor diagnosis from symptoms,"אבחון ע""י רופא בעקבות סימפטומים"
+2,1862,-703.0,By means of a blood test only,אבחון בעקבות תוצאות בדיקות דם בלבד
+3,1862,-704.0,By means of endoscopy only,אבחון בעקבות תוצאות אנדוסקופיה בלבד
+4,1862,-705.0,By means of a blood test and endoscopy,אבחון בעקבות תוצאות בדיקות דם + אנדוסקופיה
+5,1862,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,042_01,0.0,Never,אף פעם
+1,042_01,1.0,Less than one day a month,פחות מפעם בחודש
+2,042_01,2.0,One day a month,פעם בחודש
+3,042_01,3.0,Two to three days a month,פעמיים או שלוש פעמים בחודש
+4,042_01,4.0,One day a week,פעם בשבוע
+5,042_01,5.0,More than one day a week,יותר מפעם בשבוע
+6,042_01,6.0,Every day,כל יום
+7,042_01,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,042_02,1.0,Yes,כן
+1,042_02,0.0,No,לא
+2,042_02,2.0,Inconsistent,לא עקבי
+3,042_02,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,042_03,1.0,January,ינואר
+1,042_03,2.0,February,פברואר
+2,042_03,3.0,March,מרץ
+3,042_03,4.0,April,אפריל
+4,042_03,5.0,May,מאי
+5,042_03,6.0,June,יוני
+6,042_03,7.0,July,יולי
+7,042_03,8.0,August,אוגוסט
+8,042_03,9.0,September,ספטמבר
+9,042_03,10.0,October,אוקטובר
+10,042_03,11.0,November,נובמבר
+11,042_03,12.0,December,דצמבר
+12,042_03,-1.0,Was not absent at all,לא נעדרתי כלל
+0,399,-600.0,Not bothered at all,כלל לא
+1,399,-601.0,Bothered a little,מעט
+2,399,-602.0,Bothered a lot,הרבה
+3,399,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,502,1.0,Yes,כן
+1,502,0.0,No,לא
+2,502,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+3,502,-121.0,Do not know,לא יודע/ת
+0,503,1.0,Yes,כן
+1,503,0.0,No,לא
+2,503,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,950,-500.0,Never,אף פעם או באופן נדיר
+1,950,-501.0,Sometimes,לפעמים
+2,950,-502.0,Often,בדרך כלל
+3,950,-503.0,Most of the time,ברוב הפעמים
+4,950,-504.0,Always,תמיד
+5,950,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,2730,-801.0,Started suddenly,התחיל באופן פתאומי
+1,2730,-802.0,Came on gradually,התרחש בהדרגה
+2,2730,-803.0,Cannot remember,לא זוכר
+3,2730,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,7310,-901.0,Salmonella,סלמונלה
+1,7310,-902.0,Shigella,שיגלה
+2,7310,-903.0,Campylobacter,קמפילובקטר
+3,7310,-904.0,Virus,וירוס
+4,7310,-905.0,Other,אחר
+5,7310,-906.0,Do not know,לא יודע/ת
+6,7310,-818.0,Prefer not to answer,מעדיפ/ה לא לענות
+0,043_01,1.0,Pfizer,פייזר
+1,043_01,2.0,Moderna,מודרנה
+0,044_01,1.0,accurate,מדויק
+1,044_01,2.0,estimated,מוערך
+2,044_01,3.0,in progress,בתהליך
+3,044_01,4.0,unknown,לא ידוע
+0,045_01,1.0,parent,הורה
+1,045_01,2.0,child,ילד
+2,045_01,3.0,sibling,אח
+3,045_01,4.0,non twin sibling,אח שאינו תאום
+4,045_01,5.0,non identical twin,תאום לא זהה
+5,045_01,6.0,parental half sibling,חצי אח מצד אבא
+6,045_01,7.0,maternal half sibling,חצי אח מצד אמא
+7,045_01,8.0,triplet or more,שלישיה או יותר
+8,045_01,9.0,shared living space,מגורים משותפים
+0,053_01,1.0,Israel,ישראל
+1,053_01,2.0,Uganda,אוגנדה
+2,053_01,3.0,Uzbekistan,אוזבקיסטן
+3,053_01,4.0,Austria,אוסטריה
+4,053_01,5.0,Australia,אוסטרליה
+5,053_01,6.0,Ukraine,אוקראינה
+6,053_01,7.0,Uruguayan,אורוגוואי
+7,053_01,8.0,Azerbaijan,אזרבייג'ן
+8,053_01,9.0,Italy,איטליה
+9,053_01,10.0,Marshall Islands,איי מרשל
+10,053_01,11.0,Seychelles,איי סיישל
+11,053_01,12.0,Solomon Islands,איי שלמה
+12,053_01,13.0,Indonesia,אינדונזיה
+13,053_01,14.0,Iceland,איסלנד
+14,053_01,15.0,Iran,איראן
+15,053_01,16.0,Ireland,אירלנד
+16,053_01,17.0,El Salvador,אל סלוודור
+17,053_01,18.0,Albania,אלבניה
+18,053_01,19.0,Algeria,אלג'יריה
+19,053_01,20.0,Angula,אנגולה
+20,053_01,21.0,Andorra,אנדורה
+21,053_01,22.0,Antigua and Barbuda,אנטיגואה וברבודה
+22,053_01,23.0,Estonia,אסטוניה
+23,053_01,24.0,Afghanistan,אפגניסטן
+24,053_01,25.0,Ecuador,אקוודור
+25,053_01,26.0,Argentina,ארגנטינה
+26,053_01,27.0,Eritrea,אריתריאה
+27,053_01,28.0,Armenia,ארמניה
+28,053_01,29.0,United States,ארצות הברית
+29,053_01,30.0,Ethiopia,אתיופיה
+30,053_01,31.0,the Bahamas,איי בהאמה
+31,053_01,32.0,In the hottest,בהוטן
+32,053_01,33.0,Botassana,בוטסואנה
+33,053_01,34.0,Bulgaria,בולגריה
+34,053_01,35.0,Bolivia,בוליביה
+35,053_01,36.0,Bosnia and Herzegovina,בוסניה והרצגובינה
+36,053_01,37.0,Burundi,בורונדי
+37,053_01,38.0,Burkina Passo,בורקינה פאסו
+38,053_01,39.0,Bahraine,בחריין
+39,053_01,40.0,Belgium,בלגיה
+40,053_01,41.0,Belize,בליז
+41,053_01,42.0,In Belarus,בלארוס
+42,053_01,43.0,Bangladesh,בנגלדש
+43,053_01,44.0,building,בנין
+44,053_01,45.0,Barbados,ברבדוס
+45,053_01,46.0,Broni,ברוניי
+46,053_01,47.0,Brazil,ברזיל
+47,053_01,48.0,UK,בריטניה
+48,053_01,49.0,Georgia,גאורגיה
+49,053_01,50.0,Ghana,גאנה
+50,053_01,51.0,A border,גבון
+51,053_01,52.0,Guatemala,גואטמלה
+52,053_01,53.0,Guyana,גיאנה
+53,053_01,54.0,Giveti,ג'יבוטי
+54,053_01,55.0,Guinea,גינאה
+55,053_01,56.0,Guinea Basu,גינאה ביסאו
+56,053_01,57.0,Equatorial Guinea,גינאה המשוונית
+57,053_01,58.0,Gambia,גמביה
+58,053_01,59.0,Jamaica,ג'מייקה
+59,053_01,60.0,Germany,גרמניה
+60,053_01,61.0,Grande,גרנדה
+61,053_01,62.0,Dominica,דומיניקה
+62,053_01,63.0,Denmark,דנמרק
+63,053_01,64.0,South Africa,דרום אפריקה
+64,053_01,65.0,South Sudan,דרום סודאן
+65,053_01,66.0,Haiti,האיטי
+66,053_01,67.0,United Arab Emirates,איחוד האמירויות הערביות
+67,053_01,68.0,India,הודו
+68,053_01,69.0,Netherlands,הולנד
+69,053_01,70.0,Hungary,הונגריה
+70,053_01,71.0,Honduras,הונדורס
+71,053_01,72.0,Vietnam,וייטנאם
+72,053_01,73.0,And Nuato,ונואטו
+73,053_01,74.0,Venezuela,ונצואלה
+74,053_01,75.0,Zimbabwe,זימבבואה
+75,053_01,76.0,Zambia,זמביה
+76,053_01,77.0,Ivory Coast,חוף השנהב
+77,053_01,78.0,Tagicistan,טג'יקיסטן
+78,053_01,79.0,Tubalo,טובאלו
+79,053_01,80.0,Tago,טוגו
+80,053_01,81.0,Tonga,טונגה
+81,053_01,82.0,Turkey,טורקיה
+82,053_01,83.0,Turkmenistan,טורקמניסטן
+83,053_01,84.0,Tanzania,טנזניה
+84,053_01,85.0,Trinidad and Tobago,טרינידד וטובגו
+85,053_01,86.0,Greece,יוון
+86,053_01,87.0,Japan,יפן
+87,053_01,88.0,Jordan,ירדן
+88,053_01,89.0,Kuwait,כווית
+89,053_01,90.0,A spoon of rose,כף ורדה
+90,053_01,91.0,Laos,לאוס
+91,053_01,92.0,Lebanon,לבנון
+92,053_01,93.0,Libya,לוב
+93,053_01,94.0,Luxembourg,לוקסמבורג
+94,053_01,95.0,Latvia,לטביה
+95,053_01,96.0,Liberia,ליבריה
+96,053_01,97.0,Lithuania,ליטא
+97,053_01,98.0,Lichtenstein,ליכטנשטיין
+98,053_01,99.0,To the Uto,לסוטו
+99,053_01,100.0,From Oritania,מאוריטניה
+100,053_01,101.0,Mauritius,מאוריציוס
+101,053_01,102.0,Mali,מאלי
+102,053_01,103.0,Madagascar,מדגסקר
+103,053_01,104.0,Mozambique,מוזמביק
+104,053_01,105.0,Moldova,מולדובה
+105,053_01,106.0,Mongolia,מונגוליה
+106,053_01,107.0,Montenegro,מונטנגרו
+107,053_01,108.0,Monaco,מונקו
+108,053_01,109.0,East Timor,מזרח טימור
+109,053_01,110.0,Meanmar,מיאנמר
+110,053_01,111.0,Micronysia,מיקרונזיה
+111,053_01,112.0,Malawi,מלאווי
+112,053_01,113.0,Maldives,האיים המלדיביים
+113,053_01,114.0,Malaysia,מלזיה
+114,053_01,115.0,Malta,מלטה
+115,053_01,116.0,Egypt,מצרים
+116,053_01,117.0,Macedonia,מקדוניה
+117,053_01,118.0,Mexico,מקסיקו
+118,053_01,119.0,Morocco,מרוקו
+119,053_01,120.0,Enlightened,נאורו
+120,053_01,121.0,Norwegian,נורווגיה
+121,053_01,122.0,Nigeria,ניגריה
+122,053_01,123.0,New Zealand,ניו זילנד
+123,053_01,124.0,Niger,ניז'ר
+124,053_01,125.0,Nicaragua,ניקרגואה
+125,053_01,126.0,Namibia,נמיביה
+126,053_01,127.0,Nepal,נפאל
+127,053_01,128.0,Sao Tome and Principe,סאו טומה ופרינסיפה
+128,053_01,129.0,Sudan,סודאן
+129,053_01,130.0,Swaziland,סווזילנד
+130,053_01,131.0,Somalia,סומליה
+131,053_01,132.0,Syria,סוריה
+132,053_01,133.0,Sorinam,סורינאם
+133,053_01,134.0,Sierra Leon,סיירה לאון
+134,053_01,135.0,China,סין
+135,053_01,136.0,Singapore,סינגפור
+136,053_01,137.0,Slovenia,סלובניה
+137,053_01,138.0,Slovakia,סלובקיה
+138,053_01,139.0,Samoa,סמואה
+139,053_01,140.0,San marino,סן מרינו
+140,053_01,141.0,Senegal,סנגל
+141,053_01,142.0,St. Vincent and the Granndines,סנט וינסנט והגרנדינים
+142,053_01,143.0,St. Lucia,סנט לוסיה
+143,053_01,144.0,St. Kits and Navis,סנט קיטס ונוויס
+144,053_01,145.0,Spain,ספרד
+145,053_01,146.0,Serbia,סרביה
+146,053_01,147.0,Sri Lanka,סרי לנקה
+147,053_01,148.0,Oman,עומאן
+148,053_01,149.0,Iraq,עיראק
+149,053_01,150.0,Saudi Arabia,ערב הסעודית
+150,053_01,151.0,Poland,פולין
+151,053_01,152.0,Portugal,פורטוגל
+152,053_01,153.0,Fiji Islands,איי פיג'י
+153,053_01,154.0,The Philippines,הפיליפינים
+154,053_01,155.0,Finland,פינלנד
+155,053_01,156.0,Falau,פלאו
+156,053_01,157.0,Panama,פנמה
+157,053_01,158.0,Papua New Guinea,פפואה גינאה החדשה
+158,053_01,159.0,Pakistan,פקיסטן
+159,053_01,160.0,Paraguay,פרגוואי
+160,053_01,161.0,Peru,פרו
+161,053_01,162.0,Chad,צ'אד
+162,053_01,163.0,Chile,צ'ילה
+163,053_01,164.0,Czech Republic,צ'כיה
+164,053_01,165.0,France,צרפת
+165,053_01,166.0,Cuba,קובה
+166,053_01,167.0,Columbia,קולומביה
+167,053_01,168.0,Comoro Islands,איי קומורו
+168,053_01,169.0,Congo's Democratic Republic (Zaire),הרפובליקה הדמוקרטית של קונגו(זאיר)
+169,053_01,170.0,Congo Republic,רפובליקת קונגו
+170,053_01,171.0,Costa Rica,קוסטה ריקה
+171,053_01,172.0,South Korea,קוריאה הדרומית
+172,053_01,173.0,North Korea,קוריאה הצפונית
+173,053_01,174.0,Kazakhstan,קזחסטן
+174,053_01,175.0,locomotive,קטר
+175,053_01,176.0,Kyrgyzstan,קירגיזסטן
+176,053_01,177.0,Kirby,קיריבטי
+177,053_01,178.0,Cambodia,קמבודיה
+178,053_01,179.0,vault,קמרון
+179,053_01,180.0,Canada,קנדה
+180,053_01,181.0,buy,קניה
+181,053_01,182.0,Cyprus,קפריסין
+182,053_01,183.0,Croatia,קרואטיה
+183,053_01,184.0,Vatican Kiryat,קריית הוותיקן
+184,053_01,185.0,Rwanda,רואנדה
+185,053_01,186.0,Rumania,רומניה
+186,053_01,187.0,Russia,רוסיה
+187,053_01,188.0,the Dominican Republic,הרפובליקה הדומיניקנית
+188,053_01,189.0,African Central Republic,הרפובליקה המרכז אפריקאית
+189,053_01,190.0,Sweden,שוודיה
+190,053_01,191.0,Switzerland,שווייץ
+191,053_01,192.0,Thailand,תאילנד
+192,053_01,193.0,Tunisia,תוניסיה
+193,053_01,194.0,Yemen,תימן
+194,053_01,195.0,Unknown,לא ידוע
+0,053_02,1.0,Not interested in answering,לא מעוניין/ת לענות
+1,053_02,2.0,High School Certificate,תעודת בגרות תיכונית
+2,053_02,3.0,First college degree,תואר אקדמי ראשון
+3,053_02,4.0,Second Academic Degree,תואר אקדמי שני
+4,053_02,5.0,Third Academic degree,תואר אקדמי שלישי
+5,053_02,6.0,Professional Certificate another certificate,תעודה מקצועית תעודה אחרת
+6,053_02,7.0,There is no certificate,אין תעודה
+7,053_02,8.0,End of high school without diploma,סיום תיכון ללא בגרות
+0,049_01,1.0,Pain or discomfort in the chest,כאב או אי נוחות בחזה
+1,049_01,2.0,A considerable weight loss (over 5% of your body weight) without a diet a year -off in the past year,ירידה ניכרת במשקל (מעל 5% ממשקל הגוף שלך) ללא דיאטה מכוונת בשנה האחרונה
+2,049_01,3.0,"A type of neurological complaint - speech disorder, body weakness (hand and leg on the same side), face asymmetry, interruption of a side sensation (hand and leg), loss of vision of one eye","תלונה נוירולוגית מסוג – הפרעה בדיבור, חולשה של צד גוף (יד ורגל באותו צד), אסימטריה של הפנים, הפרעה בתחושה של צד (יד ורגל), אובדן ראיה חולף של עין אחת"
+3,049_01,4.0,A shortness of breath in the past year in minimal efforts such as walking in or over a single floor,קוצר נשימה בשנה האחרונה במאמצים מינימליים כגון הליכה במישור או עליה של קומה אחת
+4,049_01,5.0,Breathing in the past year in lying down,קוצר נשימה בשנה האחרונה בשכיבה
+5,049_01,6.0,Backs in the legs/ankles in the past year,נפיחות ברגליים/בקרסוליים בשנה האחרונה
+6,049_01,7.0,Accelerated heart palpitations that are not related to exercise in the past year,דפיקות לב מואצות שאינן קשורות לפעילות גופנית בשנה האחרונה
+7,049_01,8.0,Unacceptable heart rate over the past year,קצב לב לא סדיר בשנה האחרונה
+8,049_01,9.0,Loss of recognition in the last 5 years in sitting or lying down,איבוד הכרה ב-5 שנים האחרונות בישיבה או בשכיבה
+9,049_01,10.0,Pain in the legs while you have gone in the past year,כאבים ברגליים בזמן שאתה הולך בשנה האחרונה
+10,049_01,11.0,You received prolonged treatment in Isoniazid or Ripmpin due to tuberculosis exposure,קיבלת טיפול ממושך באיזוניאזיד או ריפמפין בשל חשיפה לשחפת
+11,049_01,12.0,"Promenade in areas where: malaria, HIV tuberculosis","טיילת באיזורים בהם ידוע על: מלריה, שחפת HIV"
+12,049_01,13.0,Candidate,נוחר/ת
+13,049_01,14.0,Known about a hearing decline,ידוע על ירידה שמיעה
+14,049_01,15.0,Tntun (cuxulim consumes),טנטון (צלצולים באוזניים)
+15,049_01,16.0,A component of hearing aids,מרכיב/ה מכשירי שמיעה
+16,049_01,17.0,Previously treated with drugs to cure viral inflammation C (hepatitis C),טופלת בעבר בתרופות למיגור דלקת כבד נגיפית C (הפטיטיס C)
+17,049_01,18.0,Known for a ties that requires thyroid tracking,ידוע על קשרית שמחייבת מעקב בבלוטת התריס
+18,049_01,19.0,Headaches,כאבי ראש
+0,049_02,1.0,More than 3 times a week,יותר מ-3 פעמים בשבוע
+1,049_02,2.0,once a week,פעם בשבוע
+2,049_02,4.0,Less than once a month,פחות מפעם בחודש
+3,049_02,3.0,once a month,פעם בחודש
+0,049_03,1.0,Excellent,מצויין
+1,049_03,2.0,Good,טוב
+2,049_03,3.0,variable,משתנה
+3,049_03,4.0,Not good,לא טוב
+4,049_03,5.0,Bad,רע
+0,049_04,1.0,Not at all,1
+1,049_04,2.0,A little,2
+2,049_04,3.0,Somewhat,3
+3,049_04,4.0,Quite a bit,4
+4,049_04,5.0,Very much,5
+0,048_01,0.0,Normal,תקינה
+1,048_01,1.0,Abnormal,לא תקינה
+2,048_01,2.0,Not known,לא יודע/ת
+0,046_01,0.0,Normal,תקין
+1,046_01,1.0,Abnormal,לא תקין
+2,046_01,2.0,Not known,לא יודע/ת
+0,046_02,1.0,Colonoscopy,קולונסוקופיה
+1,046_02,2.0,Breast ultrasound/mammography,אולטרסאונד/ממוגרפיה שד
+2,046_02,3.0,PSA- Prostate specific antigen,PSA- Prostate specific antigen (בדיקת סקר לגילוי מוקדם של סרטן הערמונית (אנטיגן סגולי של הערמונית
+3,046_02,4.0,Smear PAP,בדיקת סקר לאבחון מוקדם של סרטן צוואר הרחם (בדיקת פאפ של משטח צוואר הרחם) PAP SMEAR
+4,046_02,5.0,Other (Please specify),אחר (אנא פרט/י)
+0,046_03,1.0,Covid-19,קורונה
+1,046_03,2.0,Pneumococc,חיסון נגד דלקת ריאות - פנאומוקוק (Pneumococc)
+2,046_03,3.0,Influenza,שפעת (Influenza)
+3,046_03,4.0,Varicella,חיסון נגד אבעבועות רוח - וריצלה (VARICELLA)
+4,046_03,5.0,Other (Please specify),אחר (אנא פרט/י)
+0,046_04,1.0,Hot flashes,גלי חום
+1,046_04,2.0,Vaginal dryness,יובש בנרתיק
+2,046_04,3.0,Decreased libido,ירידה בחשק המיני
+3,046_04,4.0,Mood changes,שינוים במצב רוח
+4,046_04,5.0,Skin dryness,יובש ושינויים בעור
+5,046_04,6.0,Other (Please specify),אחר (אנא פרט/י)
+0,046_05,1.0,Spontaneous,ספונטנית
+1,046_05,2.0,Ovulation-inducing drugs,לאחר שימוש בתרופות משרות ביוץ (כגון איקקלומין)
+2,046_05,3.0,IVF,הפריית מבחנה (IVF - In vitro fertilization)
+3,046_05,4.0,IVF+ICSI,הפריית מבחנה עם הזרקת זרע ציטופלזמטית IVF + ICSI- In vitro fertilization with Intra-cytoplasmic sperm injection
+4,046_05,5.0,Not known,לא יודע/ת
+5,046_05,6.0,Other (Please specify),אחר (אנא פרט/י)
+0,046_06,1.0,Preeclampsia,רעלת הריון
+1,046_06,2.0,Intrauterine growth retardation of the fetus,פיגור גדילה תוך רחמי של העובר
+2,046_06,3.0,Hypertension,יתר לחץ דם
+3,046_06,4.0,Gestational diabetes,סוכרת הריון
+0,046_07,1.0,Change in lifestyle (diet and physical activity),שינוי באורח חיים (תזונה ופעילות גופנית)
+1,046_07,2.0,Oral medications,תרופות דרך הפה
+2,046_07,3.0,Insulin,אינסולין
+0,046_08,1.0,Cesarean section,ניתוח קיסרי
+1,046_08,2.0,Vaginal birth,לידה רגילה
+2,046_08,3.0,Instrumental delivery (vacuum/ forceps),(לידה מכשירנית (לידת ואקום/ מלקחיים
+3,046_08,4.0,Do not know,לא יודע/ת
+0,046_09,1.0,Induced abortion,הפלה יזומה
+1,046_09,2.0,A chromosomal problem in the fetus,בעיה כרומוזומלית בעובר
+2,046_09,3.0,Hyperactivity or hypothyroidism,פעילות יתר או תת פעילות של בלוטת התריס
+3,046_09,4.0,Unbalanced diabetes,סוכרת לא מאוזנת
+4,046_09,5.0,Blood clotting disorder,הפרעה בקרישיות הדם
+5,046_09,6.0,Cervical insufficiency,אי ספיקת צוואר הרחם
+6,046_09,7.0,Infection,זיהום
+7,046_09,8.0,Trauma,טראומה
+8,046_09,9.0,Prefer not to answer,מעדיפ/ה לא לענות
+9,046_09,10.0,Other (please specify),אחר (אנא פרט/י)
+0,050_01,1.0,Bariatric surgery,ניתוח בריאטרי - Bariatric surgery
+1,050_01,2.0,Percutaneous coronary intervention PCI,צנתור לבבי - Percutaneous coronary intervention (PCI)
+2,050_01,3.0,Valve Replacement,החלפת מסתם - Valve Replacement
+3,050_01,4.0,Coronary artery bypass surgery CABG,ניתוח מעקפים לבבי - Coronary artery bypass surgery (CABG)
+4,050_01,5.0,organ transplantation,השתלת איבר - organ transplantation
+5,050_01,6.0,Bone Marrow transplantation,השתלת מח עצם - Bone Marrow  transplantation
+6,050_01,7.0,Peripheral Arterial Bypass Surgery,מעקף עורקי בגפיים - Peripheral Arterial Bypass Surgery
+7,050_01,8.0,Carotid endarterectomy or carotid stenting,ניתוח או השתלת סטנט בעורק התרדמה - Carotid endarterectomy or carotid stenting
+8,050_01,9.0,Total partial lung resection,כריתה מלאה או חלקית של הריאה - Total/partial lung resection
+9,050_01,10.0,Surgery due to Cancer,ניתוחים בגין סרטן -  Surgery due to Cancer
+10,050_01,11.0,Lymph node resection,כריתת בלוטת לימפה - Lymph node resection
+11,050_01,12.0,Pacemaker or defibrillator transplantation,השתלת קוצב לב או דפיברילטור - Pacemaker or defibrillator transplantation
+12,050_01,13.0,Polyp Resection,הסרת פוליפ - Polyp Resection
+13,050_01,14.0,Bowel resection Colectomy,כריתת מעי - Bowel resection (Colectomy)
+14,050_01,15.0,Stomach resection Gastrectomy,כריתת קיבה - Stomach resection (Gastrectomy)
+15,050_01,16.0,Ablation of Ventricular Tachycardia,אבלציה של טכיקרדיה חדרית - Ablation of Ventricular Tachycardia
+16,050_01,17.0,kidney resection nephrectomy not for the purpose of kidney donation,"כריתת כליה שלא לצורך תרומת כליה - kidney resection(nephrectomy),&nbsp;not for the purpose of kidney donation"
+17,050_01,18.0,Total partial Thyroidectomy,כריתה מלאה או חלקית של בלוטת התריס - Total/partial Thyroidectomy
+18,050_01,19.0,Appendectomy,כריתת תוספתן - Appendectomy
+19,050_01,20.0,Cholecystectomy,כריתת כיס מרה - Cholecystectomy
+20,050_01,21.0,Plastic surgery,ניתוח פלסטי - Plastic surgery
+21,050_01,22.0,Functional endoscopic sinus surgery,ניתוח סינוסים - (Functional endoscopic sinus surgery&nbsp;(FESS
+22,050_01,23.0,Tonsillectomy,כריתת שקדים - Tonsillectomy
+23,050_01,24.0,Adenoidectomy,אדנואידקטומיה - Adenoidectomy
+24,050_01,25.0,Cataract,קטרקט - Cataract
+25,050_01,26.0,Prostatectomy,כריתת פרוסטטה - Prostatectomy
+26,050_01,27.0,Hysterectomy,כריתת רחם - Hysterectomy
+27,050_01,28.0,ovariectomy,כריתת שחלות - ovariectomy
+28,050_01,29.0,Gynecological Surgery due to Myoma Myomectomy,"כריתת מיומה רחמית - Gynecological Surgery due to Myoma, Myomectomy"
+29,050_01,30.0,Gynecological Surgery due to Endometriosis,ניתוח גניקולוגי בגין אנדומטריוזיס - Gynecological Surgery due to Endometriosis
+30,050_01,31.0,Conization of cervix,כריתת חרוט (קוניזציה) מצוואר הרחם - &nbsp;Conization&nbsp;of cervix
+31,050_01,32.0,Trauma related surgery,ניתוחים בעקבות טראומה - Trauma related surgery
+32,050_01,33.0,Orthopedic surgery,כל ניתוח אורתופדי כולל עמוד שדרה - Orthopedic surgery
+33,050_01,34.0,Splenectomy,כריתת טחול - Splenectomy
+34,050_01,35.0,Resection of Basal Cell Carcinoma (BCC) or Squamous Cell Carcinoma (SCC) of the skin,כריתת נגע עורי מסוג קרצינומת תאי הבסיס או קרצינומת תאי קשקש בעור - Resection&nbsp;of Basal Cell Carcinoma&nbsp;(BCC) or Squamous Cell Carcinoma (SCC) of the skin
+35,050_01,36.0,Meningioma Resection,כריתת מנינגיומה - Meningioma Resection
+36,050_01,37.0,Cesarean section,ניתוח קיסרי - Cesarean section
+37,050_01,38.0,Varicocele HYDROCELE repair,ניתוח לתיקון ואריקוצלה (דליות בוורידי האשכים) או הידרוצלה (מיימת האשך) - Varicocele/ HYDROCELE repair
+38,050_01,39.0,kidney resection nephrectomy for kidney donation,כריתת כליה לצורך תרומה - kidney resection (nephrectomy) - for kidney donation
+39,050_01,40.0,Ablation of Atrial Fibrillation or Flutter,אבלציה של פרפור או רפרוף פרוזדורים - Ablation of Atrial Fibrillation or Flutter
+40,050_01,41.0,Other,(אחר (אנא פרט
+0,050_02,1.0,Eco -heart at rest,אקו לב במנוחה
+1,050_02,2.0,Echo heart in the effort,אקו לב במאמץ
+2,050_02,3.0,Effort test (ergometry),מבחן מאמץ (ארגומטריה)
+3,050_02,4.0,Heart mapping,מיפוי לב
+4,050_02,5.0,Cordial catheterization,צנתור לבבי
+5,050_02,6.0,Doppler of the neck arteries,דופלר של עורקי הצוואר
+6,050_02,7.0,CT cardal,CT קרדיאלי
+7,050_02,8.0,MRI cardal,MRI קרדיאלי
+8,050_02,9.0,Lung function,תפקודי ריאות
+9,050_02,10.0,"(CT, MRI) brain imaging","(CT, MRI) הדמיה מוחית"
+10,050_02,11.0,An endoscopic examination of the digestive tract unnecessarily by age review? Gastroscopy or colonoscopy,בדיקה אנדוסקופית של דרכי העיכול שלא לצורך סקירה לפי גיל? גסטרוסקופיה או קולונוסקופיה
+11,050_02,12.0,Over the age of 50 - Did you do colonoscopy as part of a review?,מעל גיל 50 – האם ביצעת קולונוסקופיה כחלק מסקירה?
+0,050_04,1.0,proper,normal
+1,050_04,2.0,Invalid,abnormal
+0,050_03,1.0,Once,פעם אחת
+1,050_03,2.0,Twice,פעמיים
+2,050_03,3.0,Three or more times,שלוש או יותר פעמים
+0,050_05,1.0,polyp,פוליפ
+1,050_05,2.0,A polyp removed in the past three months,פוליפ שהוסר בשלושת החודשים האחרונים
+2,050_05,3.0,Up to five previously removed polyps,עד חמישה פוליפים שהוסרו בעבר
+3,050_05,4.0,More than five previously removed polyps,יותר מחמישה פוליפים שהוסרו בעבר
+4,050_05,5.0,A bleeding focus,מוקד דימום
+5,050_05,6.0,inflammation,דלקת
+6,050_05,7.0,Other,אחר
+0,050_07,0.0,No,לא
+1,050_07,-1.0,not known to me,לא ידוע לי
+2,050_07,1.0,Yes (detail),כן (פרט/י)
+0,050_06,1.0,Yes,כן
+1,050_06,0.0,No,לא
+2,050_06,-1.0,Do not remember,לא זוכר/ת
+0,052_01,1.0,Hypertension,לחץ דם גבוה
+1,052_01,2.0,Hyperlipidemia,שומנים מוגברים בדם
+2,052_01,3.0,Type 1 diabetes,סוכרת מסוג 1 (סוכרת נעורים)
+3,052_01,4.0,Type 2 diabetes,סוכרת מסוג 2
+4,052_01,5.0,Brain event (brain stroke),אירוע מוחי (שבץ מוחי)
+5,052_01,6.0,Kidney disease or dialysis treatment,מחלות כליה או טיפול בדיאליזה
+6,052_01,7.0,"A joint or autoimmune disease (for example - lupus, scleroderma, inflammatory arthritis, and scolitis)","מחלת פרקים או מחלה אוטואימונית (לדוגמה – זאבת, סקלרודרמה, מחלת פרקים דלקתית, וסקוליטיס)"
+7,052_01,8.0,Hypercoagulability,קרישיות יתר
+8,052_01,9.0,A coagulation problem that manifests itself in repeated bleeding,בעיה בקרישה שמתבטאת בדימומים חוזרים
+9,052_01,10.0,Malignancy (cancer),ממאירות (סרטן)
+10,052_01,11.0,Inflammatory bowel diseases of a hidden or ulcerative colitis,מחלות מעי דלקתיות מסוג כרוהן או קוליטיס כיבית
+11,052_01,12.0,Celiac,צליאק
+12,052_01,13.0,Dementia (dementia) at an early age under 60,דמנציה (שיטיון) בגיל צעיר מתחת לגיל 60
+13,052_01,14.0,Movement disorder such as Parkinson's,הפרעת תנועה כדוגמת פרקינסון
+14,052_01,15.0,"Asthma, allergy or atopic dermatitis","אסטמה, אלרגיה או דרמטיטיס אטופית"
+0,052_02,1.0,Breast,שד
+1,052_02,2.0,ovary,שחלה
+2,052_02,3.0,Colon,מעי גס
+3,052_02,4.0,pancreas,לבלב
+4,052_02,5.0,Melanoma,מלנומה
+5,052_02,6.0,Thyroid,תריס
+6,052_02,7.0,Other,(אחר (אנא פרט/י
+0,021_03,1.0,Do not have bad breath,אין לך ריח רע מהפה
+1,021_03,2.0,Sometimes I notice an unpleasant smell,לפעמים אני מבחין בריח לא נעים
+2,021_03,-1.0,Do not know,לא יודע
+3,021_03,3.0,Sometimes other people notice an unpleasant smell,לפעמים אנשים אחרים מבחינים בריח לא נעים
+0,021_04,0.0,No,לא
+1,021_04,1.0,Slight mobility in a small number of teeth,ניידות קלה במספר קטן של שיניים
+2,021_04,2.0,Slight mobility in many teeth.,ניידות קלה בשיניים רבות
+3,021_04,3.0,High mobility,ניידות גבוהה
+0,021_01,1.0,Rarely,לעתים רחוקות
+1,021_01,0.0,No,לא
+2,021_01,2.0,Often,לעתים קרובות
+3,021_01,3.0,All the time,כל הזמן
+0,021_02,1.0,Rarely,לעתים רחוקות
+1,021_02,0.0,Never,אף פעם
+2,021_02,2.0,Often,לעתים קרובות
+0,051_05,1.0,Change in lifestyle (diet and physical activity),שינוי באורח חיים (תזונה ופעילות גופנית)
+1,051_05,2.0,Oral medications,תרופות דרך הפה
+2,051_05,3.0,insulin,אינסולין
+0,051_04,1.0,Preeclampsia,רעלת הריון
+1,051_04,2.0,Intrauterine growth retardation of the fetus,פיגור גדילה תוך רחמי של העובר
+2,051_04,3.0,Hypertension,יתר לחץ דם
+3,051_04,4.0,Gestational diabetes,סוכרת הריונית
+0,051_03,1.0,spontaneous conception,ספונטנית
+1,051_03,2.0,After using ovulation-inducing drugs (such as Iclomin),לאחר שימוש בתרופות משרות ביוץ (כגון איקקלומין)
+2,051_03,3.0,IVF - In vitro fertilization,הפריית מבחנה (IVF - In vitro fertilization)
+3,051_03,4.0,IVF + ICSI- In vitro fertilization with Intra-cytoplasmic sperm injection,הפריית מבחנה עם הזרקת זרע ציטופלזמטית IVF + ICSI- In vitro fertilization with Intra-cytoplasmic sperm injection
+4,051_03,5.0,Do not know,לא יודע/ת
+5,051_03,6.0,Other - please private,אחר - אנא פרטי
+0,051_02,1.0,Cesarean,ניתוח קיסרי
+1,051_02,2.0,normal birth,לידה רגילה
+2,051_02,3.0,Instrumental delivery (vacuum/ forceps delivery),לידה מכשירנית (לידת ואקום/ מלקחיים)
+3,051_02,-1.0,Do not know,לא יודע/ת
+0,051_01,1.0,Miscarriage,הפלה יזומה
+1,051_01,2.0,Cervical insufficiency,אי ספיקת צוואר הרחם
+2,051_01,3.0,Audio,זיהום
+3,051_01,4.0,Blood clotting disorder,הפרעה בקרישיות הדם
+4,051_01,5.0,A chromosomal problem in the fetus,בעיה כרומוזומלית בעובר
+5,051_01,6.0,Not interested in answering,לא מעוניינת לענות
+6,051_01,7.0,Trauma,טראומה
+7,051_01,8.0,Other,אחר
+8,051_01,9.0,Hyperactivity or hypothyroidism,פעילות יתר או תת פעילות של בלוטת התריס
+9,051_01,10.0,Unbalanced diabetes,סוכרת לא מאוזנת

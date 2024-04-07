@@ -176,11 +176,11 @@ def plot_events(events: pd.DataFrame, array_index: Optional[int]=None,
     plot_df = plot_df.assign(diff=lambda x: x[x_end] - x[x_start]).sort_values([color, y])
     labels = []
     legend = []
-    for i, (y_label, y) in enumerate(plot_df.groupby(y, sort=False)):
+    for i, (y_label, y) in enumerate(plot_df.groupby(y, observed=True, sort=False)):
         if len(y) == 0:
             continue
         labels.append(y_label)
-        for c, r in y.groupby(color):
+        for c, r in y.groupby(color, observed=True):
             data = r[[x_start, 'diff']]
             if not len(data):
                 continue
@@ -241,7 +241,7 @@ def plot_channels(channels: pd.DataFrame, array_index: Optional[int]=None,
 
     # plot data
     ax_shift = 0
-    for i, (source, d) in enumerate(data.groupby('source', sort=False)):
+    for i, (source, d) in enumerate(data.groupby('source', observed=True, sort=False)):
         if (source not in CHANNELS) or (y_filter is not None and source not in y_filter):
             print(f'plot_channels: skipping {source}')
             ax_shift += 1

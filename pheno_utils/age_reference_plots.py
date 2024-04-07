@@ -13,6 +13,8 @@ from pheno_utils.config import (
     ERROR_ACTION, 
     )
 
+from .basic_plots import get_gender_indices
+
 from typing import Dict, List, Callable, Optional, Union, Tuple
 import numpy as np
 import pandas as pd
@@ -386,7 +388,7 @@ class AgeRefPlot:
         self.plot_valhist()
 
 
-# %% ../nbs/03_age_reference_plots.ipynb 8
+# %% ../nbs/03_age_reference_plots.ipynb 9
 class GenderAgeRefPlot(AgeRefPlot):
     def __init__(
         self, 
@@ -480,7 +482,7 @@ class GenderAgeRefPlot(AgeRefPlot):
         self.ax_dict = ax_dict
 
         self.female_refplot = AgeRefPlot(
-            data=self.data[self.data["sex"]==0],
+            data=self.data.loc[get_gender_indices(self.data, 'female', self.sex_col)],
             val_col=self.val_col,
             age_col=self.age_col,
             sex_col=self.sex_col,
@@ -499,7 +501,7 @@ class GenderAgeRefPlot(AgeRefPlot):
         self.female_refplot.plot()
 
         self.male_refplot = AgeRefPlot(
-            data=self.data[self.data["sex"]==1],
+            data=self.data.loc[get_gender_indices(self.data, 'male', self.sex_col)],
             val_col=self.val_col,
             age_col=self.age_col,
             sex_col=self.sex_col,

@@ -1,4 +1,4 @@
-tabular_field_name,field_string,description_string,parent_dataframe,relative_location,value_type,units,item_type,array,cohorts,data_type,debut,pandas_dtype,sampling_rate
+tabular_field_name,field_string,description_string,parent_dataframe,relative_location,value_type,units,field_type,array,cohorts,data_type,debut,pandas_dtype,sampling_rate
 collection_timestamp,Collection timestamp,Collection timestamp,,diet_logging/diet_logging.parquet,Time,Time,Data,Single,10K,Time Series,2019-01-29,"datetime64[ns, Asia/Jerusalem]",
 collection_date,Date,Datetime column relecting the time food item was logged,,diet_logging/diet_logging.parquet,Time,Time,Data,Single,10K,Time Series,2019-09-01,datetime64[ns],
 food_id,Food ID,IDs in the diet logging app representing specific food ,,diet_logging/diet_logging.parquet,Categorical (single) ,None,Data,Single,10K,Time Series,2019-09-01,integer,
