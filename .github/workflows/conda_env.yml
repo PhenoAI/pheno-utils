@@ -34,6 +34,19 @@ jobs:
         cd $GITHUB_WORKSPACE
         pip install . # Install pheno-utils from the current directory
         conda list
+    
+    - name: Checkout External Repository
+      uses: actions/checkout@v3
+      with:
+        repository: 'PhenoAI/pheno-examples' # Replace with the owner/repository of the external repo
+        token: ${{ secrets.CICD_SECRET }} # Ensure you've set this secret in your repository settings if the repo is private
+        path: 'external-repo' # This clones the repo into a directory named 'external-repo' within $GITHUB_WORKSPACE
+
+    - name: Run Script from External Repository
+      run: |
+        cd $GITHUB_WORKSPACE/external-repo
+        python src/tools/run_all_notebooks.py -d example_notebooks
+
 
     - name: Pack Conda
       shell: bash -el {0}

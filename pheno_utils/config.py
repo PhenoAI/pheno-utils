@@ -53,7 +53,11 @@ def copy_tre_config():
             env = k
             config_name = v['config_name']
             break
-        
+    
+    if env is None:
+        print('Could not find the correct data structure. \nExiting...\nPlease verify the data structure and try again.')
+        return False
+
     absolute_config_path = os.path.join(script_path, 'config_setup', config_name)
     
     if (env is not None) and (os.path.exists(absolute_config_path)):

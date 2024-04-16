@@ -73,7 +73,7 @@ def main():
     
     if not config.copy_tre_config(): 
 
-        print('S3 or Local Mode')
+        print('Currently on: S3 \ Local Mode')
         if args.datasets_path is None: 
             print('Please enter a datasets path using -d or --datasets_path parameter')
             return
@@ -95,6 +95,8 @@ def main():
         
         with open(os.path.expanduser('~/.pheno/config.json'), 'w') as outfile:
             json.dump(base_json, outfile, indent=4)
+            print('Config file created at: ~/.pheno/config.json')
+            print('Base dataset path: ', args.datasets_path)
 
 
 # run main 
