@@ -32,8 +32,6 @@ jobs:
       shell: bash -el {0}
       run: |
         cd $GITHUB_WORKSPACE
-        pip install nbdev
-        nbdev_prepare
         pip install . # Install pheno-utils from the current directory
         conda list
 
