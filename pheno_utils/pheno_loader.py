@@ -49,6 +49,7 @@ class PhenoLoader:
         valid_stage (bool, optional): Whether to ensure that all research stages in the data are valid. Defaults to False.
         flexible_field_search (bool, optional): Whether to allow regex field search. Defaults to False.
         keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to False.
+        join_non_overlapping (bool, optional): Whether to join tables with non-overlapping indices. Defaults to False.
         errors (str, optional): Whether to raise an error or issue a warning if missing data is encountered.
             Possible values are 'raise', 'warn' and 'ignore'. Defaults to ERROR_ACTION.
 
@@ -68,6 +69,7 @@ class PhenoLoader:
         valid_stage (bool): Whether to ensure that all research stages in the data are valid.
         flexible_field_search (bool): Whether to allow regex field search.
         keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage.
+        join_non_overlapping (bool): Whether to join tables with non-overlapping indices.
         errors (str): Whether to raise an error or issue a warning if missing data is encountered.
         preferred_language (str): The preferred language for the questionnaires.
     """
@@ -87,7 +89,8 @@ class PhenoLoader:
         errors: str = ERROR_ACTION,
         read_parquet_kwargs: Dict[str, Any] = {},
         preferred_language: str = PREFERRED_LANGUAGE,
-        keep_undefined_research_stage: bool = False
+        keep_undefined_research_stage: bool = False, 
+        join_non_overlapping: bool = False
     ) -> None:
         self.dataset = dataset
         self.cohort = cohort
@@ -113,6 +116,7 @@ class PhenoLoader:
             self.__load_age_sex__()
         self.dict_prop = pd.read_csv(DICT_PROPERTY_PATH, index_col='field_type')
         self.keep_undefined_research_stage = keep_undefined_research_stage
+        self.join_non_overlapping = join_non_overlapping
 
     def load_sample_data(
         self,
@@ -125,6 +129,7 @@ class PhenoLoader:
         concat: bool = True,
         pivot=None, 
         keep_undefined_research_stage: Union[None, str] = None,
+        join_non_overlapping: Union[None, bool] = None,
         **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
@@ -141,6 +146,7 @@ class PhenoLoader:
                                    concat=concat,
                                    pivot=pivot,
                                    keep_undefined_research_stage=keep_undefined_research_stage,
+                                   join_non_overlapping=join_non_overlapping,
                                    **kwargs)
 
     def load_bulk_data(
@@ -154,6 +160,7 @@ class PhenoLoader:
         concat: bool = True,
         pivot=None,
         keep_undefined_research_stage: Union[None, str] = None,
+        join_non_overlapping: Union[None, bool] = None,
         **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
@@ -169,18 +176,21 @@ class PhenoLoader:
             concat (bool, optional): Whether to concatenate the data into a single DataFrame. Automatically ignored if data is not a DataFrame. Defaults to True.
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
             keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None.
+            join_non_overlapping (bool, optional): Whether to join tables with non-overlapping indices. Defaults to None.
         """
         if keep_undefined_research_stage is None:
             keep_undefined_research_stage = self.keep_undefined_research_stage
+        if join_non_overlapping is None:
+            join_non_overlapping = self.join_non_overlapping
         # get path to bulk file
         if type(field_name) is str:
             field_name = [field_name]
-        sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage)
+        sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage, join_non_overlapping=join_non_overlapping)
         # TODO: slice bulk data based on field_type
         if sample.shape[1] > 2:
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
-                sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage, parent_dataframe=parent_bulk)
+                sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage, join_non_overlapping=join_non_overlapping, parent_dataframe=parent_bulk)
             else:
                 if self.errors == 'raise':
                     raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
@@ -322,7 +332,7 @@ class PhenoLoader:
         
         return df2_defined.index.isin(df1_defined.index).sum() > min(df1_defined.shape[0], df2_defined.shape[0]) * min_cutoff
     
-    def build_table_to_field_dict(self, data, fields):
+    def build_table_to_field_dict(self, data, fields, join_non_overlapping):
         ''' 
         Build a dictionary of tables to fields of interest.
         '''
@@ -330,7 +340,9 @@ class PhenoLoader:
         fields_of_interest_dict = dict()
         for table_name, df in self.dfs.items():
             fields_of_interest = df.columns.intersection(fields)
-            if self.check_indices_overlap(data, df[fields_of_interest]): 
+            print('join_non_overlapping', join_non_overlapping)
+            print('check', self.check_indices_overlap(data, df[fields_of_interest]))
+            if self.check_indices_overlap(data, df[fields_of_interest]) or join_non_overlapping: 
                 fields_of_interest_dict[table_name] = fields_of_interest
         return fields_of_interest_dict
     
@@ -362,7 +374,7 @@ class PhenoLoader:
         not_found = np.setdiff1d(only_merged_fields, data.columns)
         return not_found
 
-    def get(self, fields: Union[str,List[str]], flexible: bool=None, not_bulk_field=False, squeeze: bool=None, return_fields: bool=False, keep_undefined_research_stage: bool=None, **kwargs):
+    def get(self, fields: Union[str,List[str]], flexible: bool=None, not_bulk_field=False, squeeze: bool=None, return_fields: bool=False, keep_undefined_research_stage: bool=None, join_non_overlapping: bool=None,  **kwargs):
         """
         Return data for the specified fields from all tables
 
@@ -373,6 +385,7 @@ class PhenoLoader:
             squeeze (bool, optional): Whether to squeeze the output if only one field is requested. Defaults to None, which uses the PhenoLoader's squeeze attribute.
             return_fields (bool, optional): Whether to return the list of fields that were found. Defaults to False.
             keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None, which uses the PhenoLoader's keep_undefined_research_stage attribute.
+            join_non_overlapping (bool, optional): Whether to join tables with non-overlapping indices. Defaults to None, which uses the PhenoLoader's join_non_overlapping attribute.
             **kwargs: Additional keyword arguments to filter the data based on dictionary properties.
 
         Returns:
@@ -384,6 +397,8 @@ class PhenoLoader:
             squeeze = self.squeeze
         if keep_undefined_research_stage is None:
             keep_undefined_research_stage = self.keep_undefined_research_stage
+        if join_non_overlapping is None:
+            join_non_overlapping = self.join_non_overlapping
         if isinstance(fields, str):
             fields = [fields]
 
@@ -422,7 +437,7 @@ class PhenoLoader:
         not_merged = list()
         renamed_cols = list()
         
-        fields_of_interest_dict = self.build_table_to_field_dict(data, fields)
+        fields_of_interest_dict = self.build_table_to_field_dict(data, fields, join_non_overlapping)
         
         for table_name, df in self.dfs.items():
             if 'mapping' in table_name:
@@ -435,7 +450,7 @@ class PhenoLoader:
             fields_in_index = np.setdiff1d(np.intersect1d(df.index.names, fields), data.columns)
             
             if len(fields_in_col) or len(fields_in_index):
-                if not self.check_indices_overlap(data, df):
+                if (not join_non_overlapping) and (not self.check_indices_overlap(data, df)):
                     warnings.warn(f'No overlap between tables, this merge is not recommended. Please view tables separately.\
                         This warning occurred while attempting to add columns from {table_name} to the rest of the data.')
                     
