@@ -340,8 +340,6 @@ class PhenoLoader:
         fields_of_interest_dict = dict()
         for table_name, df in self.dfs.items():
             fields_of_interest = df.columns.intersection(fields)
-            print('join_non_overlapping', join_non_overlapping)
-            print('check', self.check_indices_overlap(data, df[fields_of_interest]))
             if self.check_indices_overlap(data, df[fields_of_interest]) or join_non_overlapping: 
                 fields_of_interest_dict[table_name] = fields_of_interest
         return fields_of_interest_dict
@@ -510,11 +508,13 @@ class PhenoLoader:
         category_cols = self.dict.loc[self.dict.index.isin(fields)].query('pandas_dtype == "category"').index
     
         for col in category_cols: 
-            data[col] = data[col].astype(str)
+            if col in data.columns:
+                data[col] = data[col].astype(str)
 
         data[cols] = data[cols].fillna('nan').replace(dataset_bulk_data_path, regex=True)
         for col in category_cols: 
-            data[col] = data[col].astype('category')
+            if col in data.columns:
+                data[col] = data[col].astype('category')
             
         return data
 
