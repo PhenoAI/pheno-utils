@@ -468,13 +468,16 @@ class PhenoLoader:
             
             if table_name == 'age_sex':
                 keep_undefined = True
+                how = 'left'
             else: 
                 keep_undefined = keep_undefined_research_stage
+                how = 'outer'
                 
             data = self.__concat__(
                 data, 
                 df_fields, 
-                keep_undefined
+                keep_undefined, 
+                how
                 )
             renamed_cols += duplicated_fields
             
@@ -527,13 +530,13 @@ class PhenoLoader:
         return False
     
     @staticmethod
-    def join_and_filter_undefined_research_stage(df1, df2):
+    def join_and_filter_undefined_research_stage(df1, df2, how='outer'):
         df1_defined = df1[df1.index.get_level_values('research_stage') != 'undefined']
         df2_defined = df2[df2.index.get_level_values('research_stage') != 'undefined']
 
-        return df1_defined.join(df2_defined, how='outer')
+        return df1_defined.join(df2_defined, how=how)
 
-    def __concat__(self, df1, df2, keep_undefined_research_stage=False):
+    def __concat__(self, df1, df2, keep_undefined_research_stage=False, how='outer'):
 
         if df1.empty:
             return df2
@@ -544,18 +547,32 @@ class PhenoLoader:
             self.is_value_in_index(df2, 'undefined', 'research_stage') and not keep_undefined_research_stage:
         
             warnings.warn('filtering "undefined" research_stage..')
-            df = self.join_and_filter_undefined_research_stage(df1, df2)
+            df = self.join_and_filter_undefined_research_stage(df1, df2, how)
             return df
         
-        return df1.join(df2, how='outer')
-        
+        return df1.join(df2, how=how)
+    
+    def merge_all_tables(self) -> pd.DataFrame:
+        # merge all tables in self.dfs dictionary
+        align_df = None
+        for name, df in self.dfs.items():
+            if align_df is None:
+                align_df = df
+            else:
+                align_df = pd.merge(align_df, df, left_index=True, right_index=True, how='outer', suffixes=('', name))
+                
+        return align_df
+
     def __load_age_sex__(self) -> None:
         """
         Add sex and compute age from birth date.
         """
         age_path = os.path.join(self.__get_dataset_path__(self.age_sex_dataset), 'events.parquet')
-        align_df = self.dfs[list(self.dfs)[0]]
-
+        
+        if len(self.dfs) > 1: 
+            align_df = self.merge_all_tables()
+        else: 
+            align_df = self.dfs[list(self.dfs)[0]]
         if ('research_stage' in align_df.columns) or ('research_stage' in align_df.index.names):
             try:
                 age_df = pd.read_parquet(age_path)
