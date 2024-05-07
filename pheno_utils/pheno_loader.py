@@ -573,6 +573,7 @@ class PhenoLoader:
             align_df = self.merge_all_tables()
         else: 
             align_df = self.dfs[list(self.dfs)[0]]
+        
         if ('research_stage' in align_df.columns) or ('research_stage' in align_df.index.names):
             try:
                 age_df = pd.read_parquet(age_path)
