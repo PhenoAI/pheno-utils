@@ -549,7 +549,7 @@ class PhenoLoader:
             self.is_value_in_index(df2, 'undefined', 'research_stage') and not keep_undefined_research_stage:
         
             warnings.warn('filtering "undefined" research_stage..')
-            df = self.join_and_filter_undefined_research_stage(df1, df2, how, lsuffix='', rsuffix='')
+            df = self.join_and_filter_undefined_research_stage(df1, df2, how, lsuffix, rsuffix)
             return df
         
         return df1.join(df2, how=how, lsuffix=lsuffix, rsuffix=rsuffix)
