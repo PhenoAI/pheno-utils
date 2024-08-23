@@ -102,6 +102,7 @@ def plot_lollipop_meals(
 ):
     """
     Plot a lollipop chart with pie charts representing nutrient composition for each meal.
+    NOTE: If you intend to change `xlim` after plotting, you must also provide `date_range`.
 
     Parameters:
         diet_log (pd.DataFrame): The dataframe containing the diet log data, with columns for timestamps, nutrients, and other measurements.
