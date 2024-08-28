@@ -38,7 +38,7 @@ class TimeSeriesFigure:
         self, 
         plot_function: Callable, 
         *args, 
-        num_axes: int = 1, 
+        n_axes: int = 1, 
         height: float = 1, 
         sharex: Optional[Union[str, int, plt.Axes]] = None, 
         name: Optional[str] = None, 
@@ -53,7 +53,7 @@ class TimeSeriesFigure:
         Args:
             plot_function (Callable): The dataset-specific function to plot the data.
             *args: Arguments to pass to the plot function.
-            num_axes (int): The number of axes required. Default is 1.
+            n_axes (int): The number of axes required. Default is 1.
             height (float): The proportional height of the axes relative to a single unit axis.
             sharex (str, int, or plt.Axes): Index or name of the axis to share the x-axis with. If None, the x-axis is independent.
             name (Optional[str]): Name or ID to assign to the axis (only valid if num_axes=1).
@@ -64,7 +64,7 @@ class TimeSeriesFigure:
             Union[plt.Axes, Iterable[plt.Axes]]: A single axis object or a list of axis objects if multiple axes are used.
         """
         if ax is None:
-            ax = self.add_axes(height=height, num_axes=num_axes, sharex=sharex, name=name)
+            ax = self.add_axes(height=height, n_axes=n_axes, sharex=sharex, name=name)
         else:
             ax = self.get_axes(ax, squeeze=True)
 
@@ -75,7 +75,7 @@ class TimeSeriesFigure:
     def add_axes(
         self, 
         height: float = 1, 
-        num_axes: int = 1, 
+        n_axes: int = 1, 
         sharex: Optional[Union[str, int, plt.Axes]] = None, 
         name: Optional[str] = None
     ) -> Union[plt.Axes, Iterable[plt.Axes]]:
@@ -84,7 +84,7 @@ class TimeSeriesFigure:
         
         Args:
             height (float): The proportional height of each new axis relative to a single unit axis.
-            num_axes (int): The number of axes to create.
+            n_axes (int): The number of axes to create.
             sharex (str, int, or plt.Axes): Index or name of the axis to share the x-axis with. If None, the x-axis is independent.
             name (Optional[str]): Name or ID to assign to the axis (only valid if num_axes=1).
         
@@ -98,7 +98,7 @@ class TimeSeriesFigure:
             sharex = self.get_axes(sharex)[0]
             shared_group.append(sharex)
 
-        for _ in range(num_axes):
+        for _ in range(n_axes):
             self.total_units += height
             ax = self.fig.add_subplot(len(self.axes) + 1, 1, len(self.axes) + 1, sharex=sharex)
             new_axes.append(ax)
@@ -116,7 +116,7 @@ class TimeSeriesFigure:
         
         self._adjust_axes()
 
-        return new_axes if num_axes > 1 else new_axes[0]
+        return new_axes if n_axes > 1 else new_axes[0]
 
     def _adjust_axes(self) -> None:
         """
@@ -374,6 +374,7 @@ def filter_df(
     time_range: Tuple[str, str]=None,
     x_start: str='collection_timestamp',
     x_end: str='collection_timestamp',
+    unique: bool=False,
 ) -> pd.DataFrame:
     """
     Reformat and filter a time series DataFrame based on participant ID, array index, and date range.
@@ -394,13 +395,18 @@ def filter_df(
     if array_index is not None:
         df = df.query('array_index == @array_index')
 
-    df = df.reset_index()
+    # Reset index to avoid issues with slicing and indexing
+    x_ind = np.unique([c for c in [x_start, x_end] if c in df.index.names])
+    if len(x_ind):
+        df = df.reset_index(x_ind)
     df[x_start] = df[x_start].dt.tz_localize(None)
     if x_start != x_end:
         df[x_end] = df[x_end].dt.tz_localize(None)
     if time_range is not None:
         time_range = pd.to_datetime(time_range)
         df = df.loc[(time_range[0] <= df[x_start]) & (df[x_end] <= time_range[1])]
+    if unique:
+        df = df.drop_duplicates()
 
     return df
 
@@ -421,7 +427,7 @@ def plot_events_bars(
     alpha: Optional[float] = 0.7,
     ax: Optional[plt.Axes] = None,
     figsize: Tuple[float, float] = (12, 6),
-) -> None:
+) -> plt.Axes:
     """
     Plot events as bars on a time series plot.
 
@@ -498,7 +504,7 @@ def plot_events_fill(
     alpha: Optional[float] = 0.5,
     ax: Optional[plt.Axes] = None,
     figsize: Iterable[float] = [12, 6],
-) -> None:
+) -> plt.Axes:
     """
     Plot events as filled regions on a time series plot.
 
@@ -555,6 +561,8 @@ def plot_events_fill(
         ax.legend(handles, labels, loc='upper right', bbox_to_anchor=(1.2, 1))
 
     format_xticks(ax)
+
+    return ax
 
 
 def prepare_events(
