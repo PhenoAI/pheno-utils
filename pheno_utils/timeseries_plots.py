@@ -40,9 +40,10 @@ class TimeSeriesFigure:
         *args, 
         n_axes: int = 1, 
         height: float = 1, 
-        sharex: Optional[Union[str, int, plt.Axes]] = None, 
-        name: Optional[str] = None, 
-        ax: Optional[Union[str, int, plt.Axes]] = None, 
+        sharex: Union[str, int, plt.Axes] = None, 
+        name: str = None, 
+        ax: Union[str, int, plt.Axes] = None, 
+        adjust_time: bool = True, 
         **kwargs
     ) -> Union[plt.Axes, Iterable[plt.Axes]]:
         """
@@ -56,8 +57,9 @@ class TimeSeriesFigure:
             n_axes (int): The number of axes required. Default is 1.
             height (float): The proportional height of the axes relative to a single unit axis.
             sharex (str, int, or plt.Axes): Index or name of the axis to share the x-axis with. If None, the x-axis is independent.
-            name (Optional[str]): Name or ID to assign to the axis (only valid if num_axes=1).
+            name (str): Name or ID to assign to the axis.
             ax (plt.Axes, str, int): Pre-existing axis (object, name, or index) or list of axes to plot on.
+            adjust_time (bool): Whether to adjust the time limits of all axes to match the data.
             **kwargs: Keyword arguments to pass to the plot function.
         
         Returns:
@@ -69,7 +71,9 @@ class TimeSeriesFigure:
             ax = self.get_axes(ax, squeeze=True)
 
         plot_function(*args, ax=ax, **kwargs)
-        
+        if adjust_time:
+            self.set_time_limits(None, None)  # Adjust all axes to the same time limits
+
         return ax
 
     def add_axes(
@@ -251,17 +255,27 @@ class TimeSeriesFigure:
                 self.custom_paddings[axis_index + 1] = padding
             self._adjust_axes()
 
-    def set_time_limits(self, start_time: Union[float, str, pd.Timestamp], end_time: Union[float, str, pd.Timestamp]) -> None:
+    def set_time_limits(self, start_time: Union[float, str, pd.Timestamp, None], end_time: Union[float, str, pd.Timestamp, None]) -> None:
         """
-        Set the time limits for all axes in the figure.
+        Set the time limits for all axes in the figure. Calling with None will adjust the limits to the data.
 
         Args:
-            start_time (Union[float, str, pd.Timestamp]): The start time for the x-axis.
-            end_time (Union[float, str, pd.Timestamp]): The end time for the x-axis.
+            start_time (Union[float, str, pd.Timestamp, None]): The start time for the x-axis.
+            end_time (Union[float, str, pd.Timestamp, None]): The end time for the x-axis.
         """
+        # Default values
+        xlim = np.array(self.get_axis_properties()['xlim']).reshape((-1, 2))
+        xlim = xlim[:, 0].min(), xlim[:, 1].max()
+
         # Convert string inputs to pandas Timestamp objects
-        start_time = pd.to_datetime(start_time)
-        end_time = pd.to_datetime(end_time)
+        if start_time is not None:
+            start_time = pd.to_datetime(start_time)
+        else:
+            start_time = xlim[0]
+        if end_time is not None:
+            end_time = pd.to_datetime(end_time)
+        else:
+            end_time = xlim[1]
 
         self.set_axis_properties(xlim=(start_time, end_time))
 
