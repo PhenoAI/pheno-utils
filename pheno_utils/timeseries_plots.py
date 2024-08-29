@@ -498,6 +498,7 @@ def plot_events_bars(
 
     ax.set_yticks(np.arange(len(y_labels)), y_labels)
     format_xticks(ax)
+    ax.invert_yaxis()  # Invert y-axis to match the order of the legend
 
     return ax
 
