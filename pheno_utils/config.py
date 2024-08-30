@@ -25,7 +25,7 @@ ALL_COLOR = "C5"
 GLUC_COLOR = "C0"
 FOOD_COLOR = "C1"
 
-LEGEND_SHIFT = (1.2, 1)
+LEGEND_SHIFT = (1.03, 1.05)
 TIME_FORMAT = '%d/%m\n%H:%M'
 
 DATASETS_PATH = '/home/ec2-user/studies/hpp_datasets/'
@@ -37,8 +37,6 @@ BULK_DATA_PATH = {}
 PREFERRED_LANGUAGE = 'english'
 
 config_found = False
-
-
 
 # %% ../nbs/00_config.ipynb 5
 def copy_tre_config():

@@ -493,7 +493,7 @@ def plot_events_bars(
         ax.legend(
             legend_df['handle'],
             legend_df['label'],
-            loc='upper right', 
+            loc='upper left', 
             bbox_to_anchor=LEGEND_SHIFT)
 
     ax.set_yticks(np.arange(len(y_labels)), y_labels)
@@ -576,7 +576,7 @@ def plot_events_fill(
             else:
                 handles += [plt.Rectangle((0, 0), 1, 1, color=this_color, alpha=alpha)]
                 labels += ['events']
-            a.legend(handles, labels, loc='upper right', bbox_to_anchor=LEGEND_SHIFT)
+            a.legend(handles, labels, loc='upper left', bbox_to_anchor=LEGEND_SHIFT)
 
         format_xticks(a)
 

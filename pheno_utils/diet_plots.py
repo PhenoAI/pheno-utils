@@ -106,7 +106,7 @@ def plot_meals_bars(
             c += 1
         ax[idx].set_ylabel(f'Nutrients ({unit})')
         if legend:
-            ax[idx].legend(loc='upper right', bbox_to_anchor=LEGEND_SHIFT)
+            ax[idx].legend(loc='upper left', bbox_to_anchor=LEGEND_SHIFT)
         ax[idx].grid(True)
 
     # Set x-tick labels for the bottom and top axes
@@ -237,7 +237,7 @@ def plot_meals_lollipop(
 
     if legend:
         # Create a custom legend
-        ax.legend(handles=wedges, labels= pie_nuts, loc='upper right', bbox_to_anchor=LEGEND_SHIFT)
+        ax.legend(handles=wedges, labels= pie_nuts, loc='upper left', bbox_to_anchor=LEGEND_SHIFT)
 
     # Format x-axis to display dates properly
     ax.set_ylabel(y.replace('_', ' ').title())
