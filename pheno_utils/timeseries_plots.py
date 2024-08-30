@@ -14,7 +14,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-from .config import DEFAULT_CMAP, TIME_FORMAT
+from .config import DEFAULT_PALETTE, TIME_FORMAT
 
 # %% ../nbs/15_timeseries_plots.ipynb 4
 class TimeSeriesFigure:
@@ -437,7 +437,7 @@ def plot_events_bars(
     y_include: Optional[Iterable[str]] = None,
     y_exclude: Optional[Iterable[str]] = None,
     legend: bool = True,
-    cmap: str = DEFAULT_CMAP,
+    palette: str = DEFAULT_PALETTE,
     alpha: Optional[float] = 0.7,
     ax: Optional[plt.Axes] = None,
     figsize: Tuple[float, float] = (12, 6),
@@ -457,7 +457,7 @@ def plot_events_bars(
         y_include (Iterable[str]): The list of values to include in the plot.
         y_exclude (Iterable[str]): The list of values to exclude from the plot.
         legend (bool): Whether to show the legend.
-        cmap (str): The name of the colormap to use for coloring events.
+        palette (str): The name of the colormap to use for coloring events.
         alpha (float): The transparency of the bars. Default is 0.7.
         ax (plt.Axes): The axis to plot on. If None, a new figure is created.
         figsize (Tuple[float, float]): The size of the figure (width, height) in inches.
@@ -467,7 +467,7 @@ def plot_events_bars(
         hue, y,
         participant_id, array_index, time_range,
         y_include, y_exclude,
-        cmap=cmap)
+        palette=palette)
 
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
@@ -515,7 +515,7 @@ def plot_events_fill(
     y_include: Optional[Iterable[str]] = None,
     y_exclude: Optional[Iterable[str]] = None,
     legend: bool = True,
-    cmap: str = DEFAULT_CMAP,
+    palette: str = DEFAULT_PALETTE,
     alpha: Optional[float] = 0.5,
     ax: Optional[plt.Axes] = None,
     figsize: Iterable[float] = [12, 6],
@@ -535,7 +535,7 @@ def plot_events_fill(
         y_include (Iterable[str]): The list of values to include in the plot.
         y_exclude (Iterable[str]): The list of values to exclude from the plot.
         legend (bool): Whether to show the legend.
-        cmap (str): The name of the colormap to use for coloring events.
+        palette (str): The name of the palette to use for coloring events.
         alpha (float): The transparency of the filled regions.
         ax (plt.Axes): The axis to plot on. If None, a new figure is created.
         figsize (Tuple[float, float]): The size of the figure (width, height) in inches.
@@ -545,7 +545,7 @@ def plot_events_fill(
         hue, label,
         participant_id, array_index, time_range,
         y_include, y_exclude,
-        cmap=cmap)
+        palette=palette)
 
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
@@ -591,7 +591,7 @@ def prepare_events(
     time_range: Tuple[str, str],
     y_include: Iterable[str],
     y_exclude: Iterable[str],
-    cmap=DEFAULT_CMAP,
+    palette=DEFAULT_PALETTE,
 ) -> Tuple[pd.DataFrame, pd.DataFrame]:
     """
     Prepare events for plotting.
@@ -607,7 +607,7 @@ def prepare_events(
         time_range (Iterable[str]): The time range to filter events by.
         y_include (Iterable[str]): The list of values to include in the plot.
         y_exclude (Iterable[str]): The list of values to exclude from the plot.
-        cmap (str): The name of the colormap to use for coloring events.
+        palette (str): The name of the colormap to use for coloring events.
 
     Returns:
         Tuple[pd.DataFrame, pd.DataFrame]: The filtered events dataframe and the color map.
@@ -638,7 +638,7 @@ def prepare_events(
         colors = sorted(events[hue].unique())
         colors = pd.DataFrame({
             hue: colors,
-            'color': sns.color_palette(cmap, len(colors))
+            'color': sns.color_palette(palette, len(colors))
             }).set_index(hue)['color']
     else:
         colors = None

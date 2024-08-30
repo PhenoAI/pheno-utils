@@ -17,7 +17,7 @@ from matplotlib.ticker import FuncFormatter
 
 # %% ../nbs/16_diet_plots.ipynb 4
 from .timeseries_plots import filter_df, format_xticks, plot_events_bars
-from .config import DEFAULT_CMAP
+from .config import DEFAULT_PALETTE
 
 
 def plot_meals_bars(
@@ -32,7 +32,7 @@ def plot_meals_bars(
     units: List[str]=['kcal', 'g', 'mg'],
     legend: bool=True,
     bar_width=np.timedelta64(15, 'm'),
-    cmap: str=DEFAULT_CMAP,
+    palette: str=DEFAULT_PALETTE,
     alpha: float=0.7,
     ax: plt.Axes=None,
     figsize: Tuple[float, float]=(14, 3),
@@ -52,7 +52,7 @@ def plot_meals_bars(
         units (List[str]): A list of strings representing the units to be included in the plot. Default is ['kcal', 'g', 'mg'].
         legend (bool): If True, includes a legend in the plot. Default is True.
         bar_width (np.timedelta64): The width of the bars representing each meal on the time axis. Default is 15 minutes.
-        cmap (str): The color map to use for the stacked bars. Default is 'tab20'.
+        palette (str): The color palette to use for the stacked bars.
         alpha (float): The transparency of the stacked bars. Default is 0.7.
         ax (Optional[plt.Axes]): The Matplotlib axis on which to plot the bar chart. If None, a new axis is created. Default is None.
         figsize (Tuple[float, float]): The size of the figure to create. Default is (14, 3).
@@ -82,7 +82,7 @@ def plot_meals_bars(
             ax = [ax]
 
     colors = sns.color_palette(
-        cmap, sum([len(g) for g in grouped_nutrients.values()]))
+        palette, sum([len(g) for g in grouped_nutrients.values()]))
 
     # Calculate the width in time units
     bar_width_in_days = bar_width / np.timedelta64(1, 'D')
@@ -134,7 +134,7 @@ def plot_meals_lollipop(
     summary: bool=False,
     legend: bool=True,
     size_scale: float=2,
-    cmap: str=DEFAULT_CMAP,
+    palette: str=DEFAULT_PALETTE,
     alpha: float=0.7,
     ax: plt.Axes=None,
     figsize: Tuple[float, float] = (12, 6),
@@ -155,7 +155,7 @@ def plot_meals_lollipop(
         summary (bool): If True, includes a daily summary in the plot. Default is False.
         legend (bool): If True, includes a legend in the plot. Default is True.
         size_scale (float): The scaling factor for the size of the pie charts. Default is 1.
-        cmap (str): The color map to use for the pie slices. Default is 'tab20'.
+        palette (str): The color palette to use for the pie slices. Default is DEFAULT_PALETTTE.
         alpha (float): The transparency of the pie slices. Default is 0.7.
         ax (Optional[plt.Axes]): The Matplotlib axis on which to plot the lollipop chart. If None, a new axis is created. Default is None.
         figsize (Tuple[float, float]): The size of the figure to create. Default is (12, 6).
@@ -227,10 +227,10 @@ def plot_meals_lollipop(
         ax.plot([position, position], [0, y_value], color='gray', lw=1, zorder=1)
 
         # Plot the pie chart in figure coordinates (no distortion)
-        wedges = draw_pie_chart(ax, position, y_value, row[pie_nuts].fillna(0.).values, size_value, cmap, alpha)
+        wedges = draw_pie_chart(ax, position, y_value, row[pie_nuts].fillna(0.).values, size_value, palette, alpha)
         # # Plot the pie chart using the calculated position and scaled radius
         # ax.pie(row[pie_nuts].fillna(0.).values, radius=size, center=(position, y_value), startangle=90,
-        #        wedgeprops=dict(edgecolor='none'), normalize=True, colors=sns.color_palette(cmap, len(pie_nuts)),
+        #        wedgeprops=dict(edgecolor='none'), normalize=True, colors=sns.color_palette(palette, len(pie_nuts)),
         #        alpha=alpha)
 
     if legend:
@@ -347,7 +347,7 @@ def draw_pie_chart(
     y: float, 
     data: List[float], 
     size: float, 
-    cmap: str = DEFAULT_CMAP,
+    palette: str = DEFAULT_PALETTE,
     alpha: float = 0.7,
 ):
     """
@@ -362,7 +362,7 @@ def draw_pie_chart(
         y (float): The y-coordinate in data coordinates where the pie chart's center will be placed.
         data (List[float]): The data values to be represented in the pie chart.
         size (float): The size (radius) of the pie chart in axes-relative coordinates.
-        cmap (str): The color map to use for the pie slices.
+        palette (str): The color palette to use for the pie slices.
 
     Returns:
         List[plt.Patch]: A list of wedge objects representing the pie chart slices.
@@ -375,7 +375,7 @@ def draw_pie_chart(
     inset_ax = ax.inset_axes([axes_coords[0] - size, axes_coords[1] - size, 2 * size, 2 * size])
 
     # Plot the pie chart using the calculated position and scaled radius
-    colors = [(r, g, b, alpha) for r, g, b in sns.color_palette(cmap, len(data))]
+    colors = [(r, g, b, alpha) for r, g, b in sns.color_palette(palette, len(data))]
     wedges, _ = inset_ax.pie(data, radius=1, startangle=90, wedgeprops=dict(edgecolor='none'), normalize=True,
                              colors=colors)
 
@@ -412,7 +412,7 @@ def plot_meals_events(
     rename_categories: dict=SHORT_FOOD_CATEGORIES,
     legend: bool=True,
     size_scale: float=5,
-    cmap: str=DEFAULT_CMAP,
+    palette: str=DEFAULT_PALETTE,
     alpha: float=0.7,
     ax: plt.Axes=None,
     figsize: Tuple[float, float] = (12, 6),
@@ -433,7 +433,7 @@ def plot_meals_events(
         rename_categories (dict): A dictionary mapping original food categories to shorter names. Default is SHORT_FOOD_CATEGORIES.
         legend (bool): If True, includes a legend in the plot. Default is True.
         size_scale (float): The scaling factor for the size of the bars. Default is 5.
-        cmap (str): The color map to use for the bars. Default is 'tab20'.
+        palette (str): The palette to use for the bars.
         alpha (float): The transparency of the bars. Default is 0.7.
         ax (Optional[plt.Axes]): The Matplotlib axis on which to plot the lollipop chart. If None, a new axis is created. Default is None.
         figsize (Tuple[float, float]): The size of the figure to create. Default is (12, 6).
@@ -459,7 +459,7 @@ def plot_meals_events(
         x_start=x, x_end='event_end',
         y=y, hue=hue,
         y_include=y_include, y_exclude=y_exclude, alpha=alpha,
-        ax=ax, figsize=figsize, cmap=cmap, legend=legend)
+        ax=ax, figsize=figsize, palette=palette, legend=legend)
 
     format_xticks(ax, diet_log[x].drop_duplicates())
 
