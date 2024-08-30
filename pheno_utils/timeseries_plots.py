@@ -430,7 +430,7 @@ def plot_events_bars(
     x_start: str = 'collection_timestamp',
     x_end: str = 'event_end',
     y: str = 'event',
-    color: str = 'channel',
+    hue: str = 'channel',
     participant_id: Optional[int] = None,
     array_index: Optional[int] = None,
     time_range: Optional[Tuple[str, str]] = None,
@@ -450,7 +450,7 @@ def plot_events_bars(
         x_start (str): The column name for the start time of the event.
         x_end (str): The column name for the end time of the event.
         y (str): The column name for the y-axis values.
-        color (str): The column name for the color of the event.
+        hue (str): The column name for the color of the event.
         participant_id (int): The participant ID to filter events by.
         array_index (int): The array index to filter events by.
         time_range (Tuple[str, str]): The time range to filter events by.
@@ -464,7 +464,7 @@ def plot_events_bars(
     """
     events, color_map = prepare_events(
         events, x_start, x_end,
-        color, y,
+        hue, y,
         participant_id, array_index, time_range,
         y_include, y_exclude,
         cmap=cmap)
@@ -473,14 +473,14 @@ def plot_events_bars(
         fig, ax = plt.subplots(figsize=figsize)
 
     # Plot events
-    events = events.assign(diff=lambda x: x[x_end] - x[x_start]).sort_values([color, y])
+    events = events.assign(diff=lambda x: x[x_end] - x[x_start]).sort_values([hue, y])
     y_labels = []
     legend_dicts = []
     for i, (y_label, events) in enumerate(events.groupby(y, observed=True, sort=False)):
         if len(y) == 0:
             continue
         y_labels.append(y_label)
-        for c, r in events.groupby(color, observed=True):
+        for c, r in events.groupby(hue, observed=True):
             data = r[[x_start, 'diff']]
             if not len(data):
                 continue
@@ -507,7 +507,7 @@ def plot_events_fill(
     events: pd.DataFrame,
     x_start: str = 'collection_timestamp',
     x_end: str = 'event_end',
-    color: str = 'channel',
+    hue: str = 'channel',
     label: str = None,
     participant_id: Optional[int] = None,
     array_index: Optional[int] = None,
@@ -527,7 +527,7 @@ def plot_events_fill(
         events (pd.DataFrame): The events dataframe.
         x_start (str): The column name for the start time of the event.
         x_end (str): The column name for the end time of the event.
-        color (str): The column name for the color of the event.
+        hue (str): The column name for the color of the event.
         label (str): The column name for the label of the event.
         participant_id (int): The participant ID to filter events by.
         array_index (int): The array index to filter events by.
@@ -542,7 +542,7 @@ def plot_events_fill(
     """
     events, color_map = prepare_events(
         events, x_start, x_end,
-        color, label,
+        hue, label,
         participant_id, array_index, time_range,
         y_include, y_exclude,
         cmap=cmap)
@@ -551,10 +551,10 @@ def plot_events_fill(
         fig, ax = plt.subplots(figsize=figsize)
 
     # Plotting events
-    this_color = color if color is not None else '#4c72b0'
+    this_color = hue if hue is not None else '#4c72b0'
     for _, row in events.iterrows():
         if color_map is not None:
-            this_color = color_map[row[color]]
+            this_color = color_map[row[hue]]
         ax.axvspan(row[x_start], row[x_end], 0, 1, color=this_color, alpha=alpha, transform=ax.get_xaxis_transform())
 
     # Add labels as xticks on the top secondary x-axis
@@ -584,7 +584,7 @@ def prepare_events(
     events: pd.DataFrame,
     x_start: str,
     x_end: str,
-    color: str,
+    hue: str,
     label: str,
     participant_id: int,
     array_index: int,
@@ -600,7 +600,7 @@ def prepare_events(
         events (pd.DataFrame): The events dataframe.
         x_start (str): The column name for the start time of the event.
         x_end (str): The column name for the end time of the event.
-        color (str): The column name for the color of the event.
+        hue (str): The column name for the color of the event.
         label (str): The column name for the label of the event.
         participant_id (int): The participant ID to filter events by.
         array_index (int): The array index to filter events by.
@@ -618,28 +618,28 @@ def prepare_events(
     events = events.dropna(subset=[x_start, x_end])
     if y_include is not None:
         ind = pd.Series(False, index=events.index)
-        if color is not None:
-            ind |= events[color].isin(y_include)
+        if hue is not None:
+            ind |= events[hue].isin(y_include)
         if label is not None:
             ind |= events[label].isin(y_include)
         events = events.loc[ind]
     if y_exclude is not None:
         ind = pd.Series(False, index=events.index)
-        if color is not None:
-            ind |= events[color].isin(y_exclude)
+        if hue is not None:
+            ind |= events[hue].isin(y_exclude)
         if label is not None:
             ind |= events[label].isin(y_exclude)
         events = events.loc[~ind]
 
-    col_list = pd.Series([x_start, x_end, color, label]).dropna().drop_duplicates()
+    col_list = pd.Series([x_start, x_end, hue, label]).dropna().drop_duplicates()
 
     # Set colors
-    if color in events.columns:
-        colors = sorted(events[color].unique())
+    if hue in events.columns:
+        colors = sorted(events[hue].unique())
         colors = pd.DataFrame({
-            color: colors,
+            hue: colors,
             'color': sns.color_palette(cmap, len(colors))
-            }).set_index(color)['color']
+            }).set_index(hue)['color']
     else:
         colors = None
 

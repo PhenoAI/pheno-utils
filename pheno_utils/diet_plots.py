@@ -87,11 +87,10 @@ def plot_meals_bars(
     # Calculate the width in time units
     bar_width_in_days = bar_width / np.timedelta64(1, 'D')
 
-    unit_list = []
+    unit_list = [g for g in grouped_nutrients if g != 'kcal']
     if 'kcal' in grouped_nutrients:
+        # kcal is last to keep colours synced with the lollipop plot
         unit_list.append('kcal')
-    unit_list = unit_list + [g for g in grouped_nutrients
-                             if g not in unit_list]
 
     # Stacked bar plots for grouped nutrients
     c = 0
@@ -404,7 +403,7 @@ def plot_meals_events(
     x: str='collection_timestamp',
     y: str='short_food_category',
     size: str='weight_g', 
-    color: str='short_food_category',
+    hue: str='short_food_category',
     participant_id: int=None, 
     array_index: int=None,
     time_range: Tuple[str, str]=None, 
@@ -426,7 +425,7 @@ def plot_meals_events(
         x (str): The name of the column in `diet_log` representing the x-axis variable, such as timestamps. Default is 'collection_timestamp'.
         y (str): The name of the column in `diet_log` representing the y-axis variable, such as food categories. Default is 'short_food_category'.
         size (str): The name of the column in `diet_log` representing the size of the bars. Default is 'weight_g'.
-        color (str): The name of the column in `diet_log` representing the color of the bars. Default is 'short_food_category'.
+        hue (str): The name of the column in `diet_log` representing the color of the bars. Default is 'short_food_category'.
         participant_id (Optional[int]): The participant's ID to filter the diet log. If None, no filtering is done. Default is None.
         time_range (Optional[Tuple[str, str]]): A tuple of strings representing the start and end dates for filtering the data. Format should be 'YYYY-MM-DD'. Default is None.
         y_include (List[str]): A list of strings representing the categories to include in the plot. Default is None.
@@ -458,7 +457,7 @@ def plot_meals_events(
     ax = plot_events_bars(
         diet_log,
         x_start=x, x_end='event_end',
-        y=y, color=color,
+        y=y, hue=hue,
         y_include=y_include, y_exclude=y_exclude, alpha=alpha,
         ax=ax, figsize=figsize, cmap=cmap, legend=legend)
 
