@@ -97,7 +97,7 @@ def plot_meals_bars(
     for idx, unit in enumerate(unit_list):
         bottom = pd.Series([0] * len(df))
         for nut in grouped_nutrients[unit]:
-            if nut == 'weight_g':
+            if nut in ['weight_g']:
                 continue
             ax[idx].bar(
                 df[x], df[nut], bottom=bottom, width=bar_width_in_days,
@@ -125,7 +125,7 @@ def plot_meals_lollipop(
     diet_log: pd.DataFrame, 
     x: str='collection_timestamp',
     y: str='calories_kcal',
-    size: str='weight_g', 
+    size: str='total_g', 
     label: str='short_food_name',
     participant_id: int=None, 
     array_index: int=None,
@@ -133,7 +133,7 @@ def plot_meals_lollipop(
     meals: bool=True,
     summary: bool=False,
     legend: bool=True,
-    size_scale: float=2,
+    size_scale: float=5,
     palette: str=DEFAULT_PALETTE,
     alpha: float=0.7,
     ax: plt.Axes=None,
@@ -147,7 +147,7 @@ def plot_meals_lollipop(
         diet_log (pd.DataFrame): The dataframe containing the diet log data, with columns for timestamps, nutrients, and other measurements.
         x (str): The name of the column in `diet_log` representing the x-axis variable, such as timestamps. Default is 'collection_timestamp'.
         y (str): The name of the column in `diet_log` representing the y-axis variable, such as calories. Default is 'calories_kcal'.
-        size (str): The name of the column in `diet_log` representing the size of the pie charts. Default is 'weight_g'.
+        size (str): The name of the column in `diet_log` representing the size of the pie charts. Default is 'total_g'.
         label (str): The name of the column in `diet_log` representing the labels for each meal. Default is 'short_food_name'.
         participant_id (Optional[int]): The participant's ID to filter the diet log. If None, no filtering is done. Default is None.
         time_range (Optional[Tuple[str, str]]): A tuple of strings representing the start and end dates for filtering the data. Format should be 'YYYY-MM-DD'. Default is None.
@@ -183,7 +183,9 @@ def plot_meals_lollipop(
         df[nut.replace('_mg', '_g')] = df[nut] / 1000
         grouped_nutrients['g'] += [nut.replace('_mg', '_g')]
 
-    pie_nuts = [nut for nut in grouped_nutrients['g'] if nut != 'weight_g']
+    pie_nuts = [nut for nut in grouped_nutrients['g']
+                if nut not in ['weight_g']]
+    df['total_g'] = df[pie_nuts].sum(axis=1)
 
     # Calculate unknown component and ensure all values are non-negative
     df['other_g'] = (df['weight_g'] - df[pie_nuts].sum(axis=1)).clip(lower=0)
