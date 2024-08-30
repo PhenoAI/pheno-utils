@@ -14,7 +14,7 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 
-from .config import DEFAULT_PALETTE, TIME_FORMAT
+from .config import DEFAULT_PALETTE, TIME_FORMAT, LEGEND_SHIFT
 
 # %% ../nbs/15_timeseries_plots.ipynb 4
 class TimeSeriesFigure:
@@ -494,7 +494,7 @@ def plot_events_bars(
             legend_df['handle'],
             legend_df['label'],
             loc='upper right', 
-            bbox_to_anchor=(1.2, 1))
+            bbox_to_anchor=LEGEND_SHIFT)
 
     ax.set_yticks(np.arange(len(y_labels)), y_labels)
     format_xticks(ax)
@@ -573,7 +573,7 @@ def plot_events_fill(
         else:
             handles += [plt.Rectangle((0, 0), 1, 1, color=this_color, alpha=alpha)]
             labels += ['events']
-        ax.legend(handles, labels, loc='upper right', bbox_to_anchor=(1.2, 1))
+        ax.legend(handles, labels, loc='upper right', bbox_to_anchor=LEGEND_SHIFT)
 
     format_xticks(ax)
 

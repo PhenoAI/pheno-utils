@@ -17,7 +17,7 @@ from matplotlib.ticker import FuncFormatter
 
 # %% ../nbs/16_diet_plots.ipynb 4
 from .timeseries_plots import filter_df, format_xticks, plot_events_bars
-from .config import DEFAULT_PALETTE
+from .config import DEFAULT_PALETTE, LEGEND_SHIFT
 
 
 def plot_meals_bars(
@@ -106,7 +106,7 @@ def plot_meals_bars(
             c += 1
         ax[idx].set_ylabel(f'Nutrients ({unit})')
         if legend:
-            ax[idx].legend(loc='upper right', bbox_to_anchor=(1.2, 1))
+            ax[idx].legend(loc='upper right', bbox_to_anchor=LEGEND_SHIFT)
         ax[idx].grid(True)
 
     # Set x-tick labels for the bottom and top axes
@@ -137,7 +137,7 @@ def plot_meals_lollipop(
     palette: str=DEFAULT_PALETTE,
     alpha: float=0.7,
     ax: plt.Axes=None,
-    figsize: Tuple[float, float] = (12, 6),
+    figsize: Tuple[float, float] = (12, 3),
 ):
     """
     Plot a lollipop chart with pie charts representing nutrient composition for each meal.
@@ -237,7 +237,7 @@ def plot_meals_lollipop(
 
     if legend:
         # Create a custom legend
-        ax.legend(handles=wedges, labels= pie_nuts, loc='upper right', bbox_to_anchor=(1.2, 1))
+        ax.legend(handles=wedges, labels= pie_nuts, loc='upper right', bbox_to_anchor=LEGEND_SHIFT)
 
     # Format x-axis to display dates properly
     ax.set_ylabel(y.replace('_', ' ').title())
