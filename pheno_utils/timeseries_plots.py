@@ -549,33 +549,36 @@ def plot_events_fill(
 
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
+    if type(ax) is not list:
+        ax = [ax]
 
-    # Plotting events
-    this_color = hue if hue is not None else '#4c72b0'
-    for _, row in events.iterrows():
-        if color_map is not None:
-            this_color = color_map[row[hue]]
-        ax.axvspan(row[x_start], row[x_end], 0, 1, color=this_color, alpha=alpha, transform=ax.get_xaxis_transform())
+    for a in ax:
+        # Plotting events
+        this_color = hue if hue is not None else '#4c72b0'
+        for _, row in events.iterrows():
+            if color_map is not None:
+                this_color = color_map[row[hue]]
+            a.axvspan(row[x_start], row[x_end], 0, 1, color=this_color, alpha=alpha, transform=a.get_xaxis_transform())
 
-    # Add labels as xticks on the top secondary x-axis
-    if label:
-        secax = ax.secondary_xaxis('top')
-        secax.set_xticks(events[x_start])
-        secax.set_xticklabels(events[label], rotation=0, ha='center')
+        # Add labels as xticks on the top secondary x-axis
+        if label:
+            secax = a.secondary_xaxis('top')
+            secax.set_xticks(events[x_start])
+            secax.set_xticklabels(events[label], rotation=0, ha='center')
 
-    # Add legend
-    if legend:
-        # Get existing handles from existing legends in the axes
-        handles, labels = ax.get_legend_handles_labels()
-        if color_map is not None:
-            handles += [plt.Rectangle((0, 0), 1, 1, color=c, alpha=alpha) for c in color_map]
-            labels += color_map.index.tolist()
-        else:
-            handles += [plt.Rectangle((0, 0), 1, 1, color=this_color, alpha=alpha)]
-            labels += ['events']
-        ax.legend(handles, labels, loc='upper right', bbox_to_anchor=LEGEND_SHIFT)
+        # Add legend
+        if legend:
+            # Get existing handles from existing legends in the axes
+            handles, labels = a.get_legend_handles_labels()
+            if color_map is not None:
+                handles += [plt.Rectangle((0, 0), 1, 1, color=c, alpha=alpha) for c in color_map]
+                labels += color_map.index.tolist()
+            else:
+                handles += [plt.Rectangle((0, 0), 1, 1, color=this_color, alpha=alpha)]
+                labels += ['events']
+            a.legend(handles, labels, loc='upper right', bbox_to_anchor=LEGEND_SHIFT)
 
-    format_xticks(ax)
+        format_xticks(a)
 
     return ax
 
