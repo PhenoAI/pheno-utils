@@ -560,7 +560,11 @@ def plot_events_fill(
         for _, row in events.iterrows():
             if color_map is not None:
                 this_color = color_map[row[hue]]
-            a.axvspan(row[x_start], row[x_end], 0, 1, color=this_color, alpha=alpha, transform=a.get_xaxis_transform())
+            # Plot the event as a filled region, with zorder to ensure it's behind other elements
+            a.axvspan(
+                row[x_start], row[x_end], 0, 1,
+                color=this_color, alpha=alpha, zorder=0,
+                transform=a.get_xaxis_transform())
 
         # Add labels as xticks on the top secondary x-axis
         if label:
