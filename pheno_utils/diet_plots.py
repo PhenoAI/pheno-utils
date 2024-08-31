@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['SHORT_FOOD_CATEGORIES', 'plot_meals_bars', 'plot_meals_lollipop', 'prepare_meals', 'extract_units', 'draw_pie_chart',
-           'plot_meals_events']
+           'plot_meals_events', 'plot_diet_cgm_sleep']
 
 # %% ../nbs/16_diet_plots.ipynb 3
 from typing import List, Tuple
@@ -104,7 +104,7 @@ def plot_meals_bars(
                 color=colors[c], alpha=alpha, label=nut)
             bottom += df[nut]
             c += 1
-        ax[idx].set_ylabel(f'Nutrients ({unit})')
+        ax[idx].set_ylabel(f'Nutrients ({unit})', rotation=0, horizontalalignment='right')
         if legend:
             ax[idx].legend(loc='upper left', bbox_to_anchor=LEGEND_SHIFT)
         ax[idx].grid(True)
@@ -240,7 +240,7 @@ def plot_meals_lollipop(
         ax.legend(handles=wedges, labels= pie_nuts, loc='upper left', bbox_to_anchor=LEGEND_SHIFT)
 
     # Format x-axis to display dates properly
-    ax.set_ylabel(y.replace('_', ' ').title())
+    ax.set_ylabel(y.replace('_', ' ').title(), rotation=0, horizontalalignment='right')
     ax.grid(True)
 
     # Set y-ticks and x-ticks
@@ -465,3 +465,80 @@ def plot_meals_events(
 
     format_xticks(ax, diet_log[x].drop_duplicates())
 
+
+# %% ../nbs/16_diet_plots.ipynb 6
+from .timeseries_plots import TimeSeriesFigure, plot_events_fill
+from .sleep_plots import plot_sleep_channels
+
+def plot_diet_cgm_sleep(
+    diet: pd.DataFrame=None,
+    cgm: pd.DataFrame=None,
+    sleep_events: pd.DataFrame=None,
+    sleep_channels: pd.DataFrame=None,
+    channel_filter: List[str]=['heart_rate', 'actigraph', 'pat_amplitude'],
+    participant_id=None,
+    array_index=None,
+    time_range: Tuple[str, str]=None,
+    figsize=(14, 8),
+) -> TimeSeriesFigure:
+    """
+    Plot diet, CGM and sleep data together.
+
+    Arg:
+        diet (pd.DataFrame): Diet logging data.
+        cgm (pd.DataFrame): CGM data.
+        sleep_events (pd.DataFrame): Sleep events data.
+        sleep_channels (pd.DataFrame): Sleep channels data.
+        channel_filter (List[str]): Which sleep channels to include in the plot.
+        participant_id (int): Participant ID.
+        array_index (int): Array index.
+        time_range (Tuple[str, str]): Time range to plot.
+        figsize (Tuple[int, int]): Figure size.
+
+    Returns:
+        TimeSeriesFigure: Plot.
+    """
+    g = TimeSeriesFigure(figsize=figsize)
+
+    # Add diet
+    if diet is not None:
+        g.plot(plot_meals_lollipop, diet,
+            participant_id=participant_id, array_index=array_index, time_range=time_range,
+            size_scale=15, name='meals')
+        g.plot(plot_meals_events, diet,
+            participant_id=participant_id, array_index=array_index, time_range=time_range,
+            name='diet_events', height=2)
+    # Add CGM
+    if cgm is not None:
+        g.add_axes(name='glucose', sharex='meals' if diet is not None else None)
+        cgm = filter_df(
+            cgm,
+            participant_id=participant_id, array_index=array_index, time_range=time_range,
+            )
+        ax = g.get_axes('glucose', squeeze=True)
+        ax.plot(cgm['collection_timestamp'], cgm['glucose'], label='glucose', color='#4c72b0')
+        ax.scatter(cgm['collection_timestamp'], cgm['glucose'], s=10, color='#4c72b0')
+        ax.set_ylabel('Glucose', rotation=0, horizontalalignment='right')
+        ax.set_ylabel('')
+    # Add sleep
+    if sleep_channels is not None:
+        plot_sleep_channels(
+            sleep_channels,
+            x='collection_timestamp', y='values', row='source', hue=None,
+            participant_id=participant_id, array_index=array_index, time_range=time_range,
+            y_include=channel_filter,
+            fig=g, height=1,
+        )
+    if sleep_events is not None:
+        g.plot(plot_events_fill, sleep_events,
+            participant_id=participant_id, array_index=array_index, time_range=time_range,
+            y_include=["Wake", "REM", "Light Sleep", "Deep Sleep"],
+            hue='event', ax=['glucose', 'sleep_channels'], sharex='sleep_channels', alpha=0.3)
+
+    # Tidy up
+    g.set_axis_padding(0.03)
+    if time_range is not None:
+        g.set_time_limits(*time_range)
+    g.set_periodic_ticks('2H', ax='sleep_channels')
+
+    return g

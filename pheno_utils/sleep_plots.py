@@ -162,10 +162,10 @@ def plot_sleep_channels(
 
     # Plot data
     for i, (source, d) in enumerate(channels.groupby(row, observed=True, sort=False)):
-        if colors is not None:
+        if colors is not None and hue is not None:
             c = colors.get(d[hue].iloc[0], 'grey')
         else:
-            c = 'grey'
+            c = '#4c72b0'
         if resample is not None:
             d = d.resample(resample, on=x).mean(numeric_only=True).reset_index()
 
