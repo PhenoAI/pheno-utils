@@ -14,6 +14,9 @@ import seaborn as sns
 import matplotlib.pyplot as plt
 import matplotlib.dates as mdates
 from matplotlib.ticker import FuncFormatter
+import matplotlib.patches as mpatches
+import matplotlib.lines as mlines
+import matplotlib.patches as Patch
 
 # %% ../nbs/16_diet_plots.ipynb 4
 from .timeseries_plots import filter_df, format_xticks, plot_events_bars
@@ -465,6 +468,31 @@ def plot_meals_hbars(
 
     format_xticks(ax, diet_log[x].drop_duplicates())
 
+    # Manually add size legend using broken_barh
+    sizes = [5, 10, 20]  # Example sizes in grams
+    size_durations = [pd.to_timedelta(s * size_scale, unit='s') for s in sizes]
+
+    # Calculate the xlim to place the legend bars right at the end
+    xlim = ax.get_xlim()  # These are in days
+    y_start_legend = ax.get_ylim()[0] - 1
+
+    for i, (s, duration) in enumerate(zip(sizes, size_durations)):
+        duration_days = duration.total_seconds() / (60 * 60 * 24)  # Convert duration to days
+        x_bar_start = xlim[1] - duration_days  # Calculate the start of the bar
+
+        # Plot the bar
+        ax.broken_barh(
+            xranges=[(x_bar_start, duration_days)],
+            yrange=(y_start_legend - i * 1, 0.5), 
+            facecolors='gray', alpha=alpha
+        )
+        
+        # Add text next to the bar
+        ax.annotate(f'{s}g', 
+                    (x_bar_start - 10 / (60 * 60 * 24), y_start_legend - i * 1 + 0.25),  # Adjust x_shift as needed
+                    va='center', ha='right', fontsize=10)
+
+    return ax
 
 # %% ../nbs/16_diet_plots.ipynb 6
 from .timeseries_plots import TimeSeriesFigure, plot_events_fill
@@ -475,7 +503,7 @@ def plot_diet_cgm_sleep(
     cgm: pd.DataFrame=None,
     sleep_events: pd.DataFrame=None,
     sleep_channels: pd.DataFrame=None,
-    channel_filter: List[str]=['heart_rate', 'actigraph', 'pat_amplitude'],
+    channel_filter: List[str]=['heart_rate', 'actigraph', 'spo2'],
     participant_id=None,
     array_index=None,
     time_range: Tuple[str, str]=None,
