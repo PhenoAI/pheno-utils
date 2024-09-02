@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['SHORT_FOOD_CATEGORIES', 'plot_nutrient_bars', 'plot_nutrient_lollipop', 'prepare_meals', 'extract_units',
-           'draw_pie_chart', 'plot_meals_hbars', 'plot_diet_cgm_sleep']
+           'draw_pie_chart', 'plot_meals_hbars', 'add_size_legend', 'plot_diet_cgm_sleep']
 
 # %% ../nbs/16_diet_plots.ipynb 3
 from typing import List, Tuple
@@ -416,6 +416,7 @@ def plot_meals_hbars(
     y_exclude: List[str] = None,
     rename_categories: dict=SHORT_FOOD_CATEGORIES,
     legend: bool=True,
+    size_legend: List[int]=[100, 200, 500],
     size_scale: float=5,
     palette: str=DEFAULT_PALETTE,
     alpha: float=0.7,
@@ -437,6 +438,7 @@ def plot_meals_hbars(
         y_exclude (List[str]): A list of strings representing the categories to exclude from the plot. Default is None.
         rename_categories (dict): A dictionary mapping original food categories to shorter names. Default is SHORT_FOOD_CATEGORIES.
         legend (bool): If True, includes a legend in the plot. Default is True.
+        size_legend (List[int]): A list of integers representing the sizes to include in the size legend. Default is [100, 200, 500].
         size_scale (float): The scaling factor for the size of the bars. Default is 5.
         palette (str): The palette to use for the bars.
         alpha (float): The transparency of the bars. Default is 0.7.
@@ -468,31 +470,50 @@ def plot_meals_hbars(
 
     format_xticks(ax, diet_log[x].drop_duplicates())
 
+    add_size_legend(ax, size_legend, size_scale, alpha)
+
+    return ax
+
+
+def add_size_legend(ax: plt.Axes, sizes: List[int], size_scale: float, alpha: float, shift: int=0):
+    """
+    Add a size legend to the current axis using broken_barh.
+    """
+    if len(sizes) == 0:
+        return
+
     # Manually add size legend using broken_barh
-    sizes = [5, 10, 20]  # Example sizes in grams
-    size_durations = [pd.to_timedelta(s * size_scale, unit='s') for s in sizes]
+    sec2day = 1 / (60 * 60 * 24)  # Convert seconds to days
+    size_durations = [
+        s * size_scale * sec2day
+        for s in sizes]
+    max_duration = max(size_durations)
 
     # Calculate the xlim to place the legend bars right at the end
     xlim = ax.get_xlim()  # These are in days
-    y_start_legend = ax.get_ylim()[0] - 1
+    y_start_legend = ax.get_ylim()[0] - 1 - shift
+    x_bar_start = \
+        xlim[1] - \
+        1.5 * max_duration
+
+    # Add a bounding box around the text and bars
+    ax.add_patch(mpatches.Rectangle(
+        (x_bar_start - 1.5*(max_duration + 10 * sec2day), y_start_legend - len(sizes) + 0.25),
+         3 * (max_duration + 10 * sec2day), len(sizes) + 0.5,
+         edgecolor='gray', facecolor='white', lw=1))
 
     for i, (s, duration) in enumerate(zip(sizes, size_durations)):
-        duration_days = duration.total_seconds() / (60 * 60 * 24)  # Convert duration to days
-        x_bar_start = xlim[1] - duration_days  # Calculate the start of the bar
-
         # Plot the bar
         ax.broken_barh(
-            xranges=[(x_bar_start, duration_days)],
-            yrange=(y_start_legend - i * 1, 0.5), 
+            xranges=[(x_bar_start, duration)],
+            yrange=(y_start_legend - i - 0.4, 0.8), 
             facecolors='gray', alpha=alpha
         )
-        
+
         # Add text next to the bar
         ax.annotate(f'{s}g', 
-                    (x_bar_start - 10 / (60 * 60 * 24), y_start_legend - i * 1 + 0.25),  # Adjust x_shift as needed
+                    (x_bar_start - 10 * sec2day, y_start_legend - i),
                     va='center', ha='right', fontsize=10)
-
-    return ax
 
 # %% ../nbs/16_diet_plots.ipynb 6
 from .timeseries_plots import TimeSeriesFigure, plot_events_fill
@@ -513,11 +534,11 @@ def plot_diet_cgm_sleep(
     Plot diet, CGM and sleep data together.
 
     Arg:
-        diet (pd.DataFrame): Diet logging data.
-        cgm (pd.DataFrame): CGM data.
-        sleep_events (pd.DataFrame): Sleep events data.
-        sleep_channels (pd.DataFrame): Sleep channels data.
-        channel_filter (List[str]): Which sleep channels to include in the plot.
+        diet (pd.DataFrame): Diet logging data. Set to None to remove from figure.
+        cgm (pd.DataFrame): CGM data. Set to None to remove from figure.
+        sleep_events (pd.DataFrame): Sleep events data. Set to None to remove from figure.
+        sleep_channels (pd.DataFrame): Sleep channels data. Set to None to remove from figure.
+        channel_filter (List[str]): Which sleep channels to include in the plot. Default: ['heart_rate', 'actigraph', 'spo2'].
         participant_id (int): Participant ID.
         array_index (int): Array index.
         time_range (Tuple[str, str]): Time range to plot.
