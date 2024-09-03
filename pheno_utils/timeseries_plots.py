@@ -482,6 +482,8 @@ def plot_events_bars(
         participant_id, array_index, time_range,
         y_include, y_exclude,
         palette=palette)
+    if hue is None:
+        hue = 'hue'
 
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
@@ -560,6 +562,8 @@ def plot_events_fill(
         participant_id, array_index, time_range,
         y_include, y_exclude,
         palette=palette)
+    if hue is None:
+        hue = 'hue'
 
     if ax is None:
         fig, ax = plt.subplots(figsize=figsize)
@@ -660,6 +664,9 @@ def prepare_events(
         if label is not None:
             ind |= events[label].isin(y_exclude)
         events = events.loc[~ind]
+    if hue is None:
+        hue = 'hue'
+        events[hue] = 'events'
 
     col_list = [x_start, x_end, hue, label]
     if add_columns is not None:
