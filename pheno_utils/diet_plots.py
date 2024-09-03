@@ -72,7 +72,7 @@ def plot_nutrient_bars(
         label=label,
         return_meals=meals,
         return_summary=summary,
-        return_units=agg_units,
+        agg_units=agg_units,
         x_col=x,
         )
 
@@ -525,7 +525,7 @@ def plot_diet_cgm_sleep(
     participant_id=None,
     array_index=None,
     time_range: Tuple[str, str]=None,
-    figsize=(14, 8),
+    figsize=(14, 10),
 ) -> TimeSeriesFigure:
     """
     Plot diet, CGM and sleep data together.
@@ -548,13 +548,13 @@ def plot_diet_cgm_sleep(
 
     # Add diet
     if diet is not None:
-        g.plot(plot_meals_hbars, diet,
-            participant_id=participant_id, array_index=array_index, time_range=time_range,
-            name='diet_bars', height=2)
         g.plot(plot_nutrient_lollipop, diet,
             second_y=True if cgm is not None else False,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
-            size_scale=10, name='diet_glucose', sharex='diet_bars')
+            size_scale=10, name='diet_glucose', height=1.5)
+        g.plot(plot_meals_hbars, diet,
+            participant_id=participant_id, array_index=array_index, time_range=time_range,
+            name='diet_bars', sharex='diet_glucose', height=3)
 
     # Add CGM
     if cgm is not None:
@@ -593,7 +593,6 @@ def plot_diet_cgm_sleep(
 
     # Tidy up
     g.set_axis_padding(0.03)
-    g.set_axis_padding(0.08, ax='diet_bars')
     if time_range is not None:
         g.set_time_limits(*time_range)
     g.set_periodic_ticks('2H', ax='sleep_channels')
