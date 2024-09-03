@@ -145,8 +145,8 @@ def plot_nutrient_lollipop(
     Plot a lollipop chart with pie charts representing nutrient composition for each meal.
 
     NOTE: The y-axis is scaled to match the units of the x-axis, to avoid distortion of the pie charts.
-    Use the `second_y` option to plot it with other y-axis data.
     Due to scaling, if you intend to change `xlim` after plotting, you must also provide `date_range`.
+    Use the `second_y` of g.plot() option to plot it with other y-axis data.
 
     Args:
         diet_log (pd.DataFrame): The dataframe containing the diet log data, with columns for timestamps, nutrients, and other measurements.
@@ -182,11 +182,6 @@ def plot_nutrient_lollipop(
 
     if ax is None:
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
-
-    # Secondary y-axis
-    if second_y:
-        ax.yaxis.grid(False)
-        ax = ax.twinx()
 
     # Convert nutrients in mg to grams
     for nut in grouped_nutrients['mg']:
@@ -246,13 +241,7 @@ def plot_nutrient_lollipop(
         ax.legend(handles=wedges, labels= pie_nuts, loc='upper left', bbox_to_anchor=LEGEND_SHIFT)
 
     # Format x-axis to display dates properly
-    if second_y:
-        ha = 'center'
-        rotation = 90
-    else:
-        ha = 'right'
-        rotation=0
-    ax.set_ylabel(y.replace('_', ' ').title(), rotation=rotation, horizontalalignment=ha)
+    ax.set_ylabel(y.replace('_', ' ').title(), rotation=0, horizontalalignment='right')
     ax.grid(True)
 
     # Set y-ticks and x-ticks
@@ -261,8 +250,6 @@ def plot_nutrient_lollipop(
     yticks = np.arange(0, ylim[1] / aspect_ratio, 100, dtype=int)
     ax.set_yticks(yticks * aspect_ratio)
     ax.set_yticklabels(yticks)
-    if second_y:
-        ax.yaxis.grid(False)
 
     format_xticks(ax, df[x])
     if label is not None:

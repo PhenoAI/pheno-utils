@@ -42,6 +42,7 @@ class TimeSeriesFigure:
         n_axes: int = 1, 
         height: float = 1, 
         sharex: Union[str, int, plt.Axes] = None, 
+        second_y: bool = False,
         name: str = None, 
         ax: Union[str, int, plt.Axes] = None, 
         adjust_time: bool = True, 
@@ -58,6 +59,7 @@ class TimeSeriesFigure:
             n_axes (int): The number of axes required. Default is 1.
             height (float): The proportional height of the axes relative to a single unit axis.
             sharex (str, int, or plt.Axes): Index or name of the axis to share the x-axis with. If None, the x-axis is independent.
+            second_y (bool): If True, plot will be done on a secondary y-axis in the plot. Default is False.s
             name (str): Name or ID to assign to the axis.
             ax (plt.Axes, str, int): Pre-existing axis (object, name, or index) or list of axes to plot on.
             adjust_time (bool): Whether to adjust the time limits of all axes to match the data.
@@ -71,9 +73,18 @@ class TimeSeriesFigure:
         else:
             ax = self.get_axes(ax, squeeze=True)
 
+        if second_y:
+            ax.yaxis.grid(False)
+            ax = ax.twinx()
+
         plot_function(*args, ax=ax, **kwargs)
         if adjust_time:
             self.set_time_limits(None, None)  # Adjust all axes to the same time limits
+        if second_y:
+            ax.yaxis.grid(False)
+            ax.yaxis.label.set_rotation(90)
+            ax.yaxis.label.set_ha('center')
+
 
         return ax
 
@@ -82,7 +93,7 @@ class TimeSeriesFigure:
         height: float = 1, 
         n_axes: int = 1, 
         sharex: Optional[Union[str, int, plt.Axes]] = None, 
-        name: Optional[str] = None
+        name: Optional[str] = None,
     ) -> Union[plt.Axes, Iterable[plt.Axes]]:
         """
         Add one or more axes with a specific proportional height to the figure.
@@ -156,6 +167,7 @@ class TimeSeriesFigure:
 
         Args:
             ax: The axis object, index, name, or list of those to retrieve.
+            squeeze (bool): Whether to return a single axis object if only one is found.
         
         Returns:
             Iterable[plt.Axes]: A list of axis objects.
