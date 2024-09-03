@@ -180,15 +180,18 @@ def convert_codings_to_int(df: pd.DataFrame, dict_df: pd.DataFrame, fields_for_t
     df_coding = df.copy()
     if preferred_language == 'coding':
         for column in fields_for_translation:
-            data_coding = dict_df.loc[column, 'data_coding'] # This actually should happen
+            data_coding = dict_df.loc[column, 'data_coding']
+            if isinstance(data_coding, pd.Series): # In case of multiple entries, take the first one
+                data_coding = data_coding.iloc[0]
+            
             if pd.notna(data_coding):
-                if dict_df.loc[column, 'array'] == 'Multiple':
-                    try:
-                        df_coding[column] = df[column].apply(lambda x : pd.Series(x).astype('Int16') if isinstance(x, np.ndarray) else x)
-                    except: 
-                        print(column)
+                field_array = dict_df.loc[column, 'array']
+                if isinstance(field_array, pd.Series):
+                    field_array = field_array.iloc[0]
+                if field_array == 'Multiple':
+                    continue
                 else: 
-                    df_coding[column] = df[column].astype('Int16')
+                    df_coding[column] = df[column].astype('Int16', errors='ignore')
                     dict_df.loc[column, 'pandas_dtype'] = 'Int16'
     
     return df_coding
@@ -212,7 +215,6 @@ def transform_dataframe(
         df = convert_codings_to_int(df=df, dict_df=dict_df, fields_for_translation=fields_for_translation, 
                                 preferred_language=transform_to)
         
-        print('#1', df.info())
         return df
     
     
@@ -235,5 +237,4 @@ def transform_dataframe(
     
     transformed_df = convert_codings_to_int(df=transformed_df, dict_df=dict_df, fields_for_translation=fields_for_translation, 
                                 preferred_language=transform_to)
-    print('#2', df.info())
     return transformed_df

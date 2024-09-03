@@ -48,7 +48,7 @@ def get_gender_indices(df, gender='male', gender_col='sex'):
         raise ValueError(f"Column '{gender_col}' does not exist in the DataFrame")
     
     # Check the data type of the gender column
-    if df[gender_col].dtype == 'int64':
+    if pd.api.types.is_integer_dtype(df[gender_col]):
         if gender == 'male':
             indices = df[df[gender_col] == 1].index
         else:
