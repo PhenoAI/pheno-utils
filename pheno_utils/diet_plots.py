@@ -32,7 +32,7 @@ def plot_nutrient_bars(
     time_range: Tuple[str, str]=None, 
     meals: bool=True,
     summary: bool=False,
-    units: List[str]=['kcal', 'g', 'mg'],
+    agg_units: dict={'kcal': 'sum', 'g': 'sum', 'mg': 'sum'},
     legend: bool=True,
     bar_width=np.timedelta64(15, 'm'),
     palette: str=DEFAULT_PALETTE,
@@ -52,7 +52,7 @@ def plot_nutrient_bars(
         time_range (Optional[Tuple[str, str]]): A tuple of strings representing the start and end dates for filtering the data. Format should be 'YYYY-MM-DD'. Default is None.
         meals (bool): If True, includes individual meals in the plot. Default is True.
         summary (bool): If True, includes a daily summary in the plot. Default is False.
-        units (List[str]): A list of strings representing the units to be included in the plot. Default is ['kcal', 'g', 'mg'].
+        agg_units (dict): A dictionary mapping nutrient units to aggregation functions. Only nutrients with units in this dictionary are plotted.
         legend (bool): If True, includes a legend in the plot. Default is True.
         bar_width (np.timedelta64): The width of the bars representing each meal on the time axis. Default is 15 minutes.
         palette (str): The color palette to use for the stacked bars.
@@ -72,7 +72,7 @@ def plot_nutrient_bars(
         label=label,
         return_meals=meals,
         return_summary=summary,
-        return_units=units,
+        return_units=agg_units,
         x_col=x,
         )
 
@@ -119,9 +119,7 @@ def plot_nutrient_bars(
         secax.set_xticks(df[x])
         secax.set_xticklabels(df[label], ha='center', fontsize=9)
 
-    if ax is None:
-        plt.tight_layout()
-        plt.show()
+    return ax
 
 
 def plot_nutrient_lollipop(
@@ -137,6 +135,7 @@ def plot_nutrient_lollipop(
     summary: bool=False,
     legend: bool=True,
     size_scale: float=5,
+    second_y: bool=False,
     palette: str=DEFAULT_PALETTE,
     alpha: float=0.7,
     ax: plt.Axes=None,
@@ -144,7 +143,10 @@ def plot_nutrient_lollipop(
 ):
     """
     Plot a lollipop chart with pie charts representing nutrient composition for each meal.
-    NOTE: If you intend to change `xlim` after plotting, you must also provide `date_range`.
+
+    NOTE: The y-axis is scaled to match the units of the x-axis, to avoid distortion of the pie charts.
+    Use the `second_y` option to plot it with other y-axis data.
+    Due to scaling, if you intend to change `xlim` after plotting, you must also provide `date_range`.
 
     Args:
         diet_log (pd.DataFrame): The dataframe containing the diet log data, with columns for timestamps, nutrients, and other measurements.
@@ -157,7 +159,8 @@ def plot_nutrient_lollipop(
         meals (bool): If True, includes individual meals in the plot. Default is True.
         summary (bool): If True, includes a daily summary in the plot. Default is False.
         legend (bool): If True, includes a legend in the plot. Default is True.
-        size_scale (float): The scaling factor for the size of the pie charts. Default is 1.
+        size_scale (float): The scaling factor for the size of the pie charts. Default is 5.
+        second_y (bool): If True, plot will be done on a secondary y-axis in the plot. Default is False.
         palette (str): The color palette to use for the pie slices. Default is DEFAULT_PALETTTE.
         alpha (float): The transparency of the pie slices. Default is 0.7.
         ax (Optional[plt.Axes]): The Matplotlib axis on which to plot the lollipop chart. If None, a new axis is created. Default is None.
@@ -174,12 +177,16 @@ def plot_nutrient_lollipop(
         time_range=time_range,
         return_meals=meals,
         return_summary=summary,
-        return_units=['kcal', 'g', 'mg'],
         x_col=x,
         )
 
     if ax is None:
         fig, ax = plt.subplots(nrows=1, ncols=1, figsize=figsize)
+
+    # Secondary y-axis
+    if second_y:
+        ax.yaxis.grid(False)
+        ax = ax.twinx()
 
     # Convert nutrients in mg to grams
     for nut in grouped_nutrients['mg']:
@@ -233,17 +240,19 @@ def plot_nutrient_lollipop(
 
         # Plot the pie chart in figure coordinates (no distortion)
         wedges = draw_pie_chart(ax, position, y_value, row[pie_nuts].fillna(0.).values, size_value, palette, alpha)
-        # # Plot the pie chart using the calculated position and scaled radius
-        # ax.pie(row[pie_nuts].fillna(0.).values, radius=size, center=(position, y_value), startangle=90,
-        #        wedgeprops=dict(edgecolor='none'), normalize=True, colors=sns.color_palette(palette, len(pie_nuts)),
-        #        alpha=alpha)
 
     if legend:
         # Create a custom legend
         ax.legend(handles=wedges, labels= pie_nuts, loc='upper left', bbox_to_anchor=LEGEND_SHIFT)
 
     # Format x-axis to display dates properly
-    ax.set_ylabel(y.replace('_', ' ').title(), rotation=0, horizontalalignment='right')
+    if second_y:
+        ha = 'center'
+        rotation = 90
+    else:
+        ha = 'right'
+        rotation=0
+    ax.set_ylabel(y.replace('_', ' ').title(), rotation=rotation, horizontalalignment=ha)
     ax.grid(True)
 
     # Set y-ticks and x-ticks
@@ -252,6 +261,8 @@ def plot_nutrient_lollipop(
     yticks = np.arange(0, ylim[1] / aspect_ratio, 100, dtype=int)
     ax.set_yticks(yticks * aspect_ratio)
     ax.set_yticklabels(yticks)
+    if second_y:
+        ax.yaxis.grid(False)
 
     format_xticks(ax, df[x])
     if label is not None:
@@ -259,9 +270,7 @@ def plot_nutrient_lollipop(
         secax.set_xticks(df[x])
         secax.set_xticklabels(df[label], ha='center', fontsize=9)
 
-    if ax is None:
-        plt.tight_layout()
-        plt.show()
+    return ax
 
 
 def prepare_meals(
@@ -272,7 +281,7 @@ def prepare_meals(
     label: str='short_food_name',
     return_meals: bool = True,
     return_summary: bool = False,
-    return_units: List[str]=['kcal', 'g', 'mg'],
+    agg_units: dict={'kcal': 'sum', 'g': 'sum', 'mg': 'sum', 'unknown': 'first'},
     x_col: str='collection_timestamp'
 ) -> pd.DataFrame:
     """
@@ -286,7 +295,7 @@ def prepare_meals(
         label (str): The name of the column in `diet_log` representing the labels for each meal. Default is 'short_food_name'.
         return_meals (bool): If True, includes individual meals in the plot. Default is True.
         return_summary (bool): If True, includes a daily summary in the plot. Default is False.
-        return_units (List[str]): A list of strings representing the units to be included in the plot. Default is ['kcal', 'g', 'mg'].
+        agg_units (dict): A dictionary mapping nutrient units to aggregation functions.
         x_col (str): The name of the column in `diet_log` representing the x-axis variable, such as timestamps. Default is 'collection_timestamp'.
 
     Returns:
@@ -300,12 +309,12 @@ def prepare_meals(
     grouped_nutrients = {}
     agg_dict = {}
     for nut, unit in units.items():
-        if unit not in return_units:
+        if unit not in agg_units:
             continue
         if unit not in grouped_nutrients:
             grouped_nutrients[unit] = []
         grouped_nutrients[unit].append(nut)
-        agg_dict[nut] = 'sum'
+        agg_dict[nut] = agg_units[unit]
     nut_list = list(agg_dict.keys())
     if label is not None:
         agg_dict[label] = lambda x: '\n'.join(x)
@@ -477,7 +486,7 @@ def plot_meals_hbars(
 
 def add_size_legend(ax: plt.Axes, sizes: List[int], size_scale: float, alpha: float, shift: int=0):
     """
-    Add a size legend to the current axis using broken_barh.
+    Add a size legend to a plot_meals_hbars plot using broken_barh.
     """
     if len(sizes) == 0:
         return
@@ -524,6 +533,7 @@ def plot_diet_cgm_sleep(
     cgm: pd.DataFrame=None,
     sleep_events: pd.DataFrame=None,
     sleep_channels: pd.DataFrame=None,
+    cgm_grid: List[int] = [0, 54, 70, 100, 140, 180],
     channel_filter: List[str]=['heart_rate', 'actigraph', 'spo2'],
     participant_id=None,
     array_index=None,
@@ -551,23 +561,29 @@ def plot_diet_cgm_sleep(
 
     # Add diet
     if diet is not None:
-        g.plot(plot_nutrient_lollipop, diet,
-            participant_id=participant_id, array_index=array_index, time_range=time_range,
-            size_scale=15, name='meals')
         g.plot(plot_meals_hbars, diet,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
-            name='diet_events', height=2)
+            name='diet_bars', height=2)
+        g.plot(plot_nutrient_lollipop, diet,
+            second_y=True if cgm is not None else False,
+            participant_id=participant_id, array_index=array_index, time_range=time_range,
+            size_scale=10, name='diet_glucose', sharex='diet_bars')
+
     # Add CGM
     if cgm is not None:
-        g.add_axes(name='glucose', sharex='meals' if diet is not None else None)
+        if diet is None:
+            g.add_axes(name='diet_glucose')
         cgm = filter_df(
             cgm,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
             )
-        ax = g.get_axes('glucose', squeeze=True)
+        ax = g.get_axes('diet_glucose', squeeze=True)
         ax.plot(cgm['collection_timestamp'], cgm['glucose'], label='glucose', color='#4c72b0')
         ax.scatter(cgm['collection_timestamp'], cgm['glucose'], s=10, color='#4c72b0')
         ax.set_ylabel('Glucose', rotation=0, horizontalalignment='right')
+        ax.set_yticks(cgm_grid)
+        ax.yaxis.grid(True)
+
     # Add sleep
     if sleep_channels is not None:
         plot_sleep_channels(
@@ -581,10 +597,16 @@ def plot_diet_cgm_sleep(
         g.plot(plot_events_fill, sleep_events,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
             y_include=["Wake", "REM", "Light Sleep", "Deep Sleep"],
-            hue='event', ax=['glucose', 'sleep_channels'], sharex='sleep_channels', alpha=0.3)
+            hue='event', ax=['sleep_channels'], sharex='sleep_channels', alpha=0.3)
+        if cgm is not None or diet is not None:
+            g.plot(plot_events_fill, sleep_events,
+                participant_id=participant_id, array_index=array_index, time_range=time_range,
+                y_include=["Wake", "REM", "Light Sleep", "Deep Sleep"], legend=False,
+                hue='event', ax=['diet_glucose'], sharex='sleep_channels', alpha=0.3)
 
     # Tidy up
     g.set_axis_padding(0.03)
+    g.set_axis_padding(0.08, ax='diet_bars')
     if time_range is not None:
         g.set_time_limits(*time_range)
     g.set_periodic_ticks('2H', ax='sleep_channels')

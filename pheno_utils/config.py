@@ -25,7 +25,7 @@ ALL_COLOR = "C5"
 GLUC_COLOR = "C0"
 FOOD_COLOR = "C1"
 
-LEGEND_SHIFT = (1.03, 1.05)
+LEGEND_SHIFT = (1.05, 1.05)
 TIME_FORMAT = '%d/%m\n%H:%M'
 
 DATASETS_PATH = '/home/ec2-user/studies/hpp_datasets/'
