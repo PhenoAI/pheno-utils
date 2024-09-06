@@ -526,6 +526,11 @@ def plot_diet_cgm_sleep(
     array_index=None,
     time_range: Tuple[str, str]=None,
     figsize=(14, 10),
+    nutrient_kws: dict={},
+    meals_kws: dict={},
+    cgm_kws: dict={},
+    events_kws: dict={},
+    channels_kws: dict={},
 ) -> TimeSeriesFigure:
     """
     Plot diet, CGM and sleep data together.
@@ -535,11 +540,17 @@ def plot_diet_cgm_sleep(
         cgm (pd.DataFrame): CGM data. Set to None to remove from figure.
         sleep_events (pd.DataFrame): Sleep events data. Set to None to remove from figure.
         sleep_channels (pd.DataFrame): Sleep channels data. Set to None to remove from figure.
+        cgm_grid (List[int]): CGM grid lines. Default: [0, 54, 70, 100, 140, 180].
         channel_filter (List[str]): Which sleep channels to include in the plot. Default: ['heart_rate', 'actigraph', 'spo2'].
         participant_id (int): Participant ID.
         array_index (int): Array index.
         time_range (Tuple[str, str]): Time range to plot.
         figsize (Tuple[int, int]): Figure size.
+        nutrient_kws (dict): Keyword arguments for diet nutrients lollipop plot.
+        meals_kws (dict): Keyword arguments for diet meals plot.
+        cgm_kws (dict): Keyword arguments for CGM plot.
+        events_kws (dict): Keyword arguments for sleep events plot.
+        channels_kws (dict): Keyword arguments for sleep channels plot.
 
     Returns:
         TimeSeriesFigure: Plot.
@@ -551,10 +562,10 @@ def plot_diet_cgm_sleep(
         g.plot(plot_nutrient_lollipop, diet,
             second_y=True if cgm is not None else False,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
-            size_scale=10, name='diet_glucose', height=1.5)
+            size_scale=10, name='diet_glucose', height=1.5, **nutrient_kws)
         g.plot(plot_meals_hbars, diet,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
-            name='diet_bars', sharex='diet_glucose', height=3)
+            name='diet_bars', sharex='diet_glucose', height=3, **meals_kws)
 
     # Add CGM
     if cgm is not None:
@@ -565,8 +576,8 @@ def plot_diet_cgm_sleep(
             participant_id=participant_id, array_index=array_index, time_range=time_range,
             )
         ax = g.get_axes('diet_glucose', squeeze=True)
-        ax.plot(cgm['collection_timestamp'], cgm['glucose'], label='glucose', color='#4c72b0')
-        ax.scatter(cgm['collection_timestamp'], cgm['glucose'], s=10, color='#4c72b0')
+        ax.plot(cgm['collection_timestamp'], cgm['glucose'], label='glucose', color='#4c72b0', **cgm_kws)
+        ax.scatter(cgm['collection_timestamp'], cgm['glucose'], s=10, color='#4c72b0', **cgm_kws)
         ax.set_ylabel('Glucose', rotation=0, horizontalalignment='right')
         ax.set_yticks(cgm_grid)
         ax.yaxis.grid(True)
@@ -578,18 +589,18 @@ def plot_diet_cgm_sleep(
             x='collection_timestamp', y='values', row='source', hue=None,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
             y_include=channel_filter,
-            fig=g, height=1,
+            fig=g, height=1, **channels_kws,
         )
     if sleep_events is not None:
         g.plot(plot_events_fill, sleep_events,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
             y_include=["Wake", "REM", "Light Sleep", "Deep Sleep"],
-            hue='event', ax=['sleep_channels'], sharex='sleep_channels', alpha=0.3)
+            hue='event', ax=['sleep_channels'], sharex='sleep_channels', alpha=0.3, **events_kws)
         if cgm is not None or diet is not None:
             g.plot(plot_events_fill, sleep_events,
                 participant_id=participant_id, array_index=array_index, time_range=time_range,
                 y_include=["Wake", "REM", "Light Sleep", "Deep Sleep"], legend=False,
-                hue='event', ax=['diet_glucose'], sharex='sleep_channels', alpha=0.3)
+                hue='event', ax=['diet_glucose'], sharex='sleep_channels', alpha=0.3, **events_kws)
 
     # Tidy up
     g.set_axis_padding(0.03)
