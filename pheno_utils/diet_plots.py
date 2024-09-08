@@ -32,6 +32,8 @@ def plot_nutrient_bars(
     time_range: Tuple[str, str]=None, 
     meals: bool=True,
     summary: bool=False,
+    nut_include: List[str]=None,
+    nut_exclude: List[str]=None,
     agg_units: dict={'kcal': 'sum', 'g': 'sum', 'mg': 'sum'},
     legend: bool=True,
     bar_width=np.timedelta64(15, 'm'),
@@ -52,6 +54,8 @@ def plot_nutrient_bars(
         time_range (Optional[Tuple[str, str]]): A tuple of strings representing the start and end dates for filtering the data. Format should be 'YYYY-MM-DD'. Default is None.
         meals (bool): If True, includes individual meals in the plot. Default is True.
         summary (bool): If True, includes a daily summary in the plot. Default is False.
+        nut_include (List[str]): A list of nutrients to include in the plot. Default is None.
+        nut_exclude (List[str]): A list of nutrients to exclude from the plot. Default is None.
         agg_units (dict): A dictionary mapping nutrient units to aggregation functions. Only nutrients with units in this dictionary are plotted.
         legend (bool): If True, includes a legend in the plot. Default is True.
         bar_width (np.timedelta64): The width of the bars representing each meal on the time axis. Default is 15 minutes.
@@ -72,6 +76,8 @@ def plot_nutrient_bars(
         label=label,
         return_meals=meals,
         return_summary=summary,
+        y_include=nut_include,
+        y_exclude=nut_exclude,
         agg_units=agg_units,
         x_col=x,
         )
@@ -133,9 +139,10 @@ def plot_nutrient_lollipop(
     time_range: Tuple[str, str]=None, 
     meals: bool=True,
     summary: bool=False,
+    nut_include: List[str]=None,
+    nut_exclude: List[str]=None,
     legend: bool=True,
     size_scale: float=5,
-    second_y: bool=False,
     palette: str=DEFAULT_PALETTE,
     alpha: float=0.7,
     ax: plt.Axes=None,
@@ -158,9 +165,10 @@ def plot_nutrient_lollipop(
         time_range (Optional[Tuple[str, str]]): A tuple of strings representing the start and end dates for filtering the data. Format should be 'YYYY-MM-DD'. Default is None.
         meals (bool): If True, includes individual meals in the plot. Default is True.
         summary (bool): If True, includes a daily summary in the plot. Default is False.
+        nut_include (List[str]): A list of nutrients to include in the plot. Default is None.
+        nut_exclude (List[str]): A list of nutrients to exclude from the plot. Default is None.
         legend (bool): If True, includes a legend in the plot. Default is True.
         size_scale (float): The scaling factor for the size of the pie charts. Default is 5.
-        second_y (bool): If True, plot will be done on a secondary y-axis in the plot. Default is False.
         palette (str): The color palette to use for the pie slices. Default is DEFAULT_PALETTTE.
         alpha (float): The transparency of the pie slices. Default is 0.7.
         ax (Optional[plt.Axes]): The Matplotlib axis on which to plot the lollipop chart. If None, a new axis is created. Default is None.
@@ -177,6 +185,8 @@ def plot_nutrient_lollipop(
         time_range=time_range,
         return_meals=meals,
         return_summary=summary,
+        y_include=nut_include,
+        y_exclude=nut_exclude,
         x_col=x,
         )
 
@@ -268,6 +278,8 @@ def prepare_meals(
     label: str='short_food_name',
     return_meals: bool = True,
     return_summary: bool = False,
+    y_include: List[str] = None,
+    y_exclude: List[str] = None,
     agg_units: dict={'kcal': 'sum', 'g': 'sum', 'mg': 'sum', 'unknown': 'first'},
     x_col: str='collection_timestamp'
 ) -> pd.DataFrame:
@@ -282,6 +294,8 @@ def prepare_meals(
         label (str): The name of the column in `diet_log` representing the labels for each meal. Default is 'short_food_name'.
         return_meals (bool): If True, includes individual meals in the plot. Default is True.
         return_summary (bool): If True, includes a daily summary in the plot. Default is False.
+        y_include (List[str]): A list of nutrients (regex) to include in the plot. Default is None.
+        y_exclude (List[str]): A list of nutrients (regex) to exclude from the plot. Default is None.
         agg_units (dict): A dictionary mapping nutrient units to aggregation functions.
         x_col (str): The name of the column in `diet_log` representing the x-axis variable, such as timestamps. Default is 'collection_timestamp'.
 
@@ -294,9 +308,15 @@ def prepare_meals(
 
     units = extract_units(diet_log.columns)
     grouped_nutrients = {}
+    import re  # Add this line to import the re module
+
     agg_dict = {}
     for nut, unit in units.items():
         if unit not in agg_units:
+            continue
+        if y_include is not None and not any([re.match(inc, nut) for inc in y_include]):
+            continue
+        if y_exclude is not None and any([re.match(exc, nut) for exc in y_exclude]):
             continue
         if unit not in grouped_nutrients:
             grouped_nutrients[unit] = []
