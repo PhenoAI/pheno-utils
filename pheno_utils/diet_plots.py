@@ -533,7 +533,7 @@ def add_size_legend(ax: plt.Axes, sizes: List[int], size_scale: float, alpha: fl
 
 # %% ../nbs/16_diet_plots.ipynb 6
 from .timeseries_plots import TimeSeriesFigure, plot_events_fill
-from .sleep_plots import plot_sleep_channels
+from .sleep_plots import plot_sleep_channels, get_sleep_period
 
 def plot_diet_cgm_sleep(
     diet: pd.DataFrame=None,
@@ -614,13 +614,14 @@ def plot_diet_cgm_sleep(
     if sleep_events is not None:
         g.plot(plot_events_fill, sleep_events,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
-            y_include=["Wake", "REM", "Light Sleep", "Deep Sleep"],
+            y_include=["Wake", "REM", "Light Sleep", "Deep Sleep", "Sleep"],
             hue='event', ax=['sleep_channels'], sharex='sleep_channels', alpha=0.3, **events_kws)
         if cgm is not None or diet is not None:
-            g.plot(plot_events_fill, sleep_events,
+            g.plot(plot_events_fill, get_sleep_period(sleep_events),
                 participant_id=participant_id, array_index=array_index, time_range=time_range,
-                y_include=["Wake", "REM", "Light Sleep", "Deep Sleep"], legend=False,
-                hue='event', ax=['diet_glucose'], sharex='sleep_channels', alpha=0.3, **events_kws)
+                y_include=["Wake", "REM", "Light Sleep", "Deep Sleep", "Sleep"], legend=False,
+                hue=None, palette='gray', label='event',
+                ax=['diet_glucose'], sharex='sleep_channels', alpha=0.3, **events_kws)
 
     # Tidy up
     g.set_axis_padding(0.03)

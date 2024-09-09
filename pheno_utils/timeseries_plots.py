@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['TimeSeriesFigure', 'format_xticks', 'filter_df', 'plot_events_bars', 'plot_events_fill', 'prepare_events',
-           'get_color_map']
+           'get_events_period', 'get_color_map']
 
 # %% ../nbs/15_timeseries_plots.ipynb 3
 from typing import Callable, Iterable, Optional, Union, Tuple
@@ -680,6 +680,56 @@ def prepare_events(
         colors = None
 
     return events[col_list], colors
+
+
+def get_events_period(
+    events_filtered: pd.DataFrame,
+    period_start: str,
+    period_end: str,
+    period_name: str,
+    col: str = 'event',
+    first_start: bool = True,
+    first_end: bool = True,
+    include_start: bool = True,
+    include_end: bool = True,
+    x_start: str = 'collection_timestamp',
+    x_end: str = 'event_end',
+) -> pd.DataFrame:
+    """
+    Get the period of time between the start and end events.
+
+    Args:
+        events_filtered (pd.DataFrame): The events DataFrame.
+        period_start (str): The label of the start event.
+        period_end (str): The label of the end event.
+        period_name (str): The label to assign to the period.
+        col (str): The column name for the event labels. Default is 'event'.
+        first_start (bool): If True, get the first start event. Default is True.
+        first_end (bool): If True, get the first end event. Default is True.
+        include_start (bool): If True, include the start event in the period. Default is True.
+        include_end (bool): If True, include the end event in the period. Default is True.
+        x_start (str): The column name for the start time of the event. Default is 'collection_timestamp'.
+        x_end (str): The column name for the end time of the event. Default is 'event_end'.
+
+    Returns:
+        pd.DataFrame: The period of events in the same format as the input DataFrame.
+    """
+    events_filtered = filter_df(events_filtered, None, None, None, x_start, x_end)
+
+    start_time = events_filtered.loc[
+        events_filtered[col] == period_start,
+        x_start if include_start else x_end]\
+        .iloc[0 if first_start else -1]
+    end_time = events_filtered.loc[
+        events_filtered[col] == period_end,
+        x_end if include_end else x_start]\
+        .iloc[0 if first_end else -1]
+
+    return pd.DataFrame({
+        x_start: [start_time],
+        x_end: [end_time],
+        col: [period_name]
+    })
 
 
 def get_color_map(data: pd.DataFrame, hue: str, palette: str) -> pd.DataFrame:

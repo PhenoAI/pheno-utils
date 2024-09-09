@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['CHANNELS', 'DEFAULT_CHANNELS', 'COLOR_GROUPS', 'ENUMS', 'CHANNEL_LIMS', 'plot_sleep', 'plot_sleep_channels',
-           'get_channels_colors']
+           'get_channels_colors', 'get_sleep_period']
 
 # %% ../nbs/06_sleep_plots.ipynb 3
 from typing import Iterable, Tuple, List
@@ -11,7 +11,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-from .timeseries_plots import TimeSeriesFigure, plot_events_bars, format_xticks, prepare_events, DEFAULT_PALETTE
+from .timeseries_plots import TimeSeriesFigure, plot_events_bars, get_events_period, format_xticks, prepare_events, DEFAULT_PALETTE
 
 # %% ../nbs/06_sleep_plots.ipynb 4
 CHANNELS = {
@@ -226,3 +226,19 @@ def get_channels_colors(
         palette=palette)
 
     return channels, color_map
+
+# %% ../nbs/06_sleep_plots.ipynb 6
+def get_sleep_period(events: pd.DataFrame) -> pd.DataFrame:
+    """
+    Get the sleep period from the sleep events dataframe.
+
+    Args:
+        events (pd.DataFrame): The sleep events dataframe.
+
+    Returns:
+        pd.DataFrame: The sleep period dataframe.
+    """
+    return events.groupby(['participant_id', 'research_stage', 'array_index'])\
+        .apply(get_events_period, 'Wake', 'Wake', 'Sleep',
+               first_start=True, first_end=False, include_start=False, include_end=False)
+    
