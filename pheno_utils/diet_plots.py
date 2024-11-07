@@ -19,7 +19,7 @@ import matplotlib.lines as mlines
 import matplotlib.patches as Patch
 
 # %% ../nbs/16_diet_plots.ipynb 4
-from .timeseries_plots import filter_df, format_xticks, plot_events_bars
+from .timeseries_plots import format_timeseries, format_xticks, plot_events_bars
 from .config import DEFAULT_PALETTE, LEGEND_SHIFT
 
 
@@ -302,7 +302,7 @@ def prepare_meals(
     Returns:
         pd.DataFrame: A dataframe containing the prepared data for plotting.
     """
-    diet_log = filter_df(
+    diet_log = format_timeseries(
         diet_log, participant_id, array_index, time_range,
         x_start=x_col, x_end=x_col, unique=True)
 
@@ -461,7 +461,7 @@ def plot_meals_hbars(
         ax (Optional[plt.Axes]): The Matplotlib axis on which to plot the lollipop chart. If None, a new axis is created. Default is None.
         figsize (Tuple[float, float]): The size of the figure to create. Default is (12, 6).
     """
-    diet_log = filter_df(
+    diet_log = format_timeseries(
         diet_log, participant_id, array_index,
         time_range, x_start=x, x_end=x, unique=True)
 
@@ -591,7 +591,7 @@ def plot_diet_cgm_sleep(
     if cgm is not None:
         if diet is None:
             g.add_axes(name='diet_glucose')
-        cgm = filter_df(
+        cgm = format_timeseries(
             cgm,
             participant_id=participant_id, array_index=array_index, time_range=time_range,
             )
