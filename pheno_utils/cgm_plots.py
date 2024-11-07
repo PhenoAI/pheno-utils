@@ -163,7 +163,7 @@ class CGMPlot:
             self.plot_sleep()
 
 
-# %% ../nbs/08_cgm_plots.ipynb 11
+# %% ../nbs/08_cgm_plots.ipynb 10
 class AGP:
     def __init__(
         self,
