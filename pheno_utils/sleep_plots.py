@@ -11,7 +11,7 @@ import pandas as pd
 
 import matplotlib.pyplot as plt
 
-from .timeseries_plots import TimeSeriesFigure, plot_events_bars, get_events_period, format_xticks, prepare_events, DEFAULT_PALETTE
+from .timeseries_plots import TimeSeriesFigure, plot_events_bars, get_events_period, format_xticks, prep_to_plot_timeseries, DEFAULT_PALETTE
 
 # %% ../nbs/06_sleep_plots.ipynb 4
 CHANNELS = {
@@ -144,7 +144,7 @@ def plot_sleep_channels(
 ) -> List[plt.Axes]:
     """ plot channels data for a given participant and array_index """
     # Filter data and prepare channels
-    channels, colors = prepare_events(
+    channels, colors = prep_to_plot_timeseries(
         channels, x, x, row, row,
         participant_id, array_index, time_range,
         y_include, y_exclude,
@@ -218,7 +218,7 @@ def get_channels_colors(
         .explode('source').set_index('source')
     channels = channels.join(channel_groups)
     # Simulate events colors
-    _, color_map = prepare_events(
+    _, color_map = prep_to_plot_timeseries(
         events,
         x_start='collection_timestamp', x_end='event_end', label='event', hue='channel',
         participant_id=participant_id, array_index=array_index, time_range=time_range,
