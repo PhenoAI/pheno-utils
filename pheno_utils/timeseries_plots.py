@@ -304,7 +304,7 @@ class TimeSeriesFigure:
     def set_periodic_ticks(
         self, 
         interval: Union[str, pd.Timedelta], 
-        start_time: str = None,
+        start_time: str = '2018-01-01 00:00',
         end_time: str = None,
         fmt=TIME_FORMAT,
         ax: Union[str, int, plt.Axes, Iterable[Union[str, int, plt.Axes]]] = None
@@ -315,6 +315,7 @@ class TimeSeriesFigure:
         Args:
             interval (Union[str, pd.Timedelta]): The interval between ticks (e.g., '1H' for hourly ticks, '30T' for 30 minutes).
             start_time (str): The time of day to start the ticks from (default is '00:00').
+            end_time (str): The time of day to end the ticks at (default is None).
             fmt (str): The date format string to be used for the tick labels.
             ax (str, int, plt.Axes, or a list of those): The axis (or axes) to apply the ticks to. 
                 Can be an axis object, a list of axes, an index, or a name. If None, applies to all axes.
