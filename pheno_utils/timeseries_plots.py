@@ -44,7 +44,8 @@ class TimeSeriesFigure:
         second_y: bool = False,
         name: str = None, 
         ax: Union[str, int, plt.Axes] = None, 
-        adjust_time: bool = True,  # add a keyword to get the intersection of times
+        adjust_time: Optional[str] = 'union',
+        adjust_by_axis: Union[str, int, plt.Axes, Iterable[Union[str, int, plt.Axes]]] = None,
         **kwargs
     ) -> Union[plt.Axes, Iterable[plt.Axes]]:
         """
@@ -61,7 +62,8 @@ class TimeSeriesFigure:
             second_y (bool): If True, plot will be done on a secondary y-axis in the plot. Default is False.s
             name (str): Name or ID to assign to the axis.
             ax (plt.Axes, str, int): Pre-existing axis (object, name, or index) or list of axes to plot on.
-            adjust_time (bool): Whether to adjust the time limits of all axes to match the data.
+            adjust_time (str, None): Method to adjust the time limits of all axes to match the data.
+            adjust_by_axis (str, int, plt.Axes): Axes (single or multiple) to use as a reference for adjusting the time limits.
             **kwargs: Keyword arguments to pass to the plot function.
         
         Returns:
@@ -78,12 +80,11 @@ class TimeSeriesFigure:
 
         plot_function(*args, ax=ax, **kwargs)
         if adjust_time:
-            self.set_time_limits(None, None)  # Adjust all axes to the same time limits
+            self.set_time_limits(None, None, method=adjust_time, reference_axis=adjust_by_axis)
         if second_y:
             ax.yaxis.grid(False)
             ax.yaxis.label.set_rotation(90)
             ax.yaxis.label.set_ha('center')
-
 
         return ax
 
@@ -266,7 +267,12 @@ class TimeSeriesFigure:
                 self.custom_paddings[axis_index + 1] = padding
             self._adjust_axes()
 
-    def set_time_limits(self, start_time: Union[float, str, pd.Timestamp, None], end_time: Union[float, str, pd.Timestamp, None]) -> None:
+    def set_time_limits(
+            self, start_time: Union[float, str, pd.Timestamp, None],
+            end_time: Union[float, str, pd.Timestamp, None],
+            method: str='union',
+            reference_axis: Union[str, int, plt.Axes, Iterable[Union[str, int, plt.Axes]]] = None
+    ) -> None:
         """
         Set the time limits for all axes in the figure. Calling with None will adjust the limits to the data.
 
@@ -275,8 +281,13 @@ class TimeSeriesFigure:
             end_time (Union[float, str, pd.Timestamp, None]): The end time for the x-axis.
         """
         # Default values
-        xlim = np.array(self.get_axis_properties()['xlim']).reshape((-1, 2))
-        xlim = xlim[:, 0].min(), xlim[:, 1].max()
+        xlim = np.array(self.get_axis_properties(reference_axis)['xlim']).reshape((-1, 2))
+        if method == 'union':
+            xlim = xlim[:, 0].min(), xlim[:, 1].max()
+        elif method == 'intersect':
+            xlim = xlim[:, 0].max(), xlim[:, 1].min()
+        else:
+            raise ValueError(f"Invalid method: {method} not in ['union', 'intersect']")
 
         # Convert string inputs to pandas Timestamp objects
         if start_time is not None:
