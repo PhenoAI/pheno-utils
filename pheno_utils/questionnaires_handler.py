@@ -175,29 +175,18 @@ def transform_answers(
         transformed_answer = transformed_answer.astype("category")
 
     return transformed_answer
-    
-def convert_codings_to_int(df: pd.DataFrame, dict_df: pd.DataFrame, fields_for_translation: list, preferred_language: str) -> pd.DataFrame:
-    df_coding = df.copy()
-    if preferred_language == 'coding':
-        for column in fields_for_translation:
-            data_coding = dict_df.loc[column, 'data_coding']
-            if isinstance(data_coding, pd.Series): # In case of multiple entries, take the first one
-                data_coding = data_coding.iloc[0]
-            
-            if pd.notna(data_coding):
-                field_array = dict_df.loc[column, 'array']
-                if isinstance(field_array, pd.Series):
-                    field_array = field_array.iloc[0]
-                if field_array == 'Multiple':
-                    continue
-                else: 
-                    df_coding[column] = df[column].astype('Int16', errors='ignore')
-                    dict_df.loc[column, 'pandas_dtype'] = 'Int16'
-    
-    return df_coding
-    
-        
-                    
+
+def convert_codings_to_int(df: pd.Series, dict_df: pd.DataFrame) -> pd.Series:
+    tabular_field_name = df.name
+    field_array = dict_df.loc[tabular_field_name, 'array']
+    if isinstance(field_array, pd.Series):
+        field_array = field_array.iloc[0]
+    if field_array == 'Multiple':
+        return df
+    else: 
+        dict_df.loc[tabular_field_name, 'pandas_dtype'] = 'Int16'
+        return df.astype('Int16', errors='ignore')
+
 def transform_dataframe(
     df: pd.DataFrame,
     transform_from: str,
@@ -205,27 +194,28 @@ def transform_dataframe(
     dict_df: pd.DataFrame,
     mapping_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    
+    # Validate input parameters
+    if transform_from not in valid_codings or transform_to not in valid_codings:
+        raise ValueError(f"transform_from and transform_to must be one of {valid_codings}")
+
     # Only fields with a code in data_coding property will be transformed
     fields_for_translation = dict_df[pd.notna(dict_df.data_coding)].index.intersection(df.columns)
     if len(fields_for_translation) == 0: # No fields with data_coding code
         return df
-    
-    if transform_from == transform_to: 
-        df = convert_codings_to_int(df=df, dict_df=dict_df, fields_for_translation=fields_for_translation, 
-                                preferred_language=transform_to)
-        
-        return df
-    
-    
+
     transformed_df = df.copy()
     for column in fields_for_translation:
         data_coding = dict_df.loc[column, 'data_coding']
         # Handle the case where data_coding is a Series (multiple entries)
         if isinstance(data_coding, pd.Series):
+            if data_coding.nunique() > 1:
+                warnings.warn(f"Multiple different data_coding values found for column {column}. Using first value.")
             data_coding = data_coding.iloc[0]
-        
-        if pd.notna(data_coding):
+
+        if pd.isna(data_coding):
+            continue
+
+        if transform_from != transform_to:
             transformed_df[column] = transform_answers(
                     column,
                     transformed_df[column],
@@ -235,6 +225,10 @@ def transform_dataframe(
                     mapping_df
                 )
     
-    transformed_df = convert_codings_to_int(df=transformed_df, dict_df=dict_df, fields_for_translation=fields_for_translation, 
-                                preferred_language=transform_to)
+        if transform_to == 'coding':
+            transformed_df[column] = convert_codings_to_int(
+                transformed_df[column], 
+                dict_df=dict_df
+            )
+
     return transformed_df
