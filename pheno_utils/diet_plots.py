@@ -417,6 +417,7 @@ SHORT_FOOD_CATEGORIES = {
     'low calories and diet drinks': 'low cal. drinks',
     'poultry and its products': 'poultry',
     'pasta, grains and side dishes': 'grains',
+    'industrialized vegetarian food ready to eat': 'industrialized veg.',
 }
 
 def plot_meals_hbars(
