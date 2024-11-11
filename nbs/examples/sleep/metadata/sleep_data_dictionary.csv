@@ -1,3 +1,5 @@
-tabular_field_name,field_string,description_string,parent_dataframe,relative_location,value_type,units,sampling_rate,item_type,array,cohorts,field_type,debut,pandas_dtype,data_coding
-ahi,AHI,AHI (Apnea-Hypopnea Index),,sleep/sleep.parquet,Continuous,Events / Hour,,Data,Multiple,10K,Continuous,2020-01-15,float64,
-total_sleep_time,Total sleep time,Total sleep time,,sleep/sleep.parquet,Integer,Seconds,,Data,Multiple,10K,Continuous,2020-01-15,float64,
+tabular_field_name,field_string,description_string,parent_dataframe,relative_location,units,sampling_rate,array,cohorts,field_type,debut,pandas_dtype
+ahi,AHI,AHI (Apnea-Hypopnea Index),,sleep/sleep.parquet,Events / Hour,,Multiple,10K,Continuous,2020-01-15,float
+total_sleep_time,Total sleep time,Total sleep time,,sleep/sleep.parquet,Seconds,,Multiple,10K,Continuous,2020-01-15,int
+channels_time_series,Channels time series,Sensor and derived channels time series parquet files,,sleep/sleep.parquet,,,Multiple,10K,Time series file (individual),2020-01-15,string
+events_time_series,Events time series,"Events during sleep derived from the raw channels, such as sleep stages, respiratory events, pulse rate events, and others",,sleep/sleep.parquet,,Data,Multiple,10K,Time series file (group),2020-01-15,string
