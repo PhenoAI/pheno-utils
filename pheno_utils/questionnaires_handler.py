@@ -178,7 +178,11 @@ def transform_answers(
         check_invalid_values(normalized_answer, code_df)
         transformed_answer = normalized_answer.replace(mapping_dict)
         transformed_answer = pd.Categorical(transformed_answer,
-            categories=cat_ordered, ordered=True)
+            categories=cat_ordered, 
+            ordered=True
+        )
+        # We update the dictionary to ensure that the categories are not reset later
+        dict_df.loc[tab_field_name, 'pandas_dtype'] = 'category_ordered'
 
     return transformed_answer
 
