@@ -28,7 +28,7 @@ class CGMPlot:
         cgm_date_col: str = "collection_timestamp",
         gluc_col: str = "glucose",
         diet_date_col: str = "collection_timestamp",
-        diet_text_col: str = "shortname_eng",
+        diet_text_col: str = "short_food_name",
         ax: Optional[plt.Axes] = None,
         smooth: bool = False,
         sleep_tuples: Optional[List[Tuple[pd.Timestamp, pd.Timestamp]]] = None,
@@ -39,15 +39,15 @@ class CGMPlot:
         Args:
             cgm_df (pd.DataFrame): DataFrame containing the glucose measurements.
             diet_df (Optional[pd.DataFrame], optional): DataFrame containing the diet data. Defaults to None.
-            cgm_date_col (str, optional): Name of the date column in cgm_df. Defaults to "Date".
+            cgm_date_col (str, optional): Name of the date column in cgm_df. Defaults to "collection_timestamp".
             gluc_col (str, optional): Name of the glucose column in cgm_df. Defaults to "glucose".
-            diet_date_col (str, optional): Name of the date column in diet_df. Defaults to "Date".
-            diet_text_col (str, optional): Name of the text column in diet_df. Defaults to "shortname_eng".
+            diet_date_col (str, optional): Name of the date column in diet_df. Defaults to "collection_timestamp".
+            diet_text_col (str, optional): Name of the text column in diet_df. Defaults to "short_food_name".
             ax (Optional[plt.Axes], optional): Matplotlib Axes object to plot on. Defaults to None.
             smooth (bool, optional): Apply smoothing to the glucose curve. Defaults to False.
             sleep_tuples (Optional[List[Tuple[pd.Timestamp, pd.Timestamp]]], optional): List of sleep start and end times. Defaults to None.
         """
-        self.cgm_df = cgm_df
+        self.cgm_df = cgm_df.reset_index()
         self.diet_df = diet_df
         self.cgm_date_col = cgm_date_col
         self.gluc_col = gluc_col
@@ -110,7 +110,7 @@ class CGMPlot:
         for i, (food_datetime, group) in enumerate(
             self.diet_df.groupby(self.diet_date_col)
         ):
-            food_str = "\n".join(group[self.diet_text_col])
+            food_str = "\n".join(group[self.diet_text_col].dropna())
 
             txt_x = food_datetime - pd.to_timedelta(7.5, "m")
             if i % 2 == 0:
