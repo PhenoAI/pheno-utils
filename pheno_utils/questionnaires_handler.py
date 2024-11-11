@@ -177,8 +177,8 @@ def transform_answers(
         normalized_answer = normalize_answers(orig_answer, field_type)
         check_invalid_values(normalized_answer, code_df)
         transformed_answer = normalized_answer.replace(mapping_dict)
-        transformed_answer = pd.Categorical(transformed_answer)\
-            .set_categories(cat_ordered, ordered=True)
+        transformed_answer = pd.Categorical(transformed_answer,
+            categories=cat_ordered, ordered=True)
 
     return transformed_answer
 
