@@ -233,9 +233,7 @@ class PhenoLoader:
             return None
 
         # load data
-        if load_func is not None:
-            warnings.warn("The 'load_func' is deprecated and will be removed in future versions.")
-        else: 
+        if load_func is None:
             if 'field_type' not in self.dict:
                 field_type = None
             else:
