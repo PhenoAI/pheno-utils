@@ -204,6 +204,9 @@ def transform_dataframe(
     dict_df: pd.DataFrame,
     mapping_df: pd.DataFrame,
 ) -> pd.DataFrame:
+    if 'data_coding' not in dict_df.columns:
+        warnings.warn("data_coding column not found in dictionary, skipping transformation")
+        return df
     # Validate input parameters
     if transform_from not in valid_codings or transform_to not in valid_codings:
         raise ValueError(f"transform_from and transform_to must be one of {valid_codings}")
