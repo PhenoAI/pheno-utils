@@ -25,7 +25,9 @@ class TimeSeriesFigure:
         a figure with multiple axes for time series data.
         
         Args:
+
             figsize (tuple): Size of the figure (width, height) in inches.
+            padding (float): The amount of padding to add between axes as a fraction of the figure height.
         """
         self.fig = plt.figure(figsize=figsize)
         self.axes: Iterable[tuple] = []
@@ -54,6 +56,7 @@ class TimeSeriesFigure:
         a list of axes if multiple axes are used.
         
         Args:
+
             plot_function (Callable): The dataset-specific function to plot the data.
             *args: Arguments to pass to the plot function.
             n_axes (int): The number of axes required. Default is 1.
@@ -67,6 +70,7 @@ class TimeSeriesFigure:
             **kwargs: Keyword arguments to pass to the plot function.
         
         Returns:
+
             Union[plt.Axes, Iterable[plt.Axes]]: A single axis object or a list of axis objects if multiple axes are used.
         """
         if ax is None:
@@ -99,12 +103,14 @@ class TimeSeriesFigure:
         Add one or more axes with a specific proportional height to the figure.
         
         Args:
+
             height (float): The proportional height of each new axis relative to a single unit axis.
             n_axes (int): The number of axes to create.
             sharex (str, int, or plt.Axes): Index or name of the axis to share the x-axis with. If None, the x-axis is independent.
             name (Optional[str]): Name or ID to assign to the axis (only valid if num_axes=1).
         
         Returns:
+
             Union[plt.Axes, Iterable[plt.Axes]]: A single axis object or a list of axis objects if multiple axes are created.
         """
         new_axes = []
@@ -153,9 +159,11 @@ class TimeSeriesFigure:
         Retrieve an axis by its name or ID.
         
         Args:
+
             name (str): The name or ID of the axis to retrieve.
         
         Returns:
+
             Optional[plt.Axes]: The corresponding axis object if found, otherwise None.
         """
         return self.axis_names.get(name, [])
@@ -165,10 +173,12 @@ class TimeSeriesFigure:
         Retrieve the axis object(s) based on the input type.
 
         Args:
+
             ax: The axis object, index, name, or list of those to retrieve.
             squeeze (bool): Whether to return a single axis object if only one is found.
         
         Returns:
+
             Iterable[plt.Axes]: A list of axis objects.
         """
         if ax is None:
@@ -194,9 +204,6 @@ class TimeSeriesFigure:
     def print_shared_axes(self):
         """
         Print which axes in the figure share their x-axis.
-
-        Returns:
-            None
         """
         shared_groups = {}
         for i, (ax, _) in enumerate(self.axes):
@@ -214,9 +221,11 @@ class TimeSeriesFigure:
         Get the properties of a specific axis or axes.
         
         Args:
+
             ax (str, int, plt.Axes, or a list of those): The axis or axes to get the properties for.
         
         Returns:
+
             dict: A dictionary of properties for the axis or axes.
         """
         ax_list = self.get_axes(ax)
@@ -235,6 +244,7 @@ class TimeSeriesFigure:
         Set properties for a specific axis or axes.
         
         Args:
+
             ax (str, int, plt.Axes, or a list of those): The axis or axes to set the properties for.
             **kwargs: Additional keyword arguments to pass to the axis object.
         """
@@ -247,8 +257,9 @@ class TimeSeriesFigure:
         Set custom padding for a specific axis.
         
         Args:
+
             padding (float): The amount of padding to add as a fraction of the figure height.
-            
+            ax (str, int, plt.Axes, or a list of those): The axis or axes to set the padding for.
             above (bool): Whether to add padding above the axis (default) or below.
         """
         ax_list = self.get_axes(ax)
@@ -277,8 +288,11 @@ class TimeSeriesFigure:
         Set the time limits for all axes in the figure. Calling with None will adjust the limits to the data.
 
         Args:
+
             start_time (Union[float, str, pd.Timestamp, None]): The start time for the x-axis.
             end_time (Union[float, str, pd.Timestamp, None]): The end time for the x-axis.
+            method (str): The method to use to adjust the time limits. Can be 'union' or 'intersect'.
+            reference_axis (str, int, plt.Axes, or a list of those): The axis or axes to use as a reference for adjusting the time limits.
         """
         # Default values
         xlim = np.array(self.get_axis_properties(reference_axis)['xlim']).reshape((-1, 2))
@@ -313,6 +327,7 @@ class TimeSeriesFigure:
         Set periodic x-ticks at a regular interval throughout the day.
 
         Args:
+
             interval (Union[str, pd.Timedelta]): The interval between ticks (e.g., '1H' for hourly ticks, '30T' for 30 minutes).
             start_time (str): The time of day to start the ticks from (default is '00:00').
             end_time (str): The time of day to end the ticks at (default is None).
@@ -362,7 +377,9 @@ class TimeSeriesFigure:
         Add a legend to a specific axis.
         
         Args:
+
             axis (str, int, plt.Axes, or a list of those): The axis to add the legend to.
+            **kwargs: Additional keyword arguments passed to the legend object.
         """
         ax_list = self.get_axes(ax)
         for a in ax_list:
@@ -373,6 +390,7 @@ class TimeSeriesFigure:
         Update the legend properties for all axes in the figure, or a subset of them, if the legend exists.
 
         Args:
+
             axis (str, int, plt.Axes, or a list of those): The name or list of names of axes to update the legend for.
             bbox_to_anchor (tuple, optional): The bounding box coordinates for the legend.
             **kwargs: Additional keyword arguments passed to the legend object.
@@ -417,12 +435,14 @@ def format_timeseries(
     Reformat and filter a time series DataFrame based on participant ID, array index, and date range.
 
     Args:
+
         df (pd.DataFrame): The DataFrame to filter.
         participant_id (int): The participant ID to filter by.
         array_index (int): The array index to filter by.
         time_range: The date range to filter by. Can be a tuple of two dates / times or two strings.
         x_start (str): The name of the column containing the start time.
         x_end (str): The name of the column containing the end time.
+        unique (bool): Whether to remove duplicate rows.
 
     Returns:
         pd.DataFrame: The filtered DataFrame
@@ -470,6 +490,7 @@ def plot_events_bars(
     Plot events as bars on a time series plot.
 
     Args:
+
         events (pd.DataFrame): The events dataframe.
         x_start (str): The column name for the start time of the event.
         x_end (str): The column name for the end time of the event.
@@ -550,6 +571,7 @@ def plot_events_fill(
     Plot events as filled regions on a time series plot.
 
     Args:
+
         events (pd.DataFrame): The events dataframe.
         x_start (str): The column name for the start time of the event.
         x_end (str): The column name for the end time of the event.
@@ -633,6 +655,7 @@ def prep_to_plot_timeseries(
     Prepare timeseries / events data for plotting.
 
     Args:
+
         events (pd.DataFrame): The timeseries / events dataframe.
         x_start (str): The column name for the start time of the event.
         x_end (str): The column name for the end time of the event.
@@ -647,6 +670,7 @@ def prep_to_plot_timeseries(
         palette (str): The name of the colormap to use for coloring events.
 
     Returns:
+
         Tuple[pd.DataFrame, pd.DataFrame]: The filtered events dataframe and the color map.
     """
     if type(add_columns) is str:
@@ -709,6 +733,7 @@ def get_events_period(
     Get the period of time between the start and end events.
 
     Args:
+
         events_filtered (pd.DataFrame): The events DataFrame.
         period_start (str): The label of the start event.
         period_end (str): The label of the end event.
@@ -722,6 +747,7 @@ def get_events_period(
         x_end (str): The column name for the end time of the event. Default is 'event_end'.
 
     Returns:
+
         pd.DataFrame: The period of events in the same format as the input DataFrame.
     """
     events_filtered = format_timeseries(events_filtered, None, None, None, x_start, x_end)
@@ -747,11 +773,13 @@ def get_color_map(data: pd.DataFrame, hue: str, palette: str) -> pd.DataFrame:
     Get a color map for a specific column in the data.
 
     Args:
+
         data (pd.DataFrame): The data to get the color map from.
         hue (str): The column name to use for the color map.
         palette (str): The name of the colormap to use.
 
     Returns:
+
         pd.DataFrame: A DataFrame with the color map.
     """
     colors = sorted(data[hue].unique())

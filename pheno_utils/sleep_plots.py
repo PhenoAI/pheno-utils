@@ -66,6 +66,7 @@ def plot_sleep(
     Plot sleep events and channels data.
 
     Args:
+
         events (pd.DataFrame): The sleep events dataframe.
         channels (pd.DataFrame): The sleep channels dataframe.
         participant_id (int): The participant id to filter the data.
@@ -80,6 +81,7 @@ def plot_sleep(
         palette (str): The color palette to use.
 
     Returns:
+
         TimeSeriesFigure: The figure with the sleep events and channels data.
     """
     # Create figure
@@ -233,9 +235,11 @@ def get_sleep_period(events: pd.DataFrame) -> pd.DataFrame:
     Get the sleep period from the sleep events dataframe.
 
     Args:
+
         events (pd.DataFrame): The sleep events dataframe.
 
     Returns:
+
         pd.DataFrame: The sleep period dataframe.
     """
     return events.groupby(['participant_id', 'research_stage', 'array_index'])\
