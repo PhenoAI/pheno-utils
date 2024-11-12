@@ -233,9 +233,7 @@ class PhenoLoader:
             return None
 
         # load data
-        if load_func is not None:
-            warnings.warn("The 'load_func' is deprecated and will be removed in future versions.")
-        else: 
+        if load_func is None:
             if 'field_type' not in self.dict:
                 field_type = None
             else:
@@ -688,6 +686,20 @@ class PhenoLoader:
                 print('Warning: index is not unique for', table_name)
             self.fields |= set(self.dfs[table_name].columns.tolist())
         self.fields = sorted(list(self.fields))
+
+        # Merge the data_codings dataframe with the dictionary dataframe
+        if 'data_coding' in self.dict.columns:
+            self.data_codings = self.dict\
+                ['data_coding']\
+                .reset_index()\
+                .rename(columns={'data_coding': 'code_number'})\
+                .astype({'code_number': 'str'})\
+                .merge(
+                    self.data_codings.astype({'code_number': 'str'}), 
+                    on='code_number',
+                    how='inner'
+                )\
+                .set_index('tabular_field_name')
 
     def __load_one_dataframe__(self, relative_location: str) -> pd.DataFrame:
         """

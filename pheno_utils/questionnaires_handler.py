@@ -2,7 +2,7 @@
 
 # %% auto 0
 __all__ = ['valid_codings', 'convert_to_string', 'normalize_answers', 'flatten_series', 'check_invalid_values', 'replace_values',
-           'transform_answers', 'transform_dataframe']
+           'transform_answers', 'convert_codings_to_int', 'transform_dataframe']
 
 # %% ../nbs/13_questionnaire_handler.ipynb 3
 import pandas as pd
@@ -147,40 +147,55 @@ def transform_answers(
     else:
         code_string = convert_to_string(dict_df.loc[tab_field_name]["data_coding"])
     
-    #getting the data coding df from the large data coding csv
+    # Getting the data coding df from the large data coding csv
     code_df = mapping_df[mapping_df["code_number"] == code_string].copy()
     
-    #Make sure no leading 0s for coding values
+    # Make sure no leading 0s for coding values
     code_df["coding"] =  code_df["coding"].apply(convert_to_string)
+    cat_ordered = code_df\
+        .astype({'coding': 'int'})\
+        .sort_values('coding')[code_to]\
+        .astype('str')\
+        .drop_duplicates()
     
     mapping_dict = dict(zip(code_df[code_from].astype(str), code_df[code_to]))
     
   
-  #adding fail safe incase older dictionaries don't have field type : TODO potentaily remove once older dictionaires are updated
-    if 'field_type' in dict_df.columns:
-        field_type =  dict_df.loc[tab_field_name]['field_type']
-        if isinstance(field_type, pd.Series):
-            if field_type.nunique() == 1:
-                field_type = field_type.iloc[0]
-            else:
-                warnings.warn(f"tabular field {tab_field_name} is used in 2 columns and have conflicting field types,please check and update dictionary. This field has not be converted.")
-                return orig_answer
-        
-        if field_type == 'Categorical (multiple)': 
-            normalise_answer = normalize_answers(orig_answer, field_type)
-            check_invalid_values(normalise_answer , code_df)
-            transformed_answer = normalise_answer.apply(replace_values, mapping_dict = mapping_dict)
+    field_type =  dict_df.loc[tab_field_name]['field_type']
+    if isinstance(field_type, pd.Series):
+        if field_type.nunique() == 1:
+            field_type = field_type.iloc[0]
         else:
-            #if categorical single
-            normalized_answer = normalize_answers(orig_answer, field_type)
-            check_invalid_values(normalized_answer, code_df)
-            transformed_answer = normalized_answer.replace(mapping_dict)
-            transformed_answer = transformed_answer.astype("category")
-
-        return transformed_answer
+            warnings.warn(f"tabular field {tab_field_name} is used in 2 columns and have conflicting field types,please check and update dictionary. This field has not be converted.")
+            return orig_answer
+    
+    if field_type == 'Categorical (multiple)': 
+        normalise_answer = normalize_answers(orig_answer, field_type)
+        check_invalid_values(normalise_answer , code_df)
+        transformed_answer = normalise_answer.apply(replace_values, mapping_dict = mapping_dict)
     else:
-        return orig_answer
+        normalized_answer = normalize_answers(orig_answer, field_type)
+        check_invalid_values(normalized_answer, code_df)
+        transformed_answer = normalized_answer.replace(mapping_dict)
+        transformed_answer = pd.Categorical(transformed_answer,
+            categories=cat_ordered, 
+            ordered=True
+        )
+        # We update the dictionary to ensure that the categories are not reset later
+        dict_df.loc[tab_field_name, 'pandas_dtype'] = 'category_ordered'
 
+    return transformed_answer
+
+def convert_codings_to_int(df: pd.Series, dict_df: pd.DataFrame) -> pd.Series:
+    tabular_field_name = df.name
+    field_array = dict_df.loc[tabular_field_name, 'array']
+    if isinstance(field_array, pd.Series):
+        field_array = field_array.iloc[0]
+    if field_array == 'Multiple':
+        return df
+    else: 
+        dict_df.loc[tabular_field_name, 'pandas_dtype'] = 'Int16'
+        return df.astype('Int16', errors='ignore')
 
 def transform_dataframe(
     df: pd.DataFrame,
@@ -189,20 +204,31 @@ def transform_dataframe(
     dict_df: pd.DataFrame,
     mapping_df: pd.DataFrame,
 ) -> pd.DataFrame:
-    if 'data_coding' not in dict_df.columns or transform_from == transform_to:
+    if 'data_coding' not in dict_df.columns:
+        warnings.warn("data_coding column not found in dictionary, skipping transformation")
         return df
-    
+    # Validate input parameters
+    if transform_from not in valid_codings or transform_to not in valid_codings:
+        raise ValueError(f"transform_from and transform_to must be one of {valid_codings}")
+
+    # Only fields with a code in data_coding property will be transformed
     fields_for_translation = dict_df[pd.notna(dict_df.data_coding)].index.intersection(df.columns)
-    if len(fields_for_translation) == 0:
+    if len(fields_for_translation) == 0: # No fields with data_coding code
         return df
+
     transformed_df = df.copy()
     for column in fields_for_translation:
         data_coding = dict_df.loc[column, 'data_coding']
         # Handle the case where data_coding is a Series (multiple entries)
         if isinstance(data_coding, pd.Series):
+            if data_coding.nunique() > 1:
+                warnings.warn(f"Multiple different data_coding values found for column {column}. Using first value.")
             data_coding = data_coding.iloc[0]
-        
-        if pd.notna(data_coding):
+
+        if pd.isna(data_coding):
+            continue
+
+        if transform_from != transform_to:
             transformed_df[column] = transform_answers(
                     column,
                     transformed_df[column],
@@ -211,4 +237,11 @@ def transform_dataframe(
                     dict_df,
                     mapping_df
                 )
+    
+        if transform_to == 'coding':
+            transformed_df[column] = convert_codings_to_int(
+                transformed_df[column], 
+                dict_df=dict_df
+            )
+
     return transformed_df
