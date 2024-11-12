@@ -179,7 +179,7 @@ def plot_nutrient_lollipop(
 
     Returns:
 
-        None: The function creates a lollipop plot with pie charts on the specified or newly created axis.
+        plt.Axes: The Matplotlib axis on which the chart was plotted.
     """
     # Prepare the data for plotting
     df, grouped_nutrients = prepare_meals(
@@ -470,6 +470,10 @@ def plot_meals_hbars(
         alpha (float): The transparency of the bars. Default is 0.7.
         ax (Optional[plt.Axes]): The Matplotlib axis on which to plot the lollipop chart. If None, a new axis is created. Default is None.
         figsize (Tuple[float, float]): The size of the figure to create. Default is (12, 6).
+
+    Returns:
+
+        plt.Axes: The Matplotlib axis on which the chart was plotted.
     """
     diet_log = format_timeseries(
         diet_log, participant_id, array_index,
@@ -585,7 +589,7 @@ def plot_diet_cgm_sleep(
 
     Returns:
 
-        TimeSeriesFigure: Plot.
+        TimeSeriesFigure: The figure object containing the plots.
     """
     g = TimeSeriesFigure(figsize=figsize)
 

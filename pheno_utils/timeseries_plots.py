@@ -413,7 +413,7 @@ class TimeSeriesFigure:
 
 
 def format_xticks(ax: plt.Axes, xticks: Iterable=None, format: str=TIME_FORMAT, **kwargs):
-    """ format datestrings on x axis """
+    """ Format datestrings on x axis """
     if xticks is None:
         xticks = ax.get_xticks()
     ax.set_xticks(xticks)
@@ -445,6 +445,7 @@ def format_timeseries(
         unique (bool): Whether to remove duplicate rows.
 
     Returns:
+
         pd.DataFrame: The filtered DataFrame
     """
     if participant_id is not None:
