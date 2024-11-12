@@ -46,6 +46,7 @@ def plot_nutrient_bars(
     Plot a stacked bar chart representing nutrient intake for each meal over time.
 
     Args:
+
         diet_log (pd.DataFrame): The dataframe containing the diet log data, with columns for timestamps, nutrients, and other measurements.
         x (str): The name of the column in `diet_log` representing the x-axis variable, such as timestamps. Default is 'collection_timestamp'.
         label (str): The name of the column in `diet_log` representing the labels for each meal. Default is 'short_food_name'.
@@ -65,6 +66,7 @@ def plot_nutrient_bars(
         figsize (Tuple[float, float]): The size of the figure to create. Default is (14, 3).
 
     Returns:
+
         None: The function creates a stacked bar chart on the specified or newly created axis.
     """
     # Prepare the data for plotting
@@ -156,6 +158,7 @@ def plot_nutrient_lollipop(
     Use the `second_y` of g.plot() option to plot it with other y-axis data.
 
     Args:
+
         diet_log (pd.DataFrame): The dataframe containing the diet log data, with columns for timestamps, nutrients, and other measurements.
         x (str): The name of the column in `diet_log` representing the x-axis variable, such as timestamps. Default is 'collection_timestamp'.
         y (str): The name of the column in `diet_log` representing the y-axis variable, such as calories. Default is 'calories_kcal'.
@@ -175,6 +178,7 @@ def plot_nutrient_lollipop(
         figsize (Tuple[float, float]): The size of the figure to create. Default is (12, 6).
 
     Returns:
+
         None: The function creates a lollipop plot with pie charts on the specified or newly created axis.
     """
     # Prepare the data for plotting
@@ -287,6 +291,7 @@ def prepare_meals(
     Prepare the diet log data for plotting meals and/or daily summaries.
 
     Args:
+
         diet_log (pd.DataFrame): The dataframe containing the diet log data, with columns for timestamps, nutrients, and other measurements.
         participant_id (Optional[int]): The participant's ID to filter the diet log. If None, no filtering is done. Default is None.
         array_index (Optional[int]): The array index to filter the diet log. If None, no filtering is done. Default is None.
@@ -300,6 +305,7 @@ def prepare_meals(
         x_col (str): The name of the column in `diet_log` representing the x-axis variable, such as timestamps. Default is 'collection_timestamp'.
 
     Returns:
+
         pd.DataFrame: A dataframe containing the prepared data for plotting.
     """
     diet_log = format_timeseries(
@@ -378,6 +384,7 @@ def draw_pie_chart(
     distorts the pie chart when drawn directly on the axes.
 
     Args:
+
         ax (plt.Axes): The axis on which to draw the pie chart.
         x (float): The x-coordinate in data coordinates where the pie chart's center will be placed.
         y (float): The y-coordinate in data coordinates where the pie chart's center will be placed.
@@ -386,6 +393,7 @@ def draw_pie_chart(
         palette (str): The color palette to use for the pie slices.
 
     Returns:
+
         List[plt.Patch]: A list of wedge objects representing the pie chart slices.
     """
     # Convert the position from data coordinates to axes coordinates
@@ -444,6 +452,7 @@ def plot_meals_hbars(
     Plot a diet chart with bars representing meals and their size over time.
 
     Args:
+
         diet_log (pd.DataFrame): The dataframe containing the diet log data, with columns for timestamps, nutrients, and other measurements.
         x (str): The name of the column in `diet_log` representing the x-axis variable, such as timestamps. Default is 'collection_timestamp'.
         y (str): The name of the column in `diet_log` representing the y-axis variable, such as food categories. Default is 'short_food_category'.
@@ -557,6 +566,7 @@ def plot_diet_cgm_sleep(
     Plot diet, CGM and sleep data together.
 
     Arg:
+
         diet (pd.DataFrame): Diet logging data. Set to None to remove from figure.
         cgm (pd.DataFrame): CGM data. Set to None to remove from figure.
         sleep_events (pd.DataFrame): Sleep events data. Set to None to remove from figure.
@@ -574,6 +584,7 @@ def plot_diet_cgm_sleep(
         channels_kws (dict): Keyword arguments for sleep channels plot.
 
     Returns:
+
         TimeSeriesFigure: Plot.
     """
     g = TimeSeriesFigure(figsize=figsize)
