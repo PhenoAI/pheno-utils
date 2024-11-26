@@ -12,7 +12,7 @@ permissions:
 
 jobs:
   create-conda-env:
-    runs-on: ubuntu-22.04
+    runs-on: ubuntu-latest
     env:
       AWS_DEFAULT_REGION: eu-west-1
     container:
@@ -22,12 +22,8 @@ jobs:
       run: yum install -y tar gzip
 
     - name: Checkout Code
-      uses: actions/checkout@v3  # Checks out the repository under $GITHUB_WORKSPACE.
-    
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '16' # Use a stable, compatible version
+      uses: actions/checkout@v4  # Checks out the repository under $GITHUB_WORKSPACE.
+
     - name: Setup conda
       uses: conda-incubator/setup-miniconda@v2
       with:
