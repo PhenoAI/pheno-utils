@@ -130,6 +130,7 @@ class PhenoLoader:
         pivot=None, 
         keep_undefined_research_stage: Union[None, str] = None,
         join_non_overlapping: Union[None, bool] = None,
+        extend_bulk_index: bool = True,
         **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
@@ -147,6 +148,7 @@ class PhenoLoader:
                                    pivot=pivot,
                                    keep_undefined_research_stage=keep_undefined_research_stage,
                                    join_non_overlapping=join_non_overlapping,
+                                   extend_bulk_index=extend_bulk_index
                                    **kwargs)
 
     def load_bulk_data(
@@ -161,6 +163,7 @@ class PhenoLoader:
         pivot=None,
         keep_undefined_research_stage: Union[None, str] = None,
         join_non_overlapping: Union[None, bool] = None,
+        extend_bulk_index: bool = True,
         **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
@@ -177,6 +180,7 @@ class PhenoLoader:
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
             keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None.
             join_non_overlapping (bool, optional): Whether to join tables with non-overlapping indices. Defaults to None.
+            extend_bulk_index (bool, optional): Whether to extend the bulk index to match the main table index. Defaults to False.
         """
         if keep_undefined_research_stage is None:
             keep_undefined_research_stage = self.keep_undefined_research_stage
@@ -247,7 +251,8 @@ class PhenoLoader:
             try:
                 data.append(load_func(p, **kwargs))
                 if isinstance(data[-1], pd.DataFrame):
-                    data[-1] = self.__add_missing_levels__(data[-1], sample.loc[sample == p].to_frame())
+                    if extend_bulk_index:
+                        data[-1] = self.__add_missing_levels__(data[-1], sample.loc[sample == p].to_frame())
                     if query_str:
                         data[-1] = data[-1].query(query_str)
                     data[-1].sort_index(inplace=True)
