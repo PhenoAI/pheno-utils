@@ -429,7 +429,7 @@ class PhenoLoader:
             fields = [fields]
 
         search_dict = self.dict.copy()
-        if not_bulk_field:
+        if not_bulk_field and 'parent_dataframe' in search_dict.columns:
             search_dict = search_dict.loc[search_dict['parent_dataframe'].isnull()]
         for k, v in kwargs.items():
             if k in search_dict.columns:
