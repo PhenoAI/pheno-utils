@@ -191,16 +191,18 @@ class PhenoLoader:
             field_name = [field_name]
         sample, fields = self.get(
             field_name,
+            squeeze=False,
             return_fields=True,
             keep_undefined_research_stage=keep_undefined_research_stage,
             join_non_overlapping=join_non_overlapping
         )
         # TODO: slice bulk data based on field_type
-        if sample.shape[1] > 3:
+        if sample.shape[1] > 1:
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
                 sample, fields = self.get(
                     field_name,
+                    squeeze=False,
                     return_fields=True,
                     keep_undefined_research_stage=keep_undefined_research_stage,
                     join_non_overlapping=join_non_overlapping,
