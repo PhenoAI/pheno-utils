@@ -198,6 +198,7 @@ class PhenoLoader:
         )
         # TODO: slice bulk data based on field_type
         if sample.shape[1] > 1:
+            # requested fields appear in more than one bulk file
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
                 sample, fields = self.get(
