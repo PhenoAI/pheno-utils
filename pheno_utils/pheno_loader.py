@@ -130,6 +130,7 @@ class PhenoLoader:
         pivot=None, 
         keep_undefined_research_stage: Union[None, str] = None,
         join_non_overlapping: Union[None, bool] = None,
+        extend_bulk_index: bool = True,
         **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
@@ -147,6 +148,7 @@ class PhenoLoader:
                                    pivot=pivot,
                                    keep_undefined_research_stage=keep_undefined_research_stage,
                                    join_non_overlapping=join_non_overlapping,
+                                   extend_bulk_index=extend_bulk_index
                                    **kwargs)
 
     def load_bulk_data(
@@ -161,6 +163,7 @@ class PhenoLoader:
         pivot=None,
         keep_undefined_research_stage: Union[None, str] = None,
         join_non_overlapping: Union[None, bool] = None,
+        extend_bulk_index: bool = True,
         **kwargs
     ) -> Union[pd.DataFrame, None]:
         """
@@ -177,6 +180,7 @@ class PhenoLoader:
             pivot (str, optional): The name of the field to pivot the data on (if DataFrame). Defaults to None.
             keep_undefined_research_stage (bool, optional): Whether to keep samples with undefined research stage. Defaults to None.
             join_non_overlapping (bool, optional): Whether to join tables with non-overlapping indices. Defaults to None.
+            extend_bulk_index (bool, optional): Whether to extend the bulk index to match the main table index. Defaults to False.
         """
         if keep_undefined_research_stage is None:
             keep_undefined_research_stage = self.keep_undefined_research_stage
@@ -185,20 +189,42 @@ class PhenoLoader:
         # get path to bulk file
         if type(field_name) is str:
             field_name = [field_name]
-        sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage, join_non_overlapping=join_non_overlapping)
+        sample, fields = self.get(
+            field_name,
+            squeeze=False,
+            return_fields=True,
+            keep_undefined_research_stage=keep_undefined_research_stage,
+            join_non_overlapping=join_non_overlapping
+        )
         # TODO: slice bulk data based on field_type
-        if sample.shape[1] > 2:
+        if sample.shape[1] > 1:
+            # requested fields appear in more than one bulk file
             if parent_bulk is not None:
                 # get the field_name associated with parent_bulk
-                sample, fields = self.get(field_name + ['participant_id'], return_fields=True, keep_undefined_research_stage=keep_undefined_research_stage, join_non_overlapping=join_non_overlapping, parent_dataframe=parent_bulk)
+                sample, fields = self.get(
+                    field_name,
+                    squeeze=False,
+                    return_fields=True,
+                    keep_undefined_research_stage=keep_undefined_research_stage,
+                    join_non_overlapping=join_non_overlapping,
+                    parent_dataframe=parent_bulk
+                )
             else:
                 if self.errors == 'raise':
                     raise ValueError(f'More than one field found for {field_name}. Specify parent_bulk')
                 elif self.errors == 'warn':
                     warnings.warn(f'More than one field found for {field_name}. Specify parent_bulk')
-        fields = [f for f in fields if f != 'participant_id']  # these are fields, as opposed to parent_bulk
-        col = sample.columns.drop('participant_id')[0]  # can be different from field_name if parent_dataframe is implied
-        sample = sample.astype({col: str})
+        col = sample.columns[0]  # can be different from field_name if parent_dataframe is implied
+        # add participant_id and collection_date to the sample, ensure it's from the main tables
+        sample = sample \
+            .join(
+                self.get(
+                    ['participant_id', 'collection_date'],
+                    keep_undefined_research_stage=keep_undefined_research_stage,
+                    join_non_overlapping=join_non_overlapping,
+                    not_bulk_field=True
+                )
+            ).astype({col: str})
 
         # filter by participant_id, research_stage and array_index
         query_str = []
@@ -239,15 +265,22 @@ class PhenoLoader:
             else:
                 field_type = self.dict.loc[fields, 'field_type'].values[0]
             load_func = get_function_for_field_type(field_type)
-        sample = sample.loc[:, col]
-        sample = self.__slice_bulk_partition__(fields, sample)
+        sample_path = sample.loc[:, col]
+        sample_path = self.__slice_bulk_partition__(fields, sample_path)
         kwargs.update(self.__slice_bulk_data__(fields))
         data = []
-        for p in sample.unique():
+        for p in sample_path.unique():
             try:
                 data.append(load_func(p, **kwargs))
                 if isinstance(data[-1], pd.DataFrame):
-                    data[-1] = self.__add_missing_levels__(data[-1], sample.loc[sample == p].to_frame())
+                    if extend_bulk_index:
+                        data[-1] = self.__add_missing_levels__(
+                            data[-1],
+                            sample.loc[sample[col] == p, :].drop(
+                                columns=['participant_id'],
+                                errors='ignore'
+                            )
+                        )
                     if query_str:
                         data[-1] = data[-1].query(query_str)
                     data[-1].sort_index(inplace=True)
@@ -399,7 +432,7 @@ class PhenoLoader:
             fields = [fields]
 
         search_dict = self.dict.copy()
-        if not_bulk_field:
+        if not_bulk_field and 'parent_dataframe' in search_dict.columns:
             search_dict = search_dict.loc[search_dict['parent_dataframe'].isnull()]
         for k, v in kwargs.items():
             if k in search_dict.columns:
@@ -844,6 +877,9 @@ class PhenoLoader:
         """
         # Identify common index levels
         common_index_levels = list(set(data.index.names).intersection(set(more_levels.index.names)))
+        if 'collection_date' in data.columns.union(data.index.names) and \
+            'collection_date' in more_levels.columns.union(more_levels.index.names):
+            common_index_levels.append('collection_date')
         if len(common_index_levels) == 0:
             return data
         
