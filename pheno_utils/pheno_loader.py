@@ -148,7 +148,7 @@ class PhenoLoader:
                                    pivot=pivot,
                                    keep_undefined_research_stage=keep_undefined_research_stage,
                                    join_non_overlapping=join_non_overlapping,
-                                   extend_bulk_index=extend_bulk_index
+                                   extend_bulk_index=extend_bulk_index,
                                    **kwargs)
 
     def load_bulk_data(
@@ -291,6 +291,8 @@ class PhenoLoader:
                     warnings.warn(f'Error loading {p}: {e}')
 
         # format the final result
+        if not data:
+            raise ValueError(f'No data loaded for fields {field_name}. Check that the bulk data paths exist.')
         if concat and isinstance(data[0], pd.DataFrame):
             data = pd.concat(data, axis=0)
         if pivot is not None and isinstance(data, pd.DataFrame):
@@ -538,7 +540,11 @@ class PhenoLoader:
     
     def replace_bulk_data_path(self, data, fields):
         bulk_field_types = self.dict_prop.loc[self.dict_prop.is_bulk == True].index.to_list()
-        bulk_fields = self.dict.loc[self.dict.index.isin(fields)].query('field_type in @bulk_field_types')
+        fields_dict = self.dict.loc[self.dict.index.isin(fields)]
+        if 'field_type' not in fields_dict:
+            bulk_fields = fields_dict.iloc[0:0]
+        else:
+            bulk_fields = fields_dict.query('field_type in @bulk_field_types')
         cols = [col for col in bulk_fields.index.to_list() if col in data.columns] 
         dataset_bulk_data_path = {k:v.format(dataset=self.dataset) for k, v in BULK_DATA_PATH.items()}
         category_cols = self.dict.loc[self.dict.index.isin(fields)].query('pandas_dtype == "category"').index
